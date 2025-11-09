@@ -1,0 +1,22 @@
+<svg width="200" height="220" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoOption5VariantBTitle">
+  <title id="logoOption5VariantBTitle">ReturnShield Signal Shield – Variant B</title>
+  <defs>
+    <linearGradient id="variantBGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D1B69"/>
+      <stop offset="50%" stop-color="#4A2F8C"/>
+      <stop offset="100%" stop-color="#0066FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M100 206c-48-21-78-55-78-115V44L100 10l78 34v47c0 60-30 94-78 115Z" fill="url(#variantBGradient)"/>
+  <path d="M100 32 44 58v32c0 52 24 81 58 97l-4-36c-22-10-36-32-36-56 0-34 26-60 58-60 24 0 46 14 54 36v-24L100 32Z" fill="#FFFFFF" opacity="0.1"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="9">
+    <circle cx="100" cy="120" r="42"/>
+    <circle cx="100" cy="120" r="60"/>
+    <circle cx="100" cy="120" r="74"/>
+  </g>
+  <path d="M78 120c0-12 10-22 22-22s22 10 22 22-10 22-22 22" fill="none" stroke="#12B76A" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m100 96 30-30" stroke="#12B76A" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="100" cy="120" r="18" fill="#FFFFFF" stroke="#000000" stroke-width="3"/>
+  <path d="m86 124 14 14 34-38" fill="none" stroke="#12B76A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+

@@ -1,0 +1,13 @@
+<svg width="180" height="200" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoOption4Title">
+  <title id="logoOption4Title">ReturnShield Shield with Checkmark</title>
+  <defs>
+    <linearGradient id="shieldGradientOption4" x1="10%" y1="0%" x2="90%" y2="100%">
+      <stop offset="0%" stop-color="#3399FF"/>
+      <stop offset="100%" stop-color="#2D1B69"/>
+    </linearGradient>
+  </defs>
+  <path d="M90 190c42-20 72-52 72-108V38L90 12 18 38v44c0 56 30 88 72 108Z" fill="url(#shieldGradientOption4)"/>
+  <path d="M52 110l24 24 52-64" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M128 60c0 21.5-17.5 39-39 39s-39-17.5-39-39" fill="none" stroke="#E8E8E8" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 10"/>
+</svg>
+

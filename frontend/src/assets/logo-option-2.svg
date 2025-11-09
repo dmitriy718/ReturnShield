@@ -1,0 +1,18 @@
+<svg width="180" height="200" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoOption2Title">
+  <title id="logoOption2Title">ReturnShield Shield with Bar Chart</title>
+  <defs>
+    <linearGradient id="shieldGradientOption2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D1B69"/>
+      <stop offset="100%" stop-color="#3399FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M90 190c-44-20-72-52-72-108V40L90 12l72 28v42c0 56-28 88-72 108Z" fill="url(#shieldGradientOption2)"/>
+  <g fill="#FFFFFF">
+    <rect x="52" y="108" width="18" height="40" rx="4"/>
+    <rect x="80" y="92" width="18" height="56" rx="4"/>
+    <rect x="108" y="74" width="18" height="74" rx="4"/>
+  </g>
+  <path d="M48 124c24-38 44-56 72-68" stroke="#E8E8E8" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <circle cx="120" cy="58" r="8" fill="#FFFFFF"/>
+</svg>
+
