@@ -32,6 +32,23 @@ DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") if not DEBUG else ["*"]
 
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000").rstrip("/")
+SHOPIFY_APP_URL = os.getenv("SHOPIFY_APP_URL", FRONTEND_URL).rstrip("/")
+ALLOWED_APP_DOMAINS = [
+    domain.strip()
+    for domain in os.getenv("ALLOWED_APP_DOMAINS", "").split(",")
+    if domain.strip()
+]
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY", "")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+
+SHOPIFY_CLIENT_ID = os.getenv("SHOPIFY_CLIENT_ID", "")
+SHOPIFY_CLIENT_SECRET = os.getenv("SHOPIFY_CLIENT_SECRET", "")
+SHOPIFY_SCOPES = ["read_orders", "write_orders", "read_returns"]
+
 
 # Application definition
 
@@ -161,15 +178,15 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://returnshield.app",
-]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://returnshield.app",
+_origin_candidates = {
     "http://localhost:3000",
-]
+    FRONTEND_URL,
+    SHOPIFY_APP_URL,
+}
+CORS_ALLOWED_ORIGINS = [origin for origin in _origin_candidates if origin.startswith("http")]
+
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
