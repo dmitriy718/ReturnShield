@@ -1,0 +1,16 @@
+<svg width="180" height="200" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoOption3Title">
+  <title id="logoOption3Title">ReturnShield Monogram Shield</title>
+  <defs>
+    <linearGradient id="shieldGradientOption3" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#4A2F8C"/>
+      <stop offset="50%" stop-color="#0066FF"/>
+      <stop offset="100%" stop-color="#2D1B69"/>
+    </linearGradient>
+  </defs>
+  <path d="M90 190c40-20 70-52 70-106V42L90 12 20 42v42c0 54 30 86 70 106Z" fill="url(#shieldGradientOption3)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M58 70h35c18 0 28 10 28 24s-10 24-28 24H58V70Z"/>
+    <path d="M90 118c22 0 32 12 32 28s-10 28-32 28c-16 0-28-6-36-16"/>
+  </g>
+</svg>
+
