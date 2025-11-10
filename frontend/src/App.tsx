@@ -120,9 +120,8 @@ function App() {
   return (
     <div className="page">
       <header className="top-nav">
-        <Link to="/" className="brand">
-          <img src={logo} alt="ReturnShield" className="brand-logo" />
-          <span className="brand-name">ReturnShield</span>
+        <Link to="/" className="brand" aria-label="ReturnShield home">
+          <img src={logo} alt="ReturnShield logo" className="brand-logo" />
         </Link>
         <nav className="nav-links">
           <a href="#features">Features</a>
@@ -372,9 +371,8 @@ function App() {
 
       <footer className="footer">
         <div>
-          <Link to="/" className="brand">
-            <img src={logo} alt="ReturnShield" className="brand-logo" />
-            <span className="brand-name">ReturnShield</span>
+          <Link to="/" className="brand" aria-label="ReturnShield home">
+            <img src={logo} alt="ReturnShield logo" className="brand-logo" />
           </Link>
           <p>Premium return analytics that defend every dollar of profit.</p>
         </div>

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import posthog from 'posthog-js'
 
 import logo from '../assets/logo.svg'
@@ -85,10 +86,9 @@ export default function ExchangeAutopilotPage() {
   return (
     <div className="page exchange-page">
       <header className="top-nav">
-        <div className="brand">
-          <img src={logo} alt="ReturnShield" className="brand-logo" />
-          <span className="brand-name">ReturnShield</span>
-        </div>
+        <Link to="/" className="brand" aria-label="ReturnShield home">
+          <img src={logo} alt="ReturnShield logo" className="brand-logo" />
+        </Link>
         <nav className="nav-links">
           <a href="/">Platform</a>
           <span className="nav-active">Exchange Autopilot</span>
@@ -241,10 +241,9 @@ export default function ExchangeAutopilotPage() {
 
       <footer className="footer">
         <div>
-          <div className="brand">
-            <img src={logo} alt="ReturnShield" className="brand-logo" />
-            <span className="brand-name">ReturnShield</span>
-          </div>
+          <Link to="/" className="brand" aria-label="ReturnShield home">
+            <img src={logo} alt="ReturnShield logo" className="brand-logo" />
+          </Link>
           <p>Premium return analytics that defend every dollar of profit.</p>
         </div>
         <div className="footer-links">

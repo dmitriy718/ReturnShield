@@ -31,7 +31,7 @@
 }
 
 .brand-logo {
-  width: 40px;
+  width: 180px;
   height: auto;
   display: block;
 }
@@ -693,6 +693,10 @@
     background: transparent;
   }
 
+  .brand-logo {
+    width: 150px;
+  }
+
   .nav-links {
     flex-wrap: wrap;
   }
@@ -854,6 +858,10 @@
   .exchange-proof {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .brand-logo {
+    width: 140px;
   }
 
   .roi-callout {
