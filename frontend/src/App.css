@@ -24,6 +24,7 @@
   font-size: 1.1rem;
   color: var(--color-primary);
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .brand-name {
