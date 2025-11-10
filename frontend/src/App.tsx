@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import posthog from 'posthog-js'
 import logo from './assets/logo.svg'
 import './App.css'
@@ -119,12 +120,18 @@ function App() {
   return (
     <div className="page">
       <header className="top-nav">
-        <div className="brand">
+        <Link to="/" className="brand">
           <img src={logo} alt="ReturnShield" className="brand-logo" />
           <span className="brand-name">ReturnShield</span>
-        </div>
+        </Link>
         <nav className="nav-links">
           <a href="#features">Features</a>
+          <Link
+            to="/exchange-automation"
+            onClick={() => posthog.capture('cta_click', { cta: 'nav_exchange_autopilot' })}
+          >
+            Exchange Autopilot
+          </Link>
           <a href="#pricing">Pricing</a>
           <a href="#stories">Customer Wins</a>
           <a href="#faq">FAQ</a>
@@ -155,13 +162,13 @@ function App() {
               >
                 Launch ReturnShield
               </a>
-              <a
+              <Link
                 className="btn btn-secondary"
-                href="#demo"
-                onClick={() => posthog.capture('cta_click', { cta: 'see_live_dashboard' })}
+                to="/exchange-automation"
+                onClick={() => posthog.capture('cta_click', { cta: 'see_exchange_autopilot' })}
               >
-                See a live dashboard
-              </a>
+                Explore Exchange Autopilot
+              </Link>
             </div>
             <div className="hero-proof">
               <div>
@@ -365,10 +372,10 @@ function App() {
 
       <footer className="footer">
         <div>
-          <div className="brand">
+          <Link to="/" className="brand">
             <img src={logo} alt="ReturnShield" className="brand-logo" />
             <span className="brand-name">ReturnShield</span>
-          </div>
+          </Link>
           <p>Premium return analytics that defend every dollar of profit.</p>
         </div>
         <div className="footer-links">

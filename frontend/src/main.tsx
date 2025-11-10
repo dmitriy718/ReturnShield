@@ -1,8 +1,10 @@
 import { StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import posthog from 'posthog-js'
 import './index.css'
 import App from './App.tsx'
+import ExchangeAutopilotPage from './pages/ExchangeAutopilot.tsx'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com'
@@ -17,16 +19,27 @@ if (POSTHOG_KEY) {
   })
 }
 
-function AnalyticsBootstrap() {
-  useEffect(() => {
-    posthog.capture('$pageview')
-  }, [])
+function RoutedApp() {
+  const location = useLocation()
 
-  return <App />
+  useEffect(() => {
+    if (POSTHOG_KEY) {
+      posthog.capture('$pageview', { path: location.pathname })
+    }
+  }, [location])
+
+  return (
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="/exchange-automation" element={<ExchangeAutopilotPage />} />
+    </Routes>
+  )
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AnalyticsBootstrap />
+    <BrowserRouter>
+      <RoutedApp />
+    </BrowserRouter>
   </StrictMode>,
 )
