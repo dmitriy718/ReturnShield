@@ -45,6 +45,12 @@ ALLOWED_APP_DOMAINS = [
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_PRICE_IDS = {
+    "launch": os.getenv("STRIPE_PRICE_LAUNCH", ""),
+    "scale": os.getenv("STRIPE_PRICE_SCALE", ""),
+    "elite": os.getenv("STRIPE_PRICE_ELITE", ""),
+}
+STRIPE_PRICE_IDS = {key: value for key, value in STRIPE_PRICE_IDS.items() if value}
 
 SHOPIFY_CLIENT_ID = os.getenv("SHOPIFY_CLIENT_ID", "")
 SHOPIFY_CLIENT_SECRET = os.getenv("SHOPIFY_CLIENT_SECRET", "")
@@ -75,6 +81,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'accounts',
+    'billing',
     'support',
     'notifications',
     'shopify_integration',

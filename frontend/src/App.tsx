@@ -12,6 +12,10 @@ function App() {
   const [monthlyOrders, setMonthlyOrders] = useState<number>(350)
   const [averageOrderValue, setAverageOrderValue] = useState<number>(92)
   const [returnRate, setReturnRate] = useState<number>(0.17)
+  const [checkoutLoadingPlan, setCheckoutLoadingPlan] = useState<string | null>(null)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
+
+  const apiBaseUrl = ((import.meta.env.VITE_API_URL as string | undefined) || '').replace(/\/$/, '')
 
   const roiMetrics = useMemo(() => {
     const projectedReduction = 0.23
@@ -106,8 +110,41 @@ function App() {
     }
   }
 
-  const handlePlanSelect = (planName: string) => {
-    posthog.capture('pricing_plan_interest', { plan: planName })
+  const handlePlanCheckout = async (planKey: string) => {
+    setCheckoutError(null)
+    setCheckoutLoadingPlan(planKey)
+    posthog.capture('pricing_checkout_attempt', { plan: planKey })
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/billing/create-checkout-session/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plan: planKey }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Checkout initiation failed with status ${response.status}`)
+      }
+
+      const data: { checkout_url?: string } = await response.json()
+
+      if (!data.checkout_url) {
+        throw new Error('Stripe response missing checkout URL')
+      }
+
+      posthog.capture('pricing_checkout_redirect', { plan: planKey })
+      window.location.href = data.checkout_url
+    } catch (error) {
+      console.error(error)
+      setCheckoutError(
+        "We couldn't launch checkout just now. Please verify billing is configured or reach out to concierge@returnshield.app."
+      )
+      posthog.capture('pricing_checkout_error', { plan: planKey })
+    } finally {
+      setCheckoutLoadingPlan(null)
+    }
   }
   const metrics = [
     {
@@ -167,6 +204,7 @@ function App() {
 
   const pricingTiers = [
     {
+      slug: 'launch',
       name: 'Launch',
       price: '$29',
       cadence: '/month',
@@ -180,6 +218,7 @@ function App() {
       cta: 'Start with Launch',
     },
     {
+      slug: 'scale',
       name: 'Scale',
       price: '$69',
       cadence: '/month',
@@ -195,6 +234,7 @@ function App() {
       highlighted: true,
     },
     {
+      slug: 'elite',
       name: 'Elite',
       price: '$100',
       cadence: '/month',
@@ -610,16 +650,22 @@ function App() {
                     </li>
                   ))}
                 </ul>
-                <a
+                <button
+                  type="button"
                   className="btn btn-primary"
-                  href="#signup"
-                  onClick={() => handlePlanSelect(plan.name)}
+                  onClick={() => handlePlanCheckout(plan.slug)}
+                  disabled={checkoutLoadingPlan === plan.slug}
                 >
-                  {plan.cta}
-                </a>
+                  {checkoutLoadingPlan === plan.slug ? 'Redirecting to checkout…' : plan.cta}
+                </button>
               </article>
             ))}
           </div>
+          {checkoutError ? (
+            <p className="pricing-error" role="alert">
+              {checkoutError}
+            </p>
+          ) : null}
           <div className="pricing-cta">
             <a
               href="#features"
