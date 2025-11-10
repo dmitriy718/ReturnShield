@@ -706,7 +706,7 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
       headline: 'Subscription beauty merchant recovered $94K in Q2.',
       detail: 'VIP Resolution Hub prioritized top 5% customers and automated keep-it credits.',
       cta: 'Book a concierge review',
-      href: '#signup',
+    href: 'https://app.returnshield.app/register?plan=scale',
     },
     {
       headline: 'Lifestyle retailer diverted 18K lbs from landfill.',
@@ -843,15 +843,9 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
           <button type="button" className="nav-link-button" onClick={() => handleNavScroll('vip')}>
             VIP Hub
           </button>
-          <Link
-            to="/exchange-automation"
-            onClick={() => {
-              setNavOpen(false)
-              posthog.capture('cta_click', { cta: 'nav_exchange_autopilot' })
-            }}
-          >
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('autopilot')}>
             Exchange Autopilot
-          </Link>
+          </button>
           <button type="button" className="nav-link-button" onClick={() => handleNavScroll('pricing')}>
             Pricing
           </button>
@@ -862,16 +856,16 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
             FAQ
           </button>
           <div className="nav-mobile-cta">
-          <a
-            className="link-muted"
-            href="https://app.returnshield.app/login"
-            onClick={() => setNavOpen(false)}
-          >
-            Log in
-          </a>
+            <a
+              className="link-muted"
+              href="https://app.returnshield.app/login"
+              onClick={() => setNavOpen(false)}
+            >
+              Log in
+            </a>
             <a
               className="btn btn-primary"
-              href="#signup"
+              href="https://app.returnshield.app/register"
               onClick={() => {
                 setNavOpen(false)
                 posthog.capture('cta_click', { cta: 'start_preventing_returns' })
@@ -887,7 +881,7 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
           </a>
           <a
             className="btn btn-primary btn-trial"
-            href="#signup"
+            href="https://app.returnshield.app/register"
             onClick={() => posthog.capture('cta_click', { cta: 'start_preventing_returns' })}
           >
             Start Preventing Returns
@@ -920,7 +914,7 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
             <div className="hero-cta">
               <a
                 className="btn btn-primary"
-                href="#signup"
+                href="https://app.returnshield.app/register"
                 onClick={() => posthog.capture('cta_click', { cta: 'start_preventing_returns' })}
               >
                 Start Preventing Returns
@@ -944,16 +938,13 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
               <div>
                 <strong>Built for Shopify brands</strong>
                 <p>Connect, sync, and act in under 72 hours.</p>
-                <button
-                  type="button"
-                  className="text-link"
-                  onClick={() => {
-                    posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })
-                    scrollToId('onboarding')
-                  }}
+                <a
+                  className="btn btn-secondary btn-compact"
+                  href="https://app.returnshield.app/register"
+                  onClick={() => posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })}
                 >
                   Turn Returns into Relationships
-                </button>
+                </a>
               </div>
               <div>
                 <strong>Convert returns, not customers</strong>
@@ -1311,7 +1302,7 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
           <div className="cta-banner-actions">
             <a
               className="btn btn-primary"
-              href="#pricing"
+              href="https://app.returnshield.app/register"
               onClick={() => posthog.capture('cta_click', { cta: 'unlock_returnshield_effect' })}
             >
               Unlock Your ReturnShield Effect
@@ -1329,7 +1320,11 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
         <section id="signup" className="conversion-anchor">
           <h2>Ready to defend your contribution margin?</h2>
           <p>Start a live walkthrough and activate exchange-first automations within 72 hours.</p>
-          <a className="btn btn-primary" href="mailto:concierge@returnshield.app">
+          <a
+            className="btn btn-primary"
+            href="https://app.returnshield.app/register?concierge=1"
+            onClick={() => posthog.capture('cta_click', { cta: 'schedule_concierge_onboarding' })}
+          >
             Schedule concierge onboarding
           </a>
         </section>
@@ -1337,9 +1332,54 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
         <section id="login" className="conversion-anchor">
           <h2>Already a customer?</h2>
           <p>Visit the ReturnShield operator console to monitor exchange wins and VIP queue updates.</p>
-          <a className="btn btn-secondary" href="https://app.returnshield.app">
+          <a
+            className="btn btn-secondary btn-prominent"
+            href="https://app.returnshield.app"
+            onClick={() => posthog.capture('cta_click', { cta: 'operator_console' })}
+          >
             Go to operator console
           </a>
+        </section>
+
+        <section id="autopilot" className="autopilot-preview">
+          <header>
+            <span className="tagline">Exchange Autopilot</span>
+            <h2>Automate the swap before a refund can settle.</h2>
+            <p>
+              Redirect refund intent into curated exchanges, bonus credits, and concierge outreach. Exchange Autopilot plugs
+              into your existing helpdesk and 3PL in under a day.
+            </p>
+          </header>
+          <div className="autopilot-grid">
+            <article>
+              <h3>Intercept refund intent</h3>
+              <p>Dynamic CTAs and AI sizing recommendations guide shoppers to the right replacement instantly.</p>
+            </article>
+            <article>
+              <h3>Automate fulfillment & comms</h3>
+              <p>Trigger Shopify swaps, notify your 3PL, and send branded updates without touching a ticket.</p>
+            </article>
+            <article>
+              <h3>Measure ROI in real time</h3>
+              <p>Dashboards track exchange adoption, saved margin, and loyalty gains automatically.</p>
+            </article>
+          </div>
+          <div className="autopilot-actions">
+            <Link
+              to="/exchange-automation"
+              className="btn btn-primary"
+              onClick={() => posthog.capture('cta_click', { cta: 'deep_dive_exchange_autopilot' })}
+            >
+              Explore Exchange Autopilot
+            </Link>
+            <a
+              className="btn btn-secondary"
+              href="https://app.returnshield.app/register?plan=scale"
+              onClick={() => posthog.capture('cta_click', { cta: 'launch_exchange_autopilot' })}
+            >
+              Launch in my store
+            </a>
+          </div>
         </section>
 
         <section id="features" className="features">
@@ -1475,8 +1515,8 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
           ) : null}
           <div className="pricing-cta">
             <a
-              href="#features"
-              className="btn btn-secondary"
+              href="https://app.returnshield.app/register"
+              className="btn btn-secondary btn-prominent"
               onClick={() => posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })}
             >
               Turn Returns into Relationships
@@ -1496,7 +1536,11 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
           <div className="testimonial-cta">
             <h3>Your next refund could be revenue.</h3>
             <p>Ship ReturnShield today and be the success story we feature next week.</p>
-            <a className="btn btn-secondary" href="mailto:hello@returnshield.app?subject=ReturnShield%20Walkthrough">
+          <a
+            className="btn btn-secondary btn-prominent"
+            href="https://app.returnshield.app/register"
+            onClick={() => posthog.capture('cta_click', { cta: 'schedule_walkthrough' })}
+          >
               Schedule 15-minute walkthrough
             </a>
           </div>
