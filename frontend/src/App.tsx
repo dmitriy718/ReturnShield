@@ -131,13 +131,92 @@ const formatCurrencyWithCents = (value: number) =>
 
 const formatPercent = (value: number, digits = 0) => `${(value * 100).toFixed(digits)}%`
 
-const formatNumber = (value: number, digits = 0) => value.toLocaleString('en-US', { maximumFractionDigits: digits })
+  const formatNumber = (value: number, digits = 0) => value.toLocaleString('en-US', { maximumFractionDigits: digits })
+  const formatHours = (value: number) => `${value.toFixed(1)} hrs`
 
 const stripePriceLookup: Record<'launch' | 'scale' | 'elite', string> = {
   launch: (import.meta.env.VITE_STRIPE_PRICE_LAUNCH as string | undefined) ?? '',
   scale: (import.meta.env.VITE_STRIPE_PRICE_SCALE as string | undefined) ?? '',
   elite: (import.meta.env.VITE_STRIPE_PRICE_ELITE as string | undefined) ?? '',
 }
+
+type ExchangeCoachRecommendation = {
+  title: string
+  description: string
+  expectedImpact: string
+  automationActions: string[]
+}
+
+type VIPQueueEntry = {
+  customer: string
+  segment: string
+  orderValue: number
+  lifetimeValue: number
+  ticketAgeHours: number
+  recommendedAction: string
+}
+
+const fallbackCoach: ExchangeCoachRecommendation[] = [
+  {
+    title: 'Promote exchanges for Luxe Knit Throw',
+    description:
+      'Redirect refund intent into exchanges for Luxe Knit Throw with an instant 28% bonus credit across all channels.',
+    expectedImpact: 'Protect ≈ $1,240 this month.',
+    automationActions: [
+      'Swap refund CTA for exchange-first workflow in Shopify app embed.',
+      'Send size/fit reassurance email via SendGrid to pending returns.',
+      'Track PostHog funnel `exchange_bonus_opt_in` daily.',
+    ],
+  },
+  {
+    title: 'Launch 14-day exchange sprint',
+    description:
+      'Target the highest-risk SKUs and automate exchange bonus flows for the next 14 days to capture refund leakage before peak season.',
+    expectedImpact: '+53,520 projected annualized margin saved.',
+    automationActions: [
+      'Bulk-update Shopify return reasons to enable exchange defaults.',
+      'Schedule Slack alerts for refund spikes by cohort.',
+      'Trigger returnless mode for < $15 COGS SKUs once credit issued.',
+    ],
+  },
+  {
+    title: 'Measure coach results',
+    description: 'Review weekly Coach summary to double down on winners and retire underperforming plays.',
+    expectedImpact: 'Sustain >20% refund-to-exchange conversion.',
+    automationActions: [
+      'Subscribe to weekly PostHog cohort digest.',
+      'Share highlights with CX leadership via Slack digest.',
+      'Capture learnings in the ReturnShield playbook library.',
+    ],
+  },
+]
+
+const fallbackVipQueue: VIPQueueEntry[] = [
+  {
+    customer: 'Alicia Gomez',
+    segment: 'Top 1% LTV · Apparel',
+    orderValue: 286,
+    lifetimeValue: 6120,
+    ticketAgeHours: 3,
+    recommendedAction: 'Issue instant exchange with complimentary 2-day shipping upgrade.',
+  },
+  {
+    customer: 'Noah Chen',
+    segment: 'Subscription VIP · Beauty',
+    orderValue: 148,
+    lifetimeValue: 3320,
+    ticketAgeHours: 5,
+    recommendedAction: 'Returnless refund + 10% loyalty credit, trigger concierge follow-up email.',
+  },
+  {
+    customer: 'Harper Singh',
+    segment: 'Wholesale · High repeat',
+    orderValue: 812,
+    lifetimeValue: 9410,
+    ticketAgeHours: 2,
+    recommendedAction: 'Flag CX lead, schedule live call, pre-create exchange with expedited warehouse routing.',
+  },
+]
 
 function App() {
   const [navOpen, setNavOpen] = useState(false)
@@ -149,6 +228,8 @@ function App() {
   const [checkoutLoadingPlan, setCheckoutLoadingPlan] = useState<string | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [returnlessInsights, setReturnlessInsights] = useState<ReturnlessInsights>(fallbackReturnlessInsights)
+  const [exchangeCoach, setExchangeCoach] = useState<ExchangeCoachRecommendation[]>(fallbackCoach)
+  const [vipQueue, setVipQueue] = useState<VIPQueueEntry[]>(fallbackVipQueue)
 
   const apiBaseUrl = ((import.meta.env.VITE_API_URL as string | undefined) || '').replace(/\/$/, '')
 
@@ -264,6 +345,40 @@ function App() {
     return () => {
       controller.abort()
     }
+  }, [apiBaseUrl])
+
+  useEffect(() => {
+    if (!apiBaseUrl) {
+      return
+    }
+    const controller = new AbortController()
+    const loadCoachAndVip = async () => {
+      try {
+        const [coachRes, vipRes] = await Promise.all([
+          fetch(`${apiBaseUrl}/returns/exchange-coach/`, { signal: controller.signal }),
+          fetch(`${apiBaseUrl}/returns/vip-resolution/`, { signal: controller.signal }),
+        ])
+        if (coachRes.ok) {
+          const coachPayload: { recommendations: ExchangeCoachRecommendation[] } = await coachRes.json()
+          if (!controller.signal.aborted && Array.isArray(coachPayload.recommendations)) {
+            setExchangeCoach(coachPayload.recommendations)
+          }
+        }
+        if (vipRes.ok) {
+          const vipPayload: { queue: VIPQueueEntry[] } = await vipRes.json()
+          if (!controller.signal.aborted && Array.isArray(vipPayload.queue)) {
+            setVipQueue(vipPayload.queue)
+          }
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error('Unable to fetch coach or VIP data', error)
+        }
+      }
+    }
+
+    void loadCoachAndVip()
+    return () => controller.abort()
   }, [apiBaseUrl])
 
   useEffect(() => {
@@ -413,6 +528,27 @@ function App() {
     ]
   }, [returnlessInsights])
 
+  const successStories = [
+    {
+      headline: 'Scaled apparel brand cut refunds by 26% in 60 days.',
+      detail: 'AI Exchange Coach automated exchange-first flows across four high-risk SKUs.',
+      cta: 'See apparel playbook',
+      href: '/exchange-automation',
+    },
+    {
+      headline: 'Subscription beauty merchant recovered $94K in Q2.',
+      detail: 'VIP Resolution Hub prioritized top 5% customers and automated keep-it credits.',
+      cta: 'Book a concierge review',
+      href: '#signup',
+    },
+    {
+      headline: 'Lifestyle retailer diverted 18K lbs from landfill.',
+      detail: 'Returnless Impact Lab benchmarks guided donation + returnless decisions.',
+      cta: 'Explore sustainability impact',
+      href: '#impact',
+    },
+  ]
+
   const featureHighlights = [
     {
       title: 'SKU return heatmaps',
@@ -534,6 +670,12 @@ function App() {
           <button type="button" className="nav-link-button" onClick={() => handleNavScroll('impact')}>
             Impact
           </button>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('coach')}>
+            AI Coach
+          </button>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('vip')}>
+            VIP Hub
+          </button>
           <Link
             to="/exchange-automation"
             onClick={() => {
@@ -590,6 +732,20 @@ function App() {
             <p className="hero-subtitle">
               ReturnShield turns messy return data into revenue-saving actions. Detect operational leaks, automate smarter policies, and prove the ROI of every fulfillment decision.
             </p>
+            <div className="impact-ticker">
+              <div>
+                <span className="ticker-label">Revenue protected (90 days)</span>
+                <strong>{formatCurrency(returnlessInsights.summary.annualizedMarginRecovery / 4)}</strong>
+              </div>
+              <div>
+                <span className="ticker-label">Landfill diverted</span>
+                <strong>{formatNumber(returnlessInsights.summary.landfillLbsPrevented, 0)} lbs</strong>
+              </div>
+              <div>
+                <span className="ticker-label">CX hours returned</span>
+                <strong>{formatHours(returnlessInsights.summary.manualHoursReduced)}</strong>
+              </div>
+            </div>
             <div className="hero-cta">
               <a
                 className="btn btn-primary"
@@ -783,6 +939,21 @@ function App() {
               </article>
             ))}
           </div>
+          <div className="success-tiles">
+            {successStories.map((story) => (
+              <article key={story.headline}>
+                <h3>{story.headline}</h3>
+                <p>{story.detail}</p>
+                <a
+                  href={story.href}
+                  className="text-link"
+                  onClick={() => posthog.capture('cta_click', { cta: 'success_story', headline: story.headline })}
+                >
+                  {story.cta}
+                </a>
+              </article>
+            ))}
+          </div>
           <aside className="impact-timeline">
             <h3>Playbook moves live this week</h3>
             <ul>
@@ -791,6 +962,59 @@ function App() {
               ))}
             </ul>
           </aside>
+        </section>
+
+        <section id="coach" className="coach">
+          <header>
+            <h2>AI Exchange Coach™</h2>
+            <p>Automate the next best exchange-saving move and watch refunds drop in real time.</p>
+          </header>
+          <div className="coach-grid">
+            {exchangeCoach.map((item) => (
+              <article key={item.title} className="coach-card">
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+                <span className="coach-impact">{item.expectedImpact}</span>
+                <ul>
+                  {item.automationActions.map((action) => (
+                    <li key={action}>{action}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="vip" className="vip">
+          <header>
+            <h2>VIP Resolution Hub</h2>
+            <p>Resolve loyalty-rich tickets first, combine returnless refunds with concierge touches, and protect repeat revenue.</p>
+          </header>
+          <div className="vip-grid">
+            {vipQueue.map((entry) => (
+              <article key={entry.customer} className="vip-card">
+                <div className="vip-header">
+                  <h3>{entry.customer}</h3>
+                  <span>{entry.segment}</span>
+                </div>
+                <div className="vip-metrics">
+                  <div>
+                    <span className="label">Order value</span>
+                    <strong>{formatCurrency(entry.orderValue)}</strong>
+                  </div>
+                  <div>
+                    <span className="label">Lifetime value</span>
+                    <strong>{formatCurrency(entry.lifetimeValue)}</strong>
+                  </div>
+                  <div>
+                    <span className="label">Ticket age</span>
+                    <strong>{entry.ticketAgeHours} hrs</strong>
+                  </div>
+                </div>
+                <p className="vip-action">{entry.recommendedAction}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section id="returnless" className="returnless">
@@ -869,6 +1093,22 @@ function App() {
               Convert Returns to Exchanges
             </Link>
           </div>
+        </section>
+
+        <section id="signup" className="conversion-anchor">
+          <h2>Ready to defend your contribution margin?</h2>
+          <p>Start a live walkthrough and activate exchange-first automations within 72 hours.</p>
+          <a className="btn btn-primary" href="mailto:concierge@returnshield.app">
+            Schedule concierge onboarding
+          </a>
+        </section>
+
+        <section id="login" className="conversion-anchor">
+          <h2>Already a customer?</h2>
+          <p>Visit the ReturnShield operator console to monitor exchange wins and VIP queue updates.</p>
+          <a className="btn btn-secondary" href="https://app.returnshield.app">
+            Go to operator console
+          </a>
         </section>
 
         <section id="features" className="features">

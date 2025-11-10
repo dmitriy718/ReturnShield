@@ -94,6 +94,92 @@ def build_returnless_insights() -> Dict[str, Any]:
     }
 
 
+def build_exchange_coach(playbook: Dict[str, Any]) -> List[Recommendation]:
+    """Derive actionable exchange plays from returnless insights."""
+    candidates = playbook.get("candidates", [])
+    summary = playbook.get("summary", {})
+
+    recs: List[Recommendation] = []
+
+    if candidates:
+        top_candidate = max(candidates, key=lambda item: item.get("estimated_margin_recaptured", 0))
+        recs.append(
+            Recommendation(
+                title=f"Promote exchanges for {top_candidate['product_name']}",
+                description=(
+                    f"Redirect refund intent into exchanges for {top_candidate['product_name']} with an instant "
+                    f"{int(top_candidate['estimated_margin_recaptured'] // max(top_candidate['return_volume_30d'], 1))}% "
+                    "bonus credit."
+                ),
+                expected_impact=f"Protect ≈ ${top_candidate['estimated_margin_recaptured']:.0f} this month.",
+                automation_actions=[
+                    "Swap refund CTA for exchange-first workflow in Shopify app embed.",
+                    "Send size/fit reassurance email via SendGrid to pending returns.",
+                    "Track PostHog funnel `exchange_bonus_opt_in` daily.",
+                ],
+            )
+        )
+
+    if summary:
+        recs.append(
+            Recommendation(
+                title="Launch 14-day exchange sprint",
+                description="Target the highest-risk SKUs and automate exchange bonus flows for the next 14 days.",
+                expected_impact=f"+{summary.get('annualized_margin_recovery', 0):,} projected annualized margin saved.",
+                automation_actions=[
+                    "Bulk-update Shopify return reasons to enable exchange defaults.",
+                    "Schedule Slack alerts for refund spikes by cohort.",
+                    "Trigger returnless mode for < $15 COGS SKUs once credit issued.",
+                ],
+            )
+        )
+
+    recs.append(
+        Recommendation(
+            title="Measure coach results",
+            description="Review weekly Coach summary to double down on winners and retire underperforming plays.",
+            expected_impact="Sustain >20% refund-to-exchange conversion.",
+            automation_actions=[
+                "Subscribe to weekly PostHog cohort digest.",
+                "Share highlights with CX leadership via Slack digest.",
+                "Capture learnings in the ReturnShield playbook library.",
+            ],
+        )
+    )
+
+    return recs
+
+
+def build_vip_resolution_queue() -> List[Dict[str, Any]]:
+    """Generate VIP queue entries highlighting loyalty-aware actions."""
+    return [
+        {
+            "customer": "Alicia Gomez",
+            "segment": "Top 1% LTV · Apparel",
+            "order_value": 286,
+            "lifetime_value": 6120,
+            "ticket_age_hours": 3,
+            "recommended_action": "Issue instant exchange with complimentary 2-day shipping upgrade.",
+        },
+        {
+            "customer": "Noah Chen",
+            "segment": "Subscription VIP · Beauty",
+            "order_value": 148,
+            "lifetime_value": 3320,
+            "ticket_age_hours": 5,
+            "recommended_action": "Returnless refund + 10% loyalty credit, trigger concierge follow-up email.",
+        },
+        {
+            "customer": "Harper Singh",
+            "segment": "Wholesale · High repeat",
+            "order_value": 812,
+            "lifetime_value": 9410,
+            "ticket_age_hours": 2,
+            "recommended_action": "Flag CX lead, schedule live call, pre-create exchange with expedited warehouse routing.",
+        },
+    ]
+
+
 def build_exchange_playbook(
     *,
     return_rate: float,
