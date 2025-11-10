@@ -15,6 +15,18 @@ function App() {
     }
   }, [navOpen])
 
+  const scrollToId = (id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  const handleNavScroll = (id: string) => {
+    setNavOpen(false)
+    scrollToId(id)
+  }
+
   const handlePlanSelect = (planName: string) => {
     posthog.capture('pricing_plan_interest', { plan: planName })
   }
@@ -148,9 +160,9 @@ function App() {
           <span />
         </button>
         <nav className={`nav-links ${navOpen ? 'nav-open' : ''}`}>
-          <a href="#features" onClick={() => setNavOpen(false)}>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('features')}>
             Features
-          </a>
+          </button>
           <Link
             to="/exchange-automation"
             onClick={() => {
@@ -160,15 +172,15 @@ function App() {
           >
             Exchange Autopilot
           </Link>
-          <a href="#pricing" onClick={() => setNavOpen(false)}>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('pricing')}>
             Pricing
-          </a>
-          <a href="#stories" onClick={() => setNavOpen(false)}>
+          </button>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('stories')}>
             Customer Wins
-          </a>
-          <a href="#faq" onClick={() => setNavOpen(false)}>
+          </button>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('faq')}>
             FAQ
-          </a>
+          </button>
           <div className="nav-mobile-cta">
             <a className="link-muted" href="#login" onClick={() => setNavOpen(false)}>
               Log in
@@ -234,14 +246,25 @@ function App() {
               <div>
                 <strong>Built for Shopify brands</strong>
                 <p>Connect, sync, and act in under 72 hours.</p>
-                <a href="#onboarding" className="text-link" onClick={() => posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })}>
+                <button
+                  type="button"
+                  className="text-link"
+                  onClick={() => {
+                    posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })
+                    scrollToId('onboarding')
+                  }}
+                >
                   Turn Returns into Relationships
-                </a>
+                </button>
               </div>
               <div>
                 <strong>Convert returns, not customers</strong>
                 <p>Exchange-first automation keeps loyal buyers in your store.</p>
-                <Link to="/exchange-automation" className="text-link" onClick={() => posthog.capture('cta_click', { cta: 'convert_returns_to_exchanges' })}>
+                <Link
+                  to="/exchange-automation"
+                  className="text-link"
+                  onClick={() => posthog.capture('cta_click', { cta: 'convert_returns_to_exchanges' })}
+                >
                   Convert Returns to Exchanges
                 </Link>
               </div>
@@ -322,7 +345,7 @@ function App() {
           </div>
         </section>
 
-        <section className="onboarding">
+        <section id="onboarding" className="onboarding">
           <div className="onboarding-intro">
             <h2>Onboarding takes less than a coffee break.</h2>
             <p>

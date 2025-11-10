@@ -7,6 +7,7 @@ import App from './App.tsx'
 import ExchangeAutopilotPage from './pages/ExchangeAutopilot.tsx'
 import PrivacyPolicyPage from './pages/PrivacyPolicy.tsx'
 import TermsOfServicePage from './pages/TermsOfService.tsx'
+import NotFoundPage from './pages/NotFound.tsx'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com'
@@ -36,6 +37,7 @@ function RoutedApp() {
       <Route path="/exchange-automation" element={<ExchangeAutopilotPage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }
