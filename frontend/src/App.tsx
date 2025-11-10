@@ -178,10 +178,10 @@ function App() {
               href="#signup"
               onClick={() => {
                 setNavOpen(false)
-                posthog.capture('cta_click', { cta: 'kickstart_revenue_save' })
+                posthog.capture('cta_click', { cta: 'start_preventing_returns' })
               }}
             >
-              Kickstart My Revenue Save
+              Start Preventing Returns
             </a>
           </div>
         </nav>
@@ -192,9 +192,9 @@ function App() {
           <a
             className="btn btn-primary btn-trial"
             href="#signup"
-            onClick={() => posthog.capture('cta_click', { cta: 'kickstart_revenue_save' })}
+            onClick={() => posthog.capture('cta_click', { cta: 'start_preventing_returns' })}
           >
-            Kickstart My Revenue Save
+            Start Preventing Returns
           </a>
         </div>
       </header>
@@ -211,26 +211,39 @@ function App() {
               <a
                 className="btn btn-primary"
                 href="#signup"
-                onClick={() => posthog.capture('cta_click', { cta: 'launch_returnshield' })}
+                onClick={() => posthog.capture('cta_click', { cta: 'start_preventing_returns' })}
               >
-                Launch ReturnShield
+                Start Preventing Returns
+              </a>
+              <a
+                className="btn btn-secondary"
+                href="#features"
+                onClick={() => posthog.capture('cta_click', { cta: 'see_the_why' })}
+              >
+                See the Why Behind Returns
               </a>
               <Link
-                className="btn btn-secondary"
+                className="btn btn-link"
                 to="/exchange-automation"
-                onClick={() => posthog.capture('cta_click', { cta: 'see_exchange_autopilot' })}
+                onClick={() => posthog.capture('cta_click', { cta: 'unlock_returnshield_effect' })}
               >
-                Explore Exchange Autopilot
+                Unlock Your ReturnShield Effect
               </Link>
             </div>
             <div className="hero-proof">
               <div>
                 <strong>Built for Shopify brands</strong>
                 <p>Connect, sync, and act in under 72 hours.</p>
+                <a href="#onboarding" className="text-link" onClick={() => posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })}>
+                  Turn Returns into Relationships
+                </a>
               </div>
               <div>
-                <strong>Priced for immediate ROI</strong>
-                <p>One recovered shipment covers your first month.</p>
+                <strong>Convert returns, not customers</strong>
+                <p>Exchange-first automation keeps loyal buyers in your store.</p>
+                <Link to="/exchange-automation" className="text-link" onClick={() => posthog.capture('cta_click', { cta: 'convert_returns_to_exchanges' })}>
+                  Convert Returns to Exchanges
+                </Link>
               </div>
             </div>
           </div>
@@ -265,6 +278,31 @@ function App() {
               <p>{metric.detail}</p>
             </div>
           ))}
+        </section>
+
+        <section className="cta-banner" aria-label="Unlock your ReturnShield effect">
+          <div className="cta-banner-copy">
+            <h2>Unlock Your ReturnShield Effect</h2>
+            <p>
+              Stop treating returns as a cost center. Surface the why behind returns, deploy exchange-first playbooks, and defend contribution margin on autopilot.
+            </p>
+          </div>
+          <div className="cta-banner-actions">
+            <a
+              className="btn btn-primary"
+              href="#pricing"
+              onClick={() => posthog.capture('cta_click', { cta: 'unlock_returnshield_effect' })}
+            >
+              Unlock Your ReturnShield Effect
+            </a>
+            <Link
+              className="btn btn-outline"
+              to="/exchange-automation"
+              onClick={() => posthog.capture('cta_click', { cta: 'convert_returns_to_exchanges' })}
+            >
+              Convert Returns to Exchanges
+            </Link>
+          </div>
         </section>
 
         <section id="features" className="features">
@@ -315,6 +353,13 @@ function App() {
               <li>Bulk actions to update policies directly from insights.</li>
               <li>Export investor-ready reports that prove contribution gains.</li>
             </ul>
+            <Link
+              to="/exchange-automation"
+              className="btn btn-secondary"
+              onClick={() => posthog.capture('cta_click', { cta: 'convert_returns_to_exchanges' })}
+            >
+              Convert Returns to Exchanges
+            </Link>
           </div>
           <div className="dashboard-visual">
             <div className="visual-card">
@@ -379,6 +424,15 @@ function App() {
                 </a>
               </article>
             ))}
+          </div>
+          <div className="pricing-cta">
+            <a
+              href="#features"
+              className="btn btn-secondary"
+              onClick={() => posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })}
+            >
+              Turn Returns into Relationships
+            </a>
           </div>
         </section>
 
