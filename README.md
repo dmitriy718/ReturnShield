@@ -73,5 +73,13 @@ npm run build  # runs TypeScript + Vite checks
 - HelpScout app ID/secret + mailbox ID
 - Analytics (PostHog project API key + host)
 
+## Shopify Integration Flow
+1. Provide `SHOPIFY_CLIENT_ID`, `SHOPIFY_CLIENT_SECRET`, and `SHOPIFY_APP_URL` in `backend/.env`.
+2. Authenticate in the app and call `POST /api/shopify/install-url/` with `{"shop_domain": "your-store"}`  
+   (accepts either full `myshopify.com` domain or store prefix).  
+   Response returns `install_url` – redirect the merchant there.
+3. Shopify redirects back to `/api/shopify/callback/`, which stores the access token and marks the
+   installation active. The user’s onboarding stage automatically advances to `sync`.
+
 ## License
 All rights reserved. Internal use only.
