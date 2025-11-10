@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -6,7 +8,8 @@ from accounts.models import User
 
 
 class AuthAPITestCase(APITestCase):
-    def test_register_creates_user_and_token(self):
+    @mock.patch("accounts.views.send_onboarding_email")
+    def test_register_creates_user_and_token(self, mock_send_email):
         url = reverse("accounts:register")
         payload = {
             "username": "founder",
@@ -24,6 +27,7 @@ class AuthAPITestCase(APITestCase):
         user = User.objects.first()
         self.assertEqual(user.company_name, payload["company_name"])
         self.assertEqual(user.onboarding_stage, "sync")
+        mock_send_email.assert_called_once_with(user)
 
     def test_login_returns_token(self):
         user = User.objects.create_user(
@@ -41,6 +45,3 @@ class AuthAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("token", response.data)
-from django.test import TestCase
-
-# Create your tests here.

@@ -51,6 +51,8 @@ SHOPIFY_CLIENT_SECRET = os.getenv("SHOPIFY_CLIENT_SECRET", "")
 SHOPIFY_SCOPES = ["read_orders", "write_orders", "read_returns"]
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
+SENDGRID_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL", "support@returnshield.app")
+SENDGRID_FROM_NAME = os.getenv("SENDGRID_FROM_NAME", "ReturnShield Concierge")
 
 HELPSCOUT_APP_ID = os.getenv("HELPSCOUT_APP_ID", "")
 HELPSCOUT_APP_SECRET = os.getenv("HELPSCOUT_APP_SECRET", "")
@@ -74,6 +76,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts',
     'support',
+    'notifications',
 ]
 
 MIDDLEWARE = [

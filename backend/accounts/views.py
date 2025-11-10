@@ -1,10 +1,16 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from notifications.email import send_onboarding_email
+
 from .serializers import RegisterSerializer, UserSerializer
+
+logger = logging.getLogger(__name__)
 
 
 User = get_user_model()
@@ -19,6 +25,10 @@ class RegisterView(generics.CreateAPIView):
         user = User.objects.get(pk=response.data["id"])
         token, _created = Token.objects.get_or_create(user=user)
         response.data["token"] = token.key
+        try:
+            send_onboarding_email(user)
+        except Exception:  # pragma: no cover
+            logger.exception("Failed to send onboarding email for user %s", user.pk)
         return response
 
 
