@@ -862,9 +862,13 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
             FAQ
           </button>
           <div className="nav-mobile-cta">
-            <a className="link-muted" href="#login" onClick={() => setNavOpen(false)}>
-              Log in
-            </a>
+          <a
+            className="link-muted"
+            href="https://app.returnshield.app/login"
+            onClick={() => setNavOpen(false)}
+          >
+            Log in
+          </a>
             <a
               className="btn btn-primary"
               href="#signup"
@@ -878,7 +882,7 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
           </div>
         </nav>
         <div className="nav-actions">
-          <a className="link-muted" href="#login">
+          <a className="link-muted" href="https://app.returnshield.app/login">
             Log in
           </a>
           <a

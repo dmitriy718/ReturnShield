@@ -5,8 +5,9 @@ ReturnShield is a returns intelligence platform for Shopify brands. The stack is
 ## Project Structure
 
 - `backend/` – Django project (`core`) with `accounts` app, REST endpoints, and auth tests.
-- `frontend/` – Vite + React + TypeScript single-page app with premium marketing experience.
-- `docker-compose.yml` – Orchestrates backend, frontend, and PostgreSQL for local development.
+- `frontend/` – Vite + React + TypeScript marketing site served at `returnshield.app`.
+- `app-frontend/` – Authenticated dashboard (React + Vite) served at `app.returnshield.app`.
+- `docker-compose.yml` – Orchestrates backend, marketing frontend, dashboard frontend, and PostgreSQL for local development.
 
 ## Getting Started
 
@@ -26,11 +27,17 @@ ReturnShield is a returns intelligence platform for Shopify brands. The stack is
    python manage.py migrate
    python manage.py runserver
    ```
-2. **Frontend**
+2. **Marketing site**
    ```bash
    cd frontend
    npm install
    cp .env.example .env  # set VITE_POSTHOG_KEY (and optional VITE_POSTHOG_HOST)
+   npm run dev
+   ```
+3. **Dashboard**
+   ```bash
+   cd app-frontend
+   npm install
    npm run dev
    ```
 
@@ -40,13 +47,17 @@ ReturnShield is a returns intelligence platform for Shopify brands. The stack is
    cp backend/.env.example backend/.env
    cp backend/compose.env.example .env
    ```
-   Then edit `.env` with real credentials (Postgres, Stripe, Shopify, OpenAI, SendGrid, HelpScout, PostHog, etc.). Supply `VITE_POSTHOG_KEY` for the frontend when using Docker (expose it in the `frontend` service environment).
+   Then edit `.env` with real credentials (Postgres, Stripe, Shopify, OpenAI, SendGrid, HelpScout, PostHog, etc.). Supply `VITE_POSTHOG_KEY` for the marketing frontend.  
+   - `FRONTEND_URL` → marketing site origin (e.g. `https://returnshield.app`)  
+   - `APP_FRONTEND_URL` → dashboard origin (e.g. `https://app.returnshield.app`)  
+   - `API_URL` / `APP_API_URL` → publicly reachable API base (e.g. `https://returnshield.app/api`)
 2. Start services:
    ```bash
    docker compose up --build
    ```
    - API → `http://localhost:8000`
-   - Frontend → `http://localhost:3000`
+   - Marketing site → `http://localhost:3000`
+   - Dashboard → `http://localhost:4173`
    - PostgreSQL → `localhost:5432`
 
 ### Testing
@@ -58,13 +69,20 @@ python manage.py test
 
 ```bash
 cd frontend
-npm run build  # runs TypeScript + Vite checks
+npm run build
+
+cd ../app-frontend
+npm run build
 ```
 
 ## Deployment Notes
 - Stage 1 deploy target: IONOS VPS `65.38.99.52` (Ubuntu). Recommend Docker + Nginx reverse proxy.
-- Domain ready: `returnshield.app`, plus `.store`, `.io`, `.us`, `.me`.
-- Nginx site: `/etc/nginx/sites-available/returnshield` proxies `https://returnshield.app/` → frontend (`8080`) and `https://returnshield.app/api/` → Django API (`8000`). Certbot manages TLS (`certbot renew --dry-run` to check automation).
+- Domain ready: `returnshield.app`, `app.returnshield.app`, plus `.store`, `.io`, `.us`, `.me`.
+- Nginx site: `/etc/nginx/sites-available/returnshield` proxies:  
+  - `https://returnshield.app/` → marketing frontend (`127.0.0.1:8080`)  
+  - `https://app.returnshield.app/` → dashboard frontend (`127.0.0.1:8081`)  
+  - `https://*/api/` → Django API (`127.0.0.1:8000`)  
+  Certbot manages TLS (`certbot renew --dry-run` to check automation).
 - Docker stack is supervised by `systemd` (`returnshield.service`) and runs `docker-compose up`; restart via `sudo systemctl restart returnshield.service`.
 
 ## Credentials Needed
@@ -77,9 +95,9 @@ npm run build  # runs TypeScript + Vite checks
 - Analytics (PostHog project API key + host)
 
 ## Billing & Checkout
-- Configure `STRIPE_PRICE_LAUNCH`, `STRIPE_PRICE_SCALE`, and `STRIPE_PRICE_ELITE` in `backend/.env` (and Docker compose env) with subscription price IDs from Stripe.
-- Frontend pricing CTAs call `POST /api/billing/create-checkout-session/` and redirect merchants to Stripe Checkout.
-- Update `FRONTEND_URL` / `BACKEND_URL` / `VITE_API_URL` to point at `https://returnshield.app` so the marketing site and API share the same secure origin.
+- Configure `STRIPE_PRICE_LAUNCH`, `STRIPE_PRICE_SCALE`, and `STRIPE_PRICE_ELITE` in `backend/.env` (and Docker compose env) with subscription price IDs from Stripe. The dashboard reuses the same IDs.
+- Marketing pricing CTAs call `POST /api/billing/create-checkout-session/` and redirect merchants to Stripe Checkout with a success page on the dashboard (`/billing/success`).
+- Keep `FRONTEND_URL` pointing at the marketing site and `APP_FRONTEND_URL` pointing at the dashboard. Set `API_URL` / `APP_API_URL` to `https://returnshield.app/api` in production so both SPAs share the same API origin.
 
 ## Sustainability & Returnless Insights
 - Marketing page now showcases landfill/carbon savings plus a returnless refund command center fed by `GET /api/returns/returnless-insights/`.

@@ -34,6 +34,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") if not DEBUG else ["*"]
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+APP_FRONTEND_URL = os.getenv("APP_FRONTEND_URL", FRONTEND_URL).rstrip("/")
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000").rstrip("/")
 SHOPIFY_APP_URL = os.getenv("SHOPIFY_APP_URL", FRONTEND_URL).rstrip("/")
 ALLOWED_APP_DOMAINS = [
@@ -211,8 +212,11 @@ CORS_ALLOW_CREDENTIALS = True
 
 _origin_candidates = {
     "http://localhost:3000",
+    "http://localhost:5173",
     FRONTEND_URL,
+    APP_FRONTEND_URL,
     SHOPIFY_APP_URL,
+    "http://localhost:4173",
 }
 CORS_ALLOWED_ORIGINS = [origin for origin in _origin_candidates if origin.startswith("http")]
 
