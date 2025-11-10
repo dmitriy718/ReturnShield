@@ -1,0 +1,19 @@
+<svg width="160" height="180" viewBox="0 0 280 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rsMarkTitle rsMarkDesc">
+  <title id="rsMarkTitle">ReturnShield shield mark</title>
+  <desc id="rsMarkDesc">Stylised shield and R icon from the ReturnShield brand</desc>
+  <defs>
+    <linearGradient id="markShieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1C64B5"/>
+      <stop offset="100%" stop-color="#0F2F69"/>
+    </linearGradient>
+    <linearGradient id="markInnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4AC6FF"/>
+      <stop offset="100%" stop-color="#1C64B5"/>
+    </linearGradient>
+  </defs>
+  <path d="M140 0C110 18 74 30 32 36C28 158 96 224 140 246C184 224 252 158 248 36C206 30 170 18 140 0Z" fill="url(#markShieldGradient)"/>
+  <path d="M204 113C206 74 176 46 134 46C104 46 80 58 62 82C56 90 50 102 50 102C50 102 74 70 120 62C170 54 206 82 200 120C186 122 170 123 154 123C120 123 92 114 76 104C90 139 130 161 176 161C190 161 202 159 212 155C214 139 206 121 204 113Z" fill="#F4FBFF"/>
+  <path d="M70 136C84 174 118 208 158 219C178 213 194 202 206 188C182 188 154 182 128 168C104 156 86 140 74 126C72 128 70 132 70 136Z" fill="url(#markInnerGradient)"/>
+  <path d="M110 128C120 140 138 150 156 155C172 150 188 140 196 126C200 128 204 132 206 136C196 152 176 166 156 172C134 166 118 154 106 142C108 138 108 132 110 128Z" fill="#1C64B5" opacity="0.45"/>
+</svg>
+

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import posthog from 'posthog-js'
 
-import logo from '../assets/logo.svg'
+import logoMark from '../assets/logo-mark.svg'
 import '../App.css'
 
 const proofPoints = [
@@ -87,7 +87,11 @@ export default function ExchangeAutopilotPage() {
     <div className="page exchange-page">
       <header className="top-nav">
         <Link to="/" className="brand" aria-label="ReturnShield home">
-          <img src={logo} alt="ReturnShield logo" className="brand-logo" />
+          <img src={logoMark} alt="ReturnShield shield" className="brand-icon" />
+          <div className="brand-text">
+            <span className="brand-title">ReturnShield</span>
+            <span className="brand-tagline">Turn Your Returns Into Relationships</span>
+          </div>
         </Link>
         <nav className="nav-links">
           <a href="/">Platform</a>
@@ -242,7 +246,11 @@ export default function ExchangeAutopilotPage() {
       <footer className="footer">
         <div>
           <Link to="/" className="brand" aria-label="ReturnShield home">
-            <img src={logo} alt="ReturnShield logo" className="brand-logo" />
+            <img src={logoMark} alt="ReturnShield shield" className="brand-icon" />
+            <div className="brand-text">
+              <span className="brand-title">ReturnShield</span>
+              <span className="brand-tagline">Turn Your Returns Into Relationships</span>
+            </div>
           </Link>
           <p>Premium return analytics that defend every dollar of profit.</p>
         </div>
