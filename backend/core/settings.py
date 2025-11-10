@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -49,6 +50,15 @@ SHOPIFY_CLIENT_ID = os.getenv("SHOPIFY_CLIENT_ID", "")
 SHOPIFY_CLIENT_SECRET = os.getenv("SHOPIFY_CLIENT_SECRET", "")
 SHOPIFY_SCOPES = ["read_orders", "write_orders", "read_returns"]
 
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
+
+HELPSCOUT_APP_ID = os.getenv("HELPSCOUT_APP_ID", "")
+HELPSCOUT_APP_SECRET = os.getenv("HELPSCOUT_APP_SECRET", "")
+HELPSCOUT_MAILBOX_ID = os.getenv("HELPSCOUT_MAILBOX_ID", "")
+
+POSTHOG_API_KEY = os.getenv("POSTHOG_API_KEY", "")
+POSTHOG_HOST = os.getenv("POSTHOG_HOST", "https://app.posthog.com")
+
 
 # Application definition
 
@@ -63,6 +73,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'accounts',
+    'support',
 ]
 
 MIDDLEWARE = [
@@ -99,7 +110,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-if os.getenv("DB_ENGINE"):
+if "test" in sys.argv and os.getenv("USE_SQLITE_FOR_TESTS", "1") == "1":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+elif os.getenv("DB_ENGINE"):
     DATABASES = {
         'default': {
             'ENGINE': os.getenv("DB_ENGINE"),
