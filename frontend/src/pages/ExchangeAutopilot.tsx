@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import posthog from 'posthog-js'
 
@@ -81,6 +81,7 @@ const playbookHighlights = [
 
 export default function ExchangeAutopilotPage() {
   const [navOpen, setNavOpen] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (navOpen) {
@@ -89,6 +90,17 @@ export default function ExchangeAutopilotPage() {
       document.body.classList.remove('no-scroll')
     }
   }, [navOpen])
+
+  const scrollHomeSection = (id: string) => {
+    setNavOpen(false)
+    navigate('/')
+    requestAnimationFrame(() => {
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
+  }
 
   const handleDemoClick = (cta: string) => {
     posthog.capture('exchange_autopilot_cta', { cta })
@@ -114,16 +126,16 @@ export default function ExchangeAutopilotPage() {
           <span />
         </button>
         <nav className={`nav-links ${navOpen ? 'nav-open' : ''}`}>
-          <a href="/" onClick={() => setNavOpen(false)}>
+          <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('features')}>
             Platform
-          </a>
+          </button>
           <span className="nav-active">Exchange Autopilot</span>
-          <a href="/#pricing" onClick={() => setNavOpen(false)}>
+          <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('pricing')}>
             Pricing
-          </a>
-          <a href="/#stories" onClick={() => setNavOpen(false)}>
+          </button>
+          <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('stories')}>
             Customer Wins
-          </a>
+          </button>
           <div className="nav-mobile-cta">
             <a className="link-muted" href="/#demo" onClick={() => setNavOpen(false)}>
               Book a call
@@ -167,9 +179,9 @@ export default function ExchangeAutopilotPage() {
             <div className="hero-cta">
               <button
                 className="btn btn-primary"
-                onClick={() => handleDemoClick('convert_returns_to_exchanges')}
+                onClick={() => handleDemoClick('start_preventing_returns')}
               >
-                Convert Returns to Exchanges
+                Start Preventing Returns
               </button>
               <button
                 className="btn btn-secondary"
