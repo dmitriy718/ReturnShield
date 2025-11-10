@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
 import posthog from 'posthog-js'
 import logoMark from './assets/logo-mark.svg'
 import './App.css'
@@ -43,6 +44,14 @@ function App() {
       scrollToId(id)
     } else {
       navigateInternal('/', { state: { scrollTo: id } })
+    }
+  }
+
+  const handleFooterLink = (event: ReactMouseEvent<HTMLAnchorElement>, path: string) => {
+    setNavOpen(false)
+    if (window.location.pathname === path) {
+      event.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -526,19 +535,27 @@ function App() {
 
       <footer className="footer">
         <div>
-          <Link to="/" className="brand" aria-label="ReturnShield home">
+          <Link
+            to="/"
+            className="brand"
+            aria-label="ReturnShield home"
+            onClick={(event) => handleFooterLink(event, '/')}
+          >
             <img src={logoMark} alt="ReturnShield shield" className="brand-icon" />
             <div className="brand-text">
               <span className="brand-title">ReturnShield</span>
               <span className="brand-tagline">Turn Your Returns Into Relationships</span>
             </div>
           </Link>
-          <p>ReturnShield helps brands convert refunds into loyalty-building exchanges.</p>
         </div>
         <div className="footer-links">
           <a href="mailto:hello@returnshield.app">hello@returnshield.app</a>
-          <Link to="/privacy">Privacy Policy</Link>
-          <Link to="/terms">Terms of Service</Link>
+          <Link to="/privacy" onClick={(event) => handleFooterLink(event, '/privacy')}>
+            Privacy Policy
+          </Link>
+          <Link to="/terms" onClick={(event) => handleFooterLink(event, '/terms')}>
+            Terms of Service
+          </Link>
         </div>
       </footer>
     </div>
