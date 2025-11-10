@@ -72,3 +72,27 @@ class ReturnlessInsightsTests(APITestCase):
         self.assertIn("summary", payload)
         self.assertIn("candidates", payload)
         self.assertGreater(len(payload["candidates"]), 0)
+
+
+class ExchangeCoachTests(APITestCase):
+    def test_exchange_coach_endpoint(self):
+        response = self.client.get(reverse("returns:exchange-coach"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertIn("recommendations", data)
+        self.assertGreaterEqual(len(data["recommendations"]), 1)
+        first = data["recommendations"][0]
+        self.assertIn("title", first)
+        self.assertIn("automation_actions", first)
+
+
+class VIPResolutionTests(APITestCase):
+    def test_vip_queue_endpoint(self):
+        response = self.client.get(reverse("returns:vip-resolution"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        payload = response.json()
+        self.assertIn("queue", payload)
+        self.assertGreater(len(payload["queue"]), 0)
+        entry = payload["queue"][0]
+        self.assertIn("customer", entry)
+        self.assertIn("recommended_action", entry)

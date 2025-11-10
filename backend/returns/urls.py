@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ExchangeAutomationView, ReturnlessInsightsView
+from .views import ExchangeAutomationView, ExchangeCoachView, ReturnlessInsightsView, VIPResolutionView
 
 app_name = "returns"
 
@@ -10,6 +10,16 @@ urlpatterns = [
         "returnless-insights/",
         ReturnlessInsightsView.as_view(),
         name="returnless-insights",
+    ),
+    path(
+        "exchange-coach/",
+        ExchangeCoachView.as_view(),
+        name="exchange-coach",
+    ),
+    path(
+        "vip-resolution/",
+        VIPResolutionView.as_view(),
+        name="vip-resolution",
     ),
 ]
 
