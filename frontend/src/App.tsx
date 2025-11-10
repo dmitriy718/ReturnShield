@@ -5,6 +5,140 @@ import posthog from 'posthog-js'
 import logoMark from './assets/logo-mark.svg'
 import './App.css'
 
+type ReturnlessCandidate = {
+  sku: string
+  productName: string
+  avgUnitCost: number
+  returnVolume30d: number
+  reasonDriver: string
+  estimatedMarginRecaptured: number
+  carbonKgPrevented: number
+  landfillLbsPrevented: number
+  handlingMinutesReduced: number
+  recommendedActions: string[]
+}
+
+type ReturnlessInsights = {
+  summary: {
+    period: string
+    annualizedMarginRecovery: number
+    carbonTonnesPrevented: number
+    landfillLbsPrevented: number
+    manualHoursReduced: number
+  }
+  candidates: ReturnlessCandidate[]
+  playbook: string[]
+}
+
+const fallbackReturnlessInsights: ReturnlessInsights = {
+  summary: {
+    period: 'last_30_days',
+    annualizedMarginRecovery: 53520,
+    carbonTonnesPrevented: 0.28,
+    landfillLbsPrevented: 592,
+    manualHoursReduced: 5.6,
+  },
+  candidates: [
+    {
+      sku: 'RS-014',
+      productName: 'Luxe Knit Throw',
+      avgUnitCost: 18.5,
+      returnVolume30d: 42,
+      reasonDriver: 'Texture / feel not as expected',
+      estimatedMarginRecaptured: 1240,
+      carbonKgPrevented: 85,
+      landfillLbsPrevented: 180,
+      handlingMinutesReduced: 96,
+      recommendedActions: [
+        'Auto-approve returnless refund with 12% exchange credit coupon.',
+        'Tag SKU for donation pickup with GiveBack Box.',
+      ],
+    },
+    {
+      sku: 'RS-221',
+      productName: 'Everyday Bamboo Tee',
+      avgUnitCost: 9.25,
+      returnVolume30d: 136,
+      reasonDriver: 'Fit feedback · relaxed cut',
+      estimatedMarginRecaptured: 2280,
+      carbonKgPrevented: 132,
+      landfillLbsPrevented: 264,
+      handlingMinutesReduced: 168,
+      recommendedActions: [
+        'Serve AI sizing quiz before checkout for repeat buyers.',
+        'Offer returnless refund with keep-it note referencing sustainability pledge.',
+      ],
+    },
+    {
+      sku: 'RS-091',
+      productName: 'Ceramic Mood Candle',
+      avgUnitCost: 7.4,
+      returnVolume30d: 58,
+      reasonDriver: 'Minor packaging blemish',
+      estimatedMarginRecaptured: 940,
+      carbonKgPrevented: 64,
+      landfillLbsPrevented: 148,
+      handlingMinutesReduced: 72,
+      recommendedActions: [
+        'Bundle blemished units for outlet flash sale.',
+        'Message VIP segment with 2-for-1 rescue offer.',
+      ],
+    },
+  ],
+  playbook: [
+    'Keep-it refund for sub-$15 cost of goods when reverse logistics > 65% of margin.',
+    'Tag donation-ready SKUs in Shopify metafields and sync nightly with fulfillment center.',
+    'Trigger SendGrid sustainability story 48h after refund to reinforce loyalty.',
+    'Track impact dashboards weekly: landfill diverted, CO₂e prevented, margin recaptured.',
+  ],
+}
+
+type ReturnlessApiCandidate = {
+  sku?: string
+  product_name?: string
+  avg_unit_cost?: number
+  return_volume_30d?: number
+  reason_driver?: string
+  estimated_margin_recaptured?: number
+  carbon_kg_prevented?: number
+  landfill_lbs_prevented?: number
+  handling_minutes_reduced?: number
+  recommended_actions?: string[]
+}
+
+type ReturnlessApiPayload = {
+  summary?: {
+    period?: string
+    annualized_margin_recovery?: number
+    carbon_tonnes_prevented?: number
+    landfill_lbs_prevented?: number
+    manual_hours_reduced?: number
+  }
+  candidates?: ReturnlessApiCandidate[]
+  playbook?: string[]
+}
+
+const formatCurrency = (value: number) =>
+  value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+
+const formatCurrencyWithCents = (value: number) =>
+  value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  })
+
+const formatPercent = (value: number, digits = 0) => `${(value * 100).toFixed(digits)}%`
+
+const formatNumber = (value: number, digits = 0) => value.toLocaleString('en-US', { maximumFractionDigits: digits })
+
+const stripePriceLookup: Record<'launch' | 'scale' | 'elite', string> = {
+  launch: (import.meta.env.VITE_STRIPE_PRICE_LAUNCH as string | undefined) ?? '',
+  scale: (import.meta.env.VITE_STRIPE_PRICE_SCALE as string | undefined) ?? '',
+  elite: (import.meta.env.VITE_STRIPE_PRICE_ELITE as string | undefined) ?? '',
+}
+
 function App() {
   const [navOpen, setNavOpen] = useState(false)
   const location = useLocation()
@@ -14,6 +148,7 @@ function App() {
   const [returnRate, setReturnRate] = useState<number>(0.17)
   const [checkoutLoadingPlan, setCheckoutLoadingPlan] = useState<string | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [returnlessInsights, setReturnlessInsights] = useState<ReturnlessInsights>(fallbackReturnlessInsights)
 
   const apiBaseUrl = ((import.meta.env.VITE_API_URL as string | undefined) || '').replace(/\/$/, '')
 
@@ -40,10 +175,6 @@ function App() {
     }
   }, [averageOrderValue, monthlyOrders, returnRate])
 
-  const formatCurrency = (value: number) =>
-    value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
-  const formatPercent = (value: number, digits = 0) => `${(value * 100).toFixed(digits)}%`
-
   const handleMonthlyOrdersChange = (event: ChangeEvent<HTMLInputElement>) => {
     const next = Number(event.target.value)
     if (!Number.isNaN(next)) {
@@ -64,6 +195,76 @@ function App() {
       setReturnRate(Math.max(0, Math.min(0.5, next)))
     }
   }
+
+  const transformReturnlessPayload = (payload: ReturnlessApiPayload | null | undefined): ReturnlessInsights => {
+    const summary = payload?.summary ?? {}
+    const rawCandidates: ReturnlessApiCandidate[] = Array.isArray(payload?.candidates)
+      ? (payload?.candidates as ReturnlessApiCandidate[])
+      : []
+    const rawPlaybook: string[] = Array.isArray(payload?.playbook) ? (payload?.playbook as string[]) : []
+    return {
+      summary: {
+        period: summary.period ?? fallbackReturnlessInsights.summary.period,
+        annualizedMarginRecovery:
+          summary.annualized_margin_recovery ?? fallbackReturnlessInsights.summary.annualizedMarginRecovery,
+        carbonTonnesPrevented:
+          summary.carbon_tonnes_prevented ?? fallbackReturnlessInsights.summary.carbonTonnesPrevented,
+        landfillLbsPrevented:
+          summary.landfill_lbs_prevented ?? fallbackReturnlessInsights.summary.landfillLbsPrevented,
+        manualHoursReduced: summary.manual_hours_reduced ?? fallbackReturnlessInsights.summary.manualHoursReduced,
+      },
+      candidates: rawCandidates.map((item: ReturnlessApiCandidate) => ({
+        sku: item.sku ?? '',
+        productName: item.product_name ?? '',
+        avgUnitCost: item.avg_unit_cost ?? 0,
+        returnVolume30d: item.return_volume_30d ?? 0,
+        reasonDriver: item.reason_driver ?? '',
+        estimatedMarginRecaptured: item.estimated_margin_recaptured ?? 0,
+        carbonKgPrevented: item.carbon_kg_prevented ?? 0,
+        landfillLbsPrevented: item.landfill_lbs_prevented ?? 0,
+        handlingMinutesReduced: item.handling_minutes_reduced ?? 0,
+        recommendedActions: Array.isArray(item.recommended_actions) ? item.recommended_actions : [],
+      })),
+      playbook: rawPlaybook.length > 0 ? rawPlaybook : fallbackReturnlessInsights.playbook,
+    }
+  }
+
+  useEffect(() => {
+    if (!apiBaseUrl) {
+      return
+    }
+    const controller = new AbortController()
+    const loadInsights = async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/returns/returnless-insights/`, {
+          signal: controller.signal,
+        })
+        if (!response.ok) {
+          throw new Error(`Returnless insights request failed with status ${response.status}`)
+        }
+        const payload = await response.json()
+        if (!controller.signal.aborted) {
+          const parsed = transformReturnlessPayload(payload)
+          setReturnlessInsights(parsed)
+          posthog.capture('returnless_insights_loaded', {
+            source: 'marketing_site',
+            sku_count: parsed.candidates.length,
+            period: parsed.summary.period,
+          })
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error('Unable to fetch returnless insights', error)
+        }
+      }
+    }
+
+    void loadInsights()
+
+    return () => {
+      controller.abort()
+    }
+  }, [apiBaseUrl])
 
   useEffect(() => {
     if (navOpen) {
@@ -115,13 +316,22 @@ function App() {
     setCheckoutLoadingPlan(planKey)
     posthog.capture('pricing_checkout_attempt', { plan: planKey })
 
+    const normalizedPlan = planKey.toLowerCase() as keyof typeof stripePriceLookup
+    const priceId = stripePriceLookup[normalizedPlan]
+    if (!priceId) {
+      setCheckoutError('Selected plan is not available right now. Please contact concierge@returnshield.app.')
+      setCheckoutLoadingPlan(null)
+      posthog.capture('pricing_checkout_error', { plan: planKey, reason: 'missing_price_id' })
+      return
+    }
+
     try {
       const response = await fetch(`${apiBaseUrl}/api/billing/create-checkout-session/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ plan: planKey }),
+        body: JSON.stringify({ plan: planKey, price_id: priceId }),
       })
 
       if (!response.ok) {
@@ -163,6 +373,45 @@ function App() {
       detail: 'From install to actionable SKU-level recommendations.',
     },
   ]
+
+  const averageKeepItValue = useMemo(() => {
+    if (!returnlessInsights.candidates.length) {
+      return 0
+    }
+    const totalPerSku = returnlessInsights.candidates.reduce((accumulator, candidate) => {
+      if (!candidate.returnVolume30d) {
+        return accumulator
+      }
+      return accumulator + candidate.estimatedMarginRecaptured / candidate.returnVolume30d
+    }, 0)
+    return totalPerSku / returnlessInsights.candidates.length
+  }, [returnlessInsights])
+
+  const sustainabilityCards = useMemo(() => {
+    const { summary } = returnlessInsights
+    return [
+      {
+        label: 'Annualized margin recovered',
+        value: formatCurrency(summary.annualizedMarginRecovery),
+        detail: 'Projected savings from automated returnless authorizations.',
+      },
+      {
+        label: 'Carbon emissions prevented',
+        value: `${formatNumber(summary.carbonTonnesPrevented, 2)} t CO₂e`,
+        detail: `Equivalent to avoiding ~${formatNumber(Math.round(summary.carbonTonnesPrevented * 1130))} last-mile deliveries.`,
+      },
+      {
+        label: 'Landfill diverted',
+        value: `${formatNumber(summary.landfillLbsPrevented, 0)} lbs`,
+        detail: 'Kept out of landfill through donations and keep-it policies.',
+      },
+      {
+        label: 'Team hours returned',
+        value: `${formatNumber(summary.manualHoursReduced, 1)} hrs`,
+        detail: 'Saved per month by skipping inspections and repacking.',
+      },
+    ]
+  }, [returnlessInsights])
 
   const featureHighlights = [
     {
@@ -281,6 +530,9 @@ function App() {
         <nav className={`nav-links ${navOpen ? 'nav-open' : ''}`}>
           <button type="button" className="nav-link-button" onClick={() => handleNavScroll('features')}>
             Features
+          </button>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('impact')}>
+            Impact
           </button>
           <Link
             to="/exchange-automation"
@@ -507,6 +759,90 @@ function App() {
                 <small>{roiMetrics.roiMultiple.toFixed(1)}× subscription ROI</small>
               </article>
             </div>
+          </div>
+        </section>
+
+        <section id="impact" className="impact">
+          <header>
+            <span className="tagline">Sustainability impact</span>
+            <h2>Returnless refunds that protect margins and the planet.</h2>
+            <p>
+              ReturnShield pinpoints low-value items where reverse logistics erodes margin. Keep-it refunds, donation routing,
+              and automated storytelling prevented{' '}
+              {formatNumber(returnlessInsights.summary.landfillLbsPrevented, 0)} lbs of landfill waste and saved{' '}
+              {formatCurrency(returnlessInsights.summary.annualizedMarginRecovery)} in annualized margin with just{' '}
+              {returnlessInsights.candidates.length} SKUs in the pilot set.
+            </p>
+          </header>
+          <div className="impact-grid">
+            {sustainabilityCards.map((card) => (
+              <article key={card.label} className="impact-card">
+                <span className="impact-value">{card.value}</span>
+                <span className="impact-label">{card.label}</span>
+                <p>{card.detail}</p>
+              </article>
+            ))}
+          </div>
+          <aside className="impact-timeline">
+            <h3>Playbook moves live this week</h3>
+            <ul>
+              {returnlessInsights.playbook.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ul>
+          </aside>
+        </section>
+
+        <section id="returnless" className="returnless">
+          <header>
+            <h2>Returnless refund intelligence, pre-modeled.</h2>
+            <p>
+              We stack-rank every SKU by margin risk, sustainability upside, and customer delight. Returnless automation frees{' '}
+              {formatNumber(returnlessInsights.summary.manualHoursReduced, 1)} hours of CX time per month while keep-it credits
+              average {formatCurrencyWithCents(averageKeepItValue)} per approval.
+            </p>
+          </header>
+          <div className="returnless-grid">
+            {returnlessInsights.candidates.map((candidate) => (
+              <article key={candidate.sku} className="returnless-card">
+                <header>
+                  <span className="returnless-sku">{candidate.sku}</span>
+                  <h3>{candidate.productName}</h3>
+                  <p>{candidate.reasonDriver}</p>
+                </header>
+                <div className="returnless-stats">
+                  <div>
+                    <span className="label">30-day returns</span>
+                    <strong>{formatNumber(candidate.returnVolume30d, 0)}</strong>
+                  </div>
+                  <div>
+                    <span className="label">Avg. COGS</span>
+                    <strong>{formatCurrencyWithCents(candidate.avgUnitCost)}</strong>
+                  </div>
+                  <div>
+                    <span className="label">Margin recaptured</span>
+                    <strong>{formatCurrency(candidate.estimatedMarginRecaptured)}</strong>
+                  </div>
+                  <div>
+                    <span className="label">Carbon prevented</span>
+                    <strong>{formatNumber(candidate.carbonKgPrevented, 0)} kg</strong>
+                  </div>
+                  <div>
+                    <span className="label">Landfill diverted</span>
+                    <strong>{formatNumber(candidate.landfillLbsPrevented, 0)} lbs</strong>
+                  </div>
+                  <div>
+                    <span className="label">Ops minutes saved</span>
+                    <strong>{formatNumber(candidate.handlingMinutesReduced, 0)} min</strong>
+                  </div>
+                </div>
+                <ul className="returnless-actions">
+                  {candidate.recommendedActions.map((action) => (
+                    <li key={action}>{action}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
           </div>
         </section>
 

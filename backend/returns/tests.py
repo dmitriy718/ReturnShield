@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from returns.utils import build_exchange_playbook
+from returns.utils import build_exchange_playbook, build_returnless_insights
 
 User = get_user_model()
 
@@ -56,3 +56,19 @@ class ExchangePlaybookTests(APITestCase):
         data = response.json()
         self.assertIn("recommendations", data)
         self.assertGreater(len(data["recommendations"]), 0)
+
+
+class ReturnlessInsightsTests(APITestCase):
+    def test_build_returnless_insights_summary(self):
+        insights = build_returnless_insights()
+        self.assertIn("summary", insights)
+        self.assertGreaterEqual(insights["summary"]["annualized_margin_recovery"], 0)
+        self.assertEqual(len(insights["candidates"]), 3)
+
+    def test_returnless_endpoint_returns_payload(self):
+        response = self.client.get(reverse("returns:returnless-insights"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        payload = response.json()
+        self.assertIn("summary", payload)
+        self.assertIn("candidates", payload)
+        self.assertGreater(len(payload["candidates"]), 0)

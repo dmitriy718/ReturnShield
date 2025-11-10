@@ -22,7 +22,19 @@ class CreateCheckoutSessionView(APIView):
             )
 
         plan = (request.data.get("plan") or "").lower()
-        price_id = settings.STRIPE_PRICE_IDS.get(plan)
+        request_price_id = (request.data.get("price_id") or "").strip()
+        configured_price_id = settings.STRIPE_PRICE_IDS.get(plan)
+
+        if request_price_id:
+            if request_price_id != configured_price_id:
+                return Response(
+                    {"detail": "Submitted plan details do not match."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            price_id = request_price_id
+        else:
+            price_id = configured_price_id
+
         if not price_id:
             return Response({"detail": "Invalid plan selection."}, status=status.HTTP_400_BAD_REQUEST)
 
