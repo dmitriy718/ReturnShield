@@ -332,6 +332,9 @@ export default function PrivacyPolicyPage() {
           <Link to="/terms" onClick={(event) => handleFooterLink(event, '/terms')}>
             Terms of Service
           </Link>
+          <Link to="/dmarc" onClick={(event) => handleFooterLink(event, '/dmarc')}>
+            DMARC Policy
+          </Link>
         </div>
       </footer>
     </div>
