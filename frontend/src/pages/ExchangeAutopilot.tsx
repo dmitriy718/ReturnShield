@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import posthog from 'posthog-js'
 
 import logoMark from '../assets/logo-mark.svg'
@@ -79,6 +80,16 @@ const playbookHighlights = [
 ]
 
 export default function ExchangeAutopilotPage() {
+  const [navOpen, setNavOpen] = useState(false)
+
+  useEffect(() => {
+    if (navOpen) {
+      document.body.classList.add('no-scroll')
+    } else {
+      document.body.classList.remove('no-scroll')
+    }
+  }, [navOpen])
+
   const handleDemoClick = (cta: string) => {
     posthog.capture('exchange_autopilot_cta', { cta })
   }
@@ -86,25 +97,59 @@ export default function ExchangeAutopilotPage() {
   return (
     <div className="page exchange-page">
       <header className="top-nav">
-        <Link to="/" className="brand" aria-label="ReturnShield home">
+        <Link to="/" className="brand" aria-label="ReturnShield home" onClick={() => setNavOpen(false)}>
           <img src={logoMark} alt="ReturnShield shield" className="brand-icon" />
           <div className="brand-text">
             <span className="brand-title">ReturnShield</span>
             <span className="brand-tagline">Turn Your Returns Into Relationships</span>
           </div>
         </Link>
-        <nav className="nav-links">
-          <a href="/">Platform</a>
+        <button
+          className={`nav-toggle ${navOpen ? 'is-open' : ''}`}
+          aria-label={navOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          onClick={() => setNavOpen((prev) => !prev)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+        <nav className={`nav-links ${navOpen ? 'nav-open' : ''}`}>
+          <a href="/" onClick={() => setNavOpen(false)}>
+            Platform
+          </a>
           <span className="nav-active">Exchange Autopilot</span>
-          <a href="/#pricing">Pricing</a>
-          <a href="/#stories">Customer Wins</a>
+          <a href="/#pricing" onClick={() => setNavOpen(false)}>
+            Pricing
+          </a>
+          <a href="/#stories" onClick={() => setNavOpen(false)}>
+            Customer Wins
+          </a>
+          <div className="nav-mobile-cta">
+            <a className="link-muted" href="/#demo" onClick={() => setNavOpen(false)}>
+              Book a call
+            </a>
+            <a
+              className="btn btn-primary"
+              href="/#signup"
+              onClick={() => {
+                setNavOpen(false)
+                posthog.capture('exchange_autopilot_cta', { cta: 'kickstart_revenue_save' })
+              }}
+            >
+              Kickstart My Revenue Save
+            </a>
+          </div>
         </nav>
         <div className="nav-actions">
           <a className="link-muted" href="/#demo">
             Book a call
           </a>
-          <a className="btn btn-primary" href="/#signup">
-            Start free trial
+          <a
+            className="btn btn-primary btn-trial"
+            href="/#signup"
+            onClick={() => posthog.capture('exchange_autopilot_cta', { cta: 'kickstart_revenue_save' })}
+          >
+            Kickstart My Revenue Save
           </a>
         </div>
       </header>
