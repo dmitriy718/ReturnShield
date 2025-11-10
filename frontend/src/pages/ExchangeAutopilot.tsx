@@ -133,10 +133,10 @@ export default function ExchangeAutopilotPage() {
               href="/#signup"
               onClick={() => {
                 setNavOpen(false)
-                posthog.capture('exchange_autopilot_cta', { cta: 'kickstart_revenue_save' })
+                posthog.capture('exchange_autopilot_cta', { cta: 'convert_returns_to_exchanges' })
               }}
             >
-              Kickstart My Revenue Save
+              Convert Returns to Exchanges
             </a>
           </div>
         </nav>
@@ -147,9 +147,9 @@ export default function ExchangeAutopilotPage() {
           <a
             className="btn btn-primary btn-trial"
             href="/#signup"
-            onClick={() => posthog.capture('exchange_autopilot_cta', { cta: 'kickstart_revenue_save' })}
+            onClick={() => posthog.capture('exchange_autopilot_cta', { cta: 'convert_returns_to_exchanges' })}
           >
-            Kickstart My Revenue Save
+            Convert Returns to Exchanges
           </a>
         </div>
       </header>
@@ -167,15 +167,21 @@ export default function ExchangeAutopilotPage() {
             <div className="hero-cta">
               <button
                 className="btn btn-primary"
-                onClick={() => handleDemoClick('book_live_workshop')}
+                onClick={() => handleDemoClick('convert_returns_to_exchanges')}
               >
-                Book a live workshop
+                Convert Returns to Exchanges
               </button>
               <button
                 className="btn btn-secondary"
-                onClick={() => handleDemoClick('download_playbook_pdf')}
+                onClick={() => handleDemoClick('turn_returns_into_relationships')}
               >
-                Download ROI playbook
+                Turn Returns into Relationships
+              </button>
+              <button
+                className="btn btn-link"
+                onClick={() => handleDemoClick('see_the_why')}
+              >
+                See the Why Behind Returns
               </button>
             </div>
             <div className="hero-proof exchange-proof">
@@ -191,7 +197,7 @@ export default function ExchangeAutopilotPage() {
           <aside className="exchange-hero-card">
             <div className="visual-card">
               <header>
-                <span className="badge badge-accent">Live Forecast</span>
+                <span className="badge badge-accent">Live Insight</span>
                 <span>Refunds converted this week</span>
               </header>
               <div className="visual-body">
@@ -199,11 +205,8 @@ export default function ExchangeAutopilotPage() {
                   <p className="visual-metric">38 exchanges</p>
                   <p className="visual-subtext">$8,540 margin protected</p>
                 </div>
-                <button
-                  className="btn btn-primary btn-small"
-                  onClick={() => handleDemoClick('view_case_study')}
-                >
-                  View case study
+                <button className="btn btn-primary btn-small" onClick={() => handleDemoClick('unlock_returnshield_effect')}>
+                  Unlock Your ReturnShield Effect
                 </button>
               </div>
               <footer>

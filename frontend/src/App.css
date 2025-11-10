@@ -9,6 +9,10 @@ body {
   color: #141b2f;
 }
 
+body.no-scroll {
+  overflow: hidden;
+}
+
 h1,
 h2,
 h3,
@@ -22,13 +26,13 @@ h3,
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  padding: 1.2rem 0;
+  padding: 1.5rem 0 1rem;
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(12px);
-  z-index: 20;
-  border-bottom: 1px solid rgba(17, 28, 63, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.78) 70%, rgba(255, 255, 255, 0) 100%);
+  backdrop-filter: blur(14px);
+  z-index: 30;
+  border-bottom: 1px solid rgba(17, 28, 63, 0.06);
 }
 
 .brand {
@@ -160,23 +164,10 @@ h3,
   transform: scaleX(1);
 }
 
-.btn-trial {
-  padding: 0.85rem 1.75rem;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  box-shadow: 0 14px 28px rgba(12, 87, 178, 0.28);
-}
-
-.btn-trial:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 34px rgba(12, 87, 178, 0.34);
-}
-
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .link-muted {
@@ -217,6 +208,90 @@ h3,
   color: var(--color-accent);
 }
 
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(17, 28, 63, 0.16);
+  color: var(--color-primary);
+  transition: border 0.2s ease, color 0.2s ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.btn-link::after {
+  content: '→';
+  font-size: 0.85em;
+  transition: transform 0.2s ease;
+}
+
+.btn-link:hover::after {
+  transform: translateX(4px);
+}
+
+.text-link {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-accent);
+}
+
+.text-link:hover {
+  color: var(--color-primary);
+}
+
+.cta-banner {
+  margin: 4rem 0;
+  padding: 3rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(20, 34, 82, 0.08), rgba(76, 151, 255, 0.12));
+  border: 1px solid rgba(17, 28, 63, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.cta-banner-copy h2 {
+  font-size: 2.1rem;
+  margin: 0 0 0.75rem;
+  color: var(--color-primary);
+}
+
+.cta-banner-copy p {
+  margin: 0;
+  color: var(--color-muted);
+  max-width: 520px;
+}
+
+.cta-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pricing-cta {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.pricing-cta .btn {
+  min-width: 260px;
+}
+
 .btn-secondary:hover {
   border-color: var(--color-accent);
   transform: translateY(-2px);
@@ -225,6 +300,19 @@ h3,
 .btn-small {
   padding: 0.6rem 1.2rem;
   font-size: 0.9rem;
+}
+
+.btn-trial {
+  padding: 0.85rem 1.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  box-shadow: 0 14px 28px rgba(12, 87, 178, 0.25);
+}
+
+.btn-trial:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 36px rgba(12, 87, 178, 0.32);
 }
 
 .hero {
@@ -815,7 +903,7 @@ h3,
     align-items: flex-start;
     gap: 1rem;
     position: static;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.98);
   }
 
   .nav-toggle {
@@ -835,7 +923,7 @@ h3,
   }
 
   .nav-links.nav-open {
-    max-height: 400px;
+    max-height: 420px;
   }
 
   .nav-links a,
@@ -854,6 +942,11 @@ h3,
     gap: 0.75rem;
     width: 100%;
     padding-top: 0.5rem;
+  }
+
+  .nav-actions {
+    width: 100%;
+    display: none;
   }
 
   .brand-icon {
@@ -876,10 +969,6 @@ h3,
   .roi-callout {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .brand-logo {
-    width: 150px;
   }
 
   .hero-content h1 {
@@ -1035,6 +1124,20 @@ h3,
   .exchange-proof {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .cta-banner {
+    padding: 2.5rem;
+  }
+
+  .cta-banner-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cta-banner-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .brand-icon {
