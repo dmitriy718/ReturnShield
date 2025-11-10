@@ -340,8 +340,16 @@ h3,
 }
 
 .pricing-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.pricing-error {
   margin-top: 2rem;
   text-align: center;
+  color: #ffb4b4;
+  font-weight: 600;
 }
 
 .pricing-cta .btn {

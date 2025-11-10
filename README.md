@@ -68,10 +68,16 @@ npm run build  # runs TypeScript + Vite checks
 ## Credentials Needed
 - Shopify Partner API key & secret
 - Stripe live publishable & secret keys
+- Stripe price IDs for Launch / Scale / Elite plans
 - OpenAI API key
 - Email provider (SendGrid API key + sender details)
 - HelpScout app ID/secret + mailbox ID
 - Analytics (PostHog project API key + host)
+
+## Billing & Checkout
+- Configure `STRIPE_PRICE_LAUNCH`, `STRIPE_PRICE_SCALE`, and `STRIPE_PRICE_ELITE` in `backend/.env` (and Docker compose env) with subscription price IDs from Stripe.
+- Frontend pricing CTAs call `POST /api/billing/create-checkout-session/` and redirect merchants to Stripe Checkout.
+- Update `FRONTEND_URL` in the backend environment so success and cancel URLs resolve correctly.
 
 ## Shopify Integration Flow
 1. Provide `SHOPIFY_CLIENT_ID`, `SHOPIFY_CLIENT_SECRET`, and `SHOPIFY_APP_URL` in `backend/.env`.
