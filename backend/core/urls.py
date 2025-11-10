@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls', namespace='accounts')),
     path('api/support/', include('support.urls', namespace='support')),
     path('api/shopify/', include('shopify_integration.urls', namespace='shopify_integration')),
+    path('api/returns/', include('returns.urls', namespace='returns')),
 ]

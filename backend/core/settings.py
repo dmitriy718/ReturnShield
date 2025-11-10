@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'support',
     'notifications',
     'shopify_integration',
+    'returns',
 ]
 
 MIDDLEWARE = [
