@@ -1,0 +1,255 @@
+.dashboard {
+  display: grid;
+  gap: 2.2rem;
+}
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.dashboard-summary article {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 0.6rem;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.dashboard-summary strong {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.dashboard-summary p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.65);
+  line-height: 1.5;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.9rem 2rem;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 1.5rem;
+}
+
+.panel header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.panel header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #0f172a;
+}
+
+.panel header button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.panel-subtitle {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.6);
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.panel table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.panel table th,
+.panel table td {
+  text-align: left;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  vertical-align: top;
+}
+
+.panel table th {
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.panel table td ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: rgba(15, 23, 42, 0.7);
+  line-height: 1.5;
+}
+
+.table-muted {
+  display: block;
+  color: rgba(15, 23, 42, 0.5);
+  font-size: 0.85rem;
+}
+
+.coach-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.coach-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  padding: 1.2rem 1.4rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.coach-card-header {
+  display: flex;
+  gap: 1rem;
+}
+
+.coach-card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.coach-card-header p {
+  margin: 0.3rem 0 0;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.coach-card dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.coach-card dt {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.coach-card dd {
+  margin: 0.2rem 0 0.65rem;
+  font-weight: 700;
+}
+
+.coach-actions {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: rgba(15, 23, 42, 0.7);
+  line-height: 1.5;
+}
+
+.badge {
+  align-self: flex-start;
+  display: inline-flex;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+}
+
+.onboarding-panel {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.06), rgba(14, 165, 233, 0.08)),
+    #ffffff;
+}
+
+.onboarding-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.stage-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  background: #fff;
+  border-radius: 16px;
+  padding: 0.85rem 1.1rem;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  transition: border 0.2s ease, transform 0.2s ease;
+}
+
+.stage-button:hover {
+  transform: translateY(-1px);
+  border-color: #2563eb;
+}
+
+.stage-button.active {
+  border-color: #2563eb;
+  box-shadow: 0 16px 30px rgba(37, 99, 235, 0.18);
+}
+
+.stage-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #2563eb;
+}
+
+.dashboard-error {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.dashboard-error button {
+  border: none;
+  padding: 0.45rem 0.95rem;
+  border-radius: 0.75rem;
+  background: #b91c1c;
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (max-width: 960px) {
+  .panel {
+    padding: 1.35rem 1.4rem;
+  }
+}
+

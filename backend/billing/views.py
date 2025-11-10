@@ -40,12 +40,18 @@ class CreateCheckoutSessionView(APIView):
 
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
+        success_url = (
+            (request.data.get("success_url") or "").strip()
+            or f"{settings.APP_FRONTEND_URL}/billing/success?session_id={{CHECKOUT_SESSION_ID}}"
+        )
+        cancel_url = (request.data.get("cancel_url") or "").strip() or f"{settings.FRONTEND_URL}#pricing"
+
         try:
             session = stripe.checkout.Session.create(  # type: ignore[attr-defined]
                 mode="subscription",
                 line_items=[{"price": price_id, "quantity": 1}],
-                success_url=f"{settings.FRONTEND_URL}/welcome?session_id={{CHECKOUT_SESSION_ID}}",
-                cancel_url=f"{settings.FRONTEND_URL}#pricing",
+                success_url=success_url,
+                cancel_url=cancel_url,
                 allow_promotion_codes=True,
                 billing_address_collection="required",
                 metadata={"plan": plan},
