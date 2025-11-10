@@ -1089,9 +1089,33 @@ h3,
   gap: 0.85rem;
 }
 
+.coach-metrics {
+  display: flex;
+  justify-content: center;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+}
+
+.coach-metrics div {
+  background: rgba(45, 27, 105, 0.06);
+  border-radius: 16px;
+  padding: 1rem 1.4rem;
+  min-width: 180px;
+  text-align: center;
+}
+
+.coach-metrics .label {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 0.35rem;
+}
+
 .coach-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.6rem;
 }
 
@@ -1102,12 +1126,30 @@ h3,
   border: 1px solid rgba(45, 27, 105, 0.08);
   box-shadow: 0 18px 40px rgba(45, 27, 105, 0.08);
   display: grid;
+  gap: 1.25rem;
+}
+
+.coach-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
+}
+
+.coach-sku {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: rgba(21, 99, 173, 0.12);
+  color: var(--color-accent);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
 }
 
 .coach-card h3 {
   margin: 0;
   color: var(--color-primary);
+  font-size: 1.15rem;
 }
 
 .coach-card p {
@@ -1115,30 +1157,43 @@ h3,
   color: var(--color-muted);
 }
 
-.coach-impact {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.35rem 0.85rem;
-  border-radius: 999px;
-  background: rgba(21, 99, 173, 0.12);
-  color: var(--color-accent);
-  font-weight: 600;
-  font-size: 0.85rem;
+.coach-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
-.coach-card ul {
+.coach-stats .label {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 0.25rem;
+}
+
+.coach-actions {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.55rem;
+  gap: 0.6rem;
   color: var(--color-muted);
 }
 
-.coach-card li::before {
-  content: '•';
+.coach-actions li {
+  position: relative;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+
+.coach-actions li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
   color: var(--color-accent);
-  margin-right: 0.5rem;
+  font-weight: 700;
 }
 
 .vip {
@@ -1155,9 +1210,33 @@ h3,
   gap: 0.85rem;
 }
 
+.vip-metrics-row {
+  display: flex;
+  justify-content: center;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+}
+
+.vip-metrics-row div {
+  background: rgba(15, 133, 108, 0.08);
+  border-radius: 16px;
+  padding: 1rem 1.4rem;
+  min-width: 200px;
+  text-align: center;
+}
+
+.vip-metrics-row .label {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 0.35rem;
+}
+
 .vip-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.6rem;
 }
 
@@ -1168,7 +1247,14 @@ h3,
   border: 1px solid rgba(45, 27, 105, 0.08);
   box-shadow: 0 18px 40px rgba(45, 27, 105, 0.08);
   display: grid;
-  gap: 1.1rem;
+  gap: 1.2rem;
+}
+
+.vip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .vip-header h3 {
@@ -1177,20 +1263,45 @@ h3,
 }
 
 .vip-header span {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--color-muted);
 }
 
-.vip-metrics {
+.vip-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.vip-stats dt {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.vip-stats dd {
+  margin: 0.15rem 0 0.35rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.vip-return-reason {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 .vip-action {
   margin: 0;
   color: var(--color-muted);
-  font-weight: 500;
+  line-height: 1.6;
+  font-weight: 600;
 }
 
 .features header,

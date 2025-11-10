@@ -8,7 +8,7 @@ from analytics.posthog import capture as capture_event
 
 from .serializers import ExchangeAutomationInputSerializer
 from .utils import (
-    build_exchange_coach,
+    build_exchange_coach_actions,
     build_exchange_playbook,
     build_returnless_insights,
     build_vip_resolution_queue,
@@ -54,23 +54,13 @@ class ExchangeCoachView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
-        insights = build_returnless_insights()
-        recommendations = build_exchange_coach(insights)
-        payload = [
-            {
-                "title": rec.title,
-                "description": rec.description,
-                "expected_impact": rec.expected_impact,
-                "automation_actions": rec.automation_actions,
-            }
-            for rec in recommendations
-        ]
+        payload = build_exchange_coach_actions()
         capture_event(
             "exchange_coach_viewed",
             distinct_id="public-web",
-            properties={"recommendation_count": len(payload)},
+            properties={"recommendation_count": len(payload.get("actions", []))},
         )
-        return Response({"recommendations": payload}, status=status.HTTP_200_OK)
+        return Response(payload, status=status.HTTP_200_OK)
 
 
 class VIPResolutionView(APIView):
@@ -81,6 +71,6 @@ class VIPResolutionView(APIView):
         capture_event(
             "vip_resolution_viewed",
             distinct_id="public-web",
-            properties={"items": len(queue)},
+            properties={"items": len(queue.get("queue", []))},
         )
-        return Response({"queue": queue}, status=status.HTTP_200_OK)
+        return Response(queue, status=status.HTTP_200_OK)

@@ -3,7 +3,12 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from returns.utils import build_exchange_playbook, build_returnless_insights
+from returns.utils import (
+    build_exchange_coach_actions,
+    build_exchange_playbook,
+    build_returnless_insights,
+    build_vip_resolution_queue,
+)
 
 User = get_user_model()
 
@@ -79,11 +84,18 @@ class ExchangeCoachTests(APITestCase):
         response = self.client.get(reverse("returns:exchange-coach"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertIn("recommendations", data)
-        self.assertGreaterEqual(len(data["recommendations"]), 1)
-        first = data["recommendations"][0]
-        self.assertIn("title", first)
-        self.assertIn("automation_actions", first)
+        self.assertIn("actions", data)
+        self.assertGreaterEqual(len(data["actions"]), 1)
+        first = data["actions"][0]
+        self.assertIn("headline", first)
+        self.assertIn("recommended_play", first)
+        self.assertIn("summary", data)
+        self.assertIn("aggregate_margin_at_risk", data["summary"])
+
+    def test_exchange_coach_utils(self):
+        payload = build_exchange_coach_actions()
+        self.assertIn("actions", payload)
+        self.assertEqual(payload["actions"][0]["sku"], "PORTFOLIO")
 
 
 class VIPResolutionTests(APITestCase):
@@ -96,3 +108,9 @@ class VIPResolutionTests(APITestCase):
         entry = payload["queue"][0]
         self.assertIn("customer", entry)
         self.assertIn("recommended_action", entry)
+        self.assertIn("summary", payload)
+        self.assertIn("revenue_defended", payload["summary"])
+
+    def test_vip_queue_utils(self):
+        report = build_vip_resolution_queue()
+        self.assertGreater(report["summary"]["open_tickets"], 0)

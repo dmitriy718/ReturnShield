@@ -131,8 +131,9 @@ const formatCurrencyWithCents = (value: number) =>
 
 const formatPercent = (value: number, digits = 0) => `${(value * 100).toFixed(digits)}%`
 
-  const formatNumber = (value: number, digits = 0) => value.toLocaleString('en-US', { maximumFractionDigits: digits })
-  const formatHours = (value: number) => `${value.toFixed(1)} hrs`
+const formatNumber = (value: number, digits = 0) =>
+  value.toLocaleString('en-US', { maximumFractionDigits: digits })
+const formatHours = (value: number) => `${value.toFixed(1)} hrs`
 
 const stripePriceLookup: Record<'launch' | 'scale' | 'elite', string> = {
   launch: (import.meta.env.VITE_STRIPE_PRICE_LAUNCH as string | undefined) ?? '',
@@ -140,83 +141,180 @@ const stripePriceLookup: Record<'launch' | 'scale' | 'elite', string> = {
   elite: (import.meta.env.VITE_STRIPE_PRICE_ELITE as string | undefined) ?? '',
 }
 
-type ExchangeCoachRecommendation = {
-  title: string
+type ExchangeCoachAction = {
+  sku: string
+  headline: string
   description: string
-  expectedImpact: string
-  automationActions: string[]
+  recommendedPlay: string[]
+  estimatedMonthlyUplift: number
+  impactScore: number
+  metrics: {
+    returnVolume30d: number
+    avgUnitCost: number
+    marginAtRisk: number
+  }
+}
+
+type ExchangeCoachSummary = {
+  period: string
+  aggregateMarginAtRisk: number
+  projectedExchangeUplift: number
+}
+
+type ExchangeCoachPayload = {
+  actions: ExchangeCoachAction[]
+  summary: ExchangeCoachSummary
 }
 
 type VIPQueueEntry = {
+  ticketId: string
   customer: string
-  segment: string
+  loyaltySegment: string
+  ltv: number
   orderValue: number
-  lifetimeValue: number
-  ticketAgeHours: number
+  returnReason: string
   recommendedAction: string
+  hoursOpen: number
+  predictedChurnRisk: number
+  sku: string
 }
 
-const fallbackCoach: ExchangeCoachRecommendation[] = [
-  {
-    title: 'Promote exchanges for Luxe Knit Throw',
-    description:
-      'Redirect refund intent into exchanges for Luxe Knit Throw with an instant 28% bonus credit across all channels.',
-    expectedImpact: 'Protect ≈ $1,240 this month.',
-    automationActions: [
-      'Swap refund CTA for exchange-first workflow in Shopify app embed.',
-      'Send size/fit reassurance email via SendGrid to pending returns.',
-      'Track PostHog funnel `exchange_bonus_opt_in` daily.',
-    ],
-  },
-  {
-    title: 'Launch 14-day exchange sprint',
-    description:
-      'Target the highest-risk SKUs and automate exchange bonus flows for the next 14 days to capture refund leakage before peak season.',
-    expectedImpact: '+53,520 projected annualized margin saved.',
-    automationActions: [
-      'Bulk-update Shopify return reasons to enable exchange defaults.',
-      'Schedule Slack alerts for refund spikes by cohort.',
-      'Trigger returnless mode for < $15 COGS SKUs once credit issued.',
-    ],
-  },
-  {
-    title: 'Measure coach results',
-    description: 'Review weekly Coach summary to double down on winners and retire underperforming plays.',
-    expectedImpact: 'Sustain >20% refund-to-exchange conversion.',
-    automationActions: [
-      'Subscribe to weekly PostHog cohort digest.',
-      'Share highlights with CX leadership via Slack digest.',
-      'Capture learnings in the ReturnShield playbook library.',
-    ],
-  },
-]
+type VIPQueueSummary = {
+  openTickets: number
+  avgHoursOpen: number
+  revenueDefended: number
+  opsHoursReturned: number
+}
 
-const fallbackVipQueue: VIPQueueEntry[] = [
-  {
-    customer: 'Alicia Gomez',
-    segment: 'Top 1% LTV · Apparel',
-    orderValue: 286,
-    lifetimeValue: 6120,
-    ticketAgeHours: 3,
-    recommendedAction: 'Issue instant exchange with complimentary 2-day shipping upgrade.',
+type VIPQueuePayload = {
+  queue: VIPQueueEntry[]
+  summary: VIPQueueSummary
+}
+
+const fallbackCoach: ExchangeCoachPayload = {
+  actions: [
+    {
+      sku: 'PORTFOLIO',
+      headline: 'Activate keep-it credits for low-margin SKUs',
+      description: 'Returnless automation prevents unnecessary shipping and accelerates repeat orders.',
+      recommendedPlay: [
+        'Enable keep-it mode when reverse logistics cost is >65% of unit margin.',
+        'Auto-enroll shoppers receiving keep-it credit into the loyalty win-back flow.',
+        'Highlight sustainability impact in the follow-up email to reinforce loyalty.',
+      ],
+      estimatedMonthlyUplift: 2174.8,
+      impactScore: 1227.68,
+      metrics: {
+        returnVolume30d: 236,
+        avgUnitCost: 11.72,
+        marginAtRisk: 4460,
+      },
+    },
+    {
+      sku: 'RS-221',
+      headline: 'Convert Everyday Bamboo Tee refunds into bonus exchanges',
+      description: 'Fit feedback · relaxed cut',
+      recommendedPlay: [
+        'Swap refund CTA with exchange-first modal offering 12% bonus credit.',
+        'Pre-build Shopify exchange templates for the top three replacement SKUs.',
+        'Trigger PostHog alert if refund intent stays above 15% after 7 days.',
+      ],
+      estimatedMonthlyUplift: 866.4,
+      impactScore: 1623.5,
+      metrics: {
+        returnVolume30d: 136,
+        avgUnitCost: 9.25,
+        marginAtRisk: 2280,
+      },
+    },
+    {
+      sku: 'RS-014',
+      headline: 'Convert Luxe Knit Throw refunds into bonus exchanges',
+      description: 'Texture / feel not as expected',
+      recommendedPlay: [
+        'Swap refund CTA with exchange-first modal offering 12% bonus credit.',
+        'Pre-build Shopify exchange templates for the top three replacement SKUs.',
+        'Trigger PostHog alert if refund intent stays above 15% after 7 days.',
+      ],
+      estimatedMonthlyUplift: 471.2,
+      impactScore: 807.7,
+      metrics: {
+        returnVolume30d: 42,
+        avgUnitCost: 18.5,
+        marginAtRisk: 1240,
+      },
+    },
+    {
+      sku: 'RS-091',
+      headline: 'Convert Ceramic Mood Candle refunds into bonus exchanges',
+      description: 'Minor packaging blemish',
+      recommendedPlay: [
+        'Swap refund CTA with exchange-first modal offering 12% bonus credit.',
+        'Pre-build Shopify exchange templates for the top three replacement SKUs.',
+        'Trigger PostHog alert if refund intent stays above 15% after 7 days.',
+      ],
+      estimatedMonthlyUplift: 357.2,
+      impactScore: 586.84,
+      metrics: {
+        returnVolume30d: 58,
+        avgUnitCost: 7.4,
+        marginAtRisk: 940,
+      },
+    },
+  ],
+  summary: {
+    period: 'last_30_days',
+    aggregateMarginAtRisk: 4460,
+    projectedExchangeUplift: 3869.6,
   },
-  {
-    customer: 'Noah Chen',
-    segment: 'Subscription VIP · Beauty',
-    orderValue: 148,
-    lifetimeValue: 3320,
-    ticketAgeHours: 5,
-    recommendedAction: 'Returnless refund + 10% loyalty credit, trigger concierge follow-up email.',
+}
+
+const fallbackVip: VIPQueuePayload = {
+  queue: [
+    {
+      ticketId: 'VIP-RS-1420',
+      customer: 'Leah Ortega',
+      loyaltySegment: 'Platinum',
+      ltv: 3916.8,
+      orderValue: 59.84,
+      returnReason: 'Texture / feel not as expected',
+      recommendedAction: 'Concierge exchange with complimentary shipping upgrade',
+      hoursOpen: 2.5,
+      predictedChurnRisk: 8,
+      sku: 'RS-014',
+    },
+    {
+      ticketId: 'VIP-RS-1421',
+      customer: 'Marcus Lin',
+      loyaltySegment: 'Gold',
+      ltv: 6407.6,
+      orderValue: 42,
+      returnReason: 'Fit feedback · relaxed cut',
+      recommendedAction: 'Concierge exchange with complimentary shipping upgrade',
+      hoursOpen: 3.8,
+      predictedChurnRisk: 47.68,
+      sku: 'RS-221',
+    },
+    {
+      ticketId: 'VIP-RS-1422',
+      customer: 'Kaya Gomez',
+      loyaltySegment: 'Gold',
+      ltv: 2865.6,
+      orderValue: 32.56,
+      returnReason: 'Minor packaging blemish',
+      recommendedAction: 'Instant keep-it refund with sustainability reinforcement',
+      hoursOpen: 5.1,
+      predictedChurnRisk: 17.04,
+      sku: 'RS-091',
+    },
+  ],
+  summary: {
+    openTickets: 3,
+    avgHoursOpen: 3.8,
+    revenueDefended: 903.15,
+    opsHoursReturned: 7.2,
   },
-  {
-    customer: 'Harper Singh',
-    segment: 'Wholesale · High repeat',
-    orderValue: 812,
-    lifetimeValue: 9410,
-    ticketAgeHours: 2,
-    recommendedAction: 'Flag CX lead, schedule live call, pre-create exchange with expedited warehouse routing.',
-  },
-]
+}
 
 function App() {
   const [navOpen, setNavOpen] = useState(false)
@@ -228,8 +326,8 @@ function App() {
   const [checkoutLoadingPlan, setCheckoutLoadingPlan] = useState<string | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [returnlessInsights, setReturnlessInsights] = useState<ReturnlessInsights>(fallbackReturnlessInsights)
-  const [exchangeCoach, setExchangeCoach] = useState<ExchangeCoachRecommendation[]>(fallbackCoach)
-  const [vipQueue, setVipQueue] = useState<VIPQueueEntry[]>(fallbackVipQueue)
+  const [coachData, setCoachData] = useState<ExchangeCoachPayload>(fallbackCoach)
+  const [vipData, setVipData] = useState<VIPQueuePayload>(fallbackVip)
 
   const apiBaseUrl = ((import.meta.env.VITE_API_URL as string | undefined) || '').replace(/\/$/, '')
 
@@ -255,6 +353,17 @@ function App() {
       exchangeCaptureRate,
     }
   }, [averageOrderValue, monthlyOrders, returnRate])
+
+  const liveImpact = useMemo(() => {
+    const revenueProtectedQuarter = coachData.summary.projectedExchangeUplift * 3
+    const landfillDiverted = returnlessInsights.summary.landfillLbsPrevented
+    const hoursReturned = returnlessInsights.summary.manualHoursReduced + vipData.summary.opsHoursReturned
+    return {
+      revenueProtectedQuarter,
+      landfillDiverted,
+      hoursReturned,
+    }
+  }, [coachData.summary.projectedExchangeUplift, returnlessInsights.summary, vipData.summary])
 
   const handleMonthlyOrdersChange = (event: ChangeEvent<HTMLInputElement>) => {
     const next = Number(event.target.value)
@@ -310,6 +419,64 @@ function App() {
     }
   }
 
+const transformCoachPayload = (payload: any): ExchangeCoachPayload => {
+  const summary = payload?.summary ?? {}
+  const actions = Array.isArray(payload?.actions)
+    ? payload.actions.map((item: any) => ({
+        sku: item?.sku ?? '',
+        headline: item?.headline ?? '',
+        description: item?.description ?? '',
+        recommendedPlay: Array.isArray(item?.recommended_play) ? item.recommended_play : [],
+        estimatedMonthlyUplift: Number(item?.estimated_monthly_uplift ?? 0),
+        impactScore: Number(item?.impact_score ?? 0),
+        metrics: {
+          returnVolume30d: Number(item?.metrics?.return_volume_30d ?? 0),
+          avgUnitCost: Number(item?.metrics?.avg_unit_cost ?? 0),
+          marginAtRisk: Number(item?.metrics?.margin_at_risk ?? 0),
+        },
+      }))
+    : []
+
+  return {
+    actions: actions.length > 0 ? actions : fallbackCoach.actions,
+    summary: {
+      period: summary.period ?? fallbackCoach.summary.period,
+      aggregateMarginAtRisk: Number(summary.aggregate_margin_at_risk ?? fallbackCoach.summary.aggregateMarginAtRisk),
+      projectedExchangeUplift: Number(
+        summary.projected_exchange_uplift ?? fallbackCoach.summary.projectedExchangeUplift,
+      ),
+    },
+  }
+}
+
+const transformVipPayload = (payload: any): VIPQueuePayload => {
+  const summary = payload?.summary ?? {}
+  const queue = Array.isArray(payload?.queue)
+    ? payload.queue.map((item: any) => ({
+        ticketId: item?.ticket_id ?? '',
+        customer: item?.customer ?? '',
+        loyaltySegment: item?.loyalty_segment ?? '',
+        ltv: Number(item?.ltv ?? 0),
+        orderValue: Number(item?.order_value ?? 0),
+        returnReason: item?.return_reason ?? '',
+        recommendedAction: item?.recommended_action ?? '',
+        hoursOpen: Number(item?.hours_open ?? 0),
+        predictedChurnRisk: Number(item?.predicted_churn_risk ?? 0),
+        sku: item?.sku ?? '',
+      }))
+    : []
+
+  return {
+    queue: queue.length > 0 ? queue : fallbackVip.queue,
+    summary: {
+      openTickets: Number(summary.open_tickets ?? fallbackVip.summary.openTickets),
+      avgHoursOpen: Number(summary.avg_hours_open ?? fallbackVip.summary.avgHoursOpen),
+      revenueDefended: Number(summary.revenue_defended ?? fallbackVip.summary.revenueDefended),
+      opsHoursReturned: Number(summary.ops_hours_returned ?? fallbackVip.summary.opsHoursReturned),
+    },
+  }
+}
+
   useEffect(() => {
     if (!apiBaseUrl) {
       return
@@ -359,15 +526,15 @@ function App() {
           fetch(`${apiBaseUrl}/returns/vip-resolution/`, { signal: controller.signal }),
         ])
         if (coachRes.ok) {
-          const coachPayload: { recommendations: ExchangeCoachRecommendation[] } = await coachRes.json()
-          if (!controller.signal.aborted && Array.isArray(coachPayload.recommendations)) {
-            setExchangeCoach(coachPayload.recommendations)
+          const rawCoach = await coachRes.json()
+          if (!controller.signal.aborted) {
+            setCoachData(transformCoachPayload(rawCoach))
           }
         }
         if (vipRes.ok) {
-          const vipPayload: { queue: VIPQueueEntry[] } = await vipRes.json()
-          if (!controller.signal.aborted && Array.isArray(vipPayload.queue)) {
-            setVipQueue(vipPayload.queue)
+          const rawVip = await vipRes.json()
+          if (!controller.signal.aborted) {
+            setVipData(transformVipPayload(rawVip))
           }
         }
       } catch (error) {
@@ -735,15 +902,15 @@ function App() {
             <div className="impact-ticker">
               <div>
                 <span className="ticker-label">Revenue protected (90 days)</span>
-                <strong>{formatCurrency(returnlessInsights.summary.annualizedMarginRecovery / 4)}</strong>
+                <strong>{formatCurrency(liveImpact.revenueProtectedQuarter)}</strong>
               </div>
               <div>
                 <span className="ticker-label">Landfill diverted</span>
-                <strong>{formatNumber(returnlessInsights.summary.landfillLbsPrevented, 0)} lbs</strong>
+                <strong>{formatNumber(liveImpact.landfillDiverted, 0)} lbs</strong>
               </div>
               <div>
                 <span className="ticker-label">CX hours returned</span>
-                <strong>{formatHours(returnlessInsights.summary.manualHoursReduced)}</strong>
+                <strong>{formatHours(liveImpact.hoursReturned)}</strong>
               </div>
             </div>
             <div className="hero-cta">
@@ -967,16 +1134,50 @@ function App() {
         <section id="coach" className="coach">
           <header>
             <h2>AI Exchange Coach™</h2>
-            <p>Automate the next best exchange-saving move and watch refunds drop in real time.</p>
+            <p>
+              Automate the next best exchange-saving move. {formatCurrency(coachData.summary.aggregateMarginAtRisk)} in
+              margin is protected while the Coach unlocks {formatCurrencyWithCents(coachData.summary.projectedExchangeUplift)}
+              in monthly uplift.
+            </p>
           </header>
+          <div className="coach-metrics">
+            <div>
+              <span className="label">Period</span>
+              <strong>{coachData.summary.period.split('_').join(' ')}</strong>
+            </div>
+            <div>
+              <span className="label">Actions live</span>
+              <strong>{coachData.actions.length}</strong>
+            </div>
+            <div>
+              <span className="label">Projected uplift</span>
+              <strong>{formatCurrencyWithCents(coachData.summary.projectedExchangeUplift)}</strong>
+            </div>
+          </div>
           <div className="coach-grid">
-            {exchangeCoach.map((item) => (
-              <article key={item.title} className="coach-card">
-                <h3>{item.title}</h3>
+            {coachData.actions.map((item) => (
+              <article key={`${item.sku}-${item.headline}`} className="coach-card">
+                <header>
+                  <span className="coach-sku">{item.sku}</span>
+                  <h3>{item.headline}</h3>
+                </header>
                 <p>{item.description}</p>
-                <span className="coach-impact">{item.expectedImpact}</span>
-                <ul>
-                  {item.automationActions.map((action) => (
+                <div className="coach-stats">
+                  <div>
+                    <span className="label">30-day returns</span>
+                    <strong>{formatNumber(item.metrics.returnVolume30d, 0)}</strong>
+                  </div>
+                  <div>
+                    <span className="label">Margin at risk</span>
+                    <strong>{formatCurrency(item.metrics.marginAtRisk)}</strong>
+                  </div>
+                  <div>
+                    <span className="label">Exchange uplift</span>
+                    <strong>{formatCurrencyWithCents(item.estimatedMonthlyUplift)}</strong>
+                  </div>
+                </div>
+                <ul className="coach-actions">
+                  {item.recommendedPlay.map((action) => (
                     <li key={action}>{action}</li>
                   ))}
                 </ul>
@@ -988,29 +1189,55 @@ function App() {
         <section id="vip" className="vip">
           <header>
             <h2>VIP Resolution Hub</h2>
-            <p>Resolve loyalty-rich tickets first, combine returnless refunds with concierge touches, and protect repeat revenue.</p>
+            <p>
+              Resolve loyalty-rich tickets first, blend returnless refunds with concierge touches, and defend{' '}
+              {formatCurrencyWithCents(vipData.summary.revenueDefended)} in repeat revenue this quarter.
+            </p>
           </header>
+          <div className="vip-metrics-row">
+            <div>
+              <span className="label">Open VIP tickets</span>
+              <strong>{vipData.summary.openTickets}</strong>
+            </div>
+            <div>
+              <span className="label">Avg. hours open</span>
+              <strong>{formatHours(vipData.summary.avgHoursOpen)}</strong>
+            </div>
+            <div>
+              <span className="label">Ops hours returned</span>
+              <strong>{formatHours(vipData.summary.opsHoursReturned)}</strong>
+            </div>
+          </div>
           <div className="vip-grid">
-            {vipQueue.map((entry) => (
-              <article key={entry.customer} className="vip-card">
+            {vipData.queue.map((entry) => (
+              <article key={entry.ticketId} className="vip-card">
                 <div className="vip-header">
                   <h3>{entry.customer}</h3>
-                  <span>{entry.segment}</span>
+                  <span>{entry.loyaltySegment}</span>
                 </div>
-                <div className="vip-metrics">
+                <dl className="vip-stats">
                   <div>
-                    <span className="label">Order value</span>
-                    <strong>{formatCurrency(entry.orderValue)}</strong>
+                    <dt>Ticket ID</dt>
+                    <dd>{entry.ticketId}</dd>
                   </div>
                   <div>
-                    <span className="label">Lifetime value</span>
-                    <strong>{formatCurrency(entry.lifetimeValue)}</strong>
+                    <dt>Order value</dt>
+                    <dd>{formatCurrency(entry.orderValue)}</dd>
                   </div>
                   <div>
-                    <span className="label">Ticket age</span>
-                    <strong>{entry.ticketAgeHours} hrs</strong>
+                    <dt>LTV</dt>
+                    <dd>{formatCurrency(entry.ltv)}</dd>
                   </div>
-                </div>
+                  <div>
+                    <dt>Churn risk</dt>
+                    <dd>{formatPercent(entry.predictedChurnRisk / 100, 1)}</dd>
+                  </div>
+                  <div>
+                    <dt>Hours open</dt>
+                    <dd>{formatHours(entry.hoursOpen)}</dd>
+                  </div>
+                </dl>
+                <p className="vip-return-reason">{entry.returnReason}</p>
                 <p className="vip-action">{entry.recommendedAction}</p>
               </article>
             ))}
@@ -1265,7 +1492,7 @@ function App() {
           <div className="testimonial-cta">
             <h3>Your next refund could be revenue.</h3>
             <p>Ship ReturnShield today and be the success story we feature next week.</p>
-            <a className="btn btn-secondary" href="#demo">
+            <a className="btn btn-secondary" href="mailto:hello@returnshield.app?subject=ReturnShield%20Walkthrough">
               Schedule 15-minute walkthrough
             </a>
           </div>

@@ -94,90 +94,128 @@ def build_returnless_insights() -> Dict[str, Any]:
     }
 
 
-def build_exchange_coach(playbook: Dict[str, Any]) -> List[Recommendation]:
-    """Derive actionable exchange plays from returnless insights."""
-    candidates = playbook.get("candidates", [])
-    summary = playbook.get("summary", {})
+def build_exchange_coach_actions() -> Dict[str, Any]:
+    """
+    Generate prioritized revenue-saving actions for the AI Exchange Coach.
+    The output is grounded in the current returnless insights dataset.
+    """
 
-    recs: List[Recommendation] = []
-
-    if candidates:
-        top_candidate = max(candidates, key=lambda item: item.get("estimated_margin_recaptured", 0))
-        recs.append(
-            Recommendation(
-                title=f"Promote exchanges for {top_candidate['product_name']}",
-                description=(
-                    f"Redirect refund intent into exchanges for {top_candidate['product_name']} with an instant "
-                    f"{int(top_candidate['estimated_margin_recaptured'] // max(top_candidate['return_volume_30d'], 1))}% "
-                    "bonus credit."
-                ),
-                expected_impact=f"Protect ≈ ${top_candidate['estimated_margin_recaptured']:.0f} this month.",
-                automation_actions=[
-                    "Swap refund CTA for exchange-first workflow in Shopify app embed.",
-                    "Send size/fit reassurance email via SendGrid to pending returns.",
-                    "Track PostHog funnel `exchange_bonus_opt_in` daily.",
-                ],
-            )
-        )
-
-    if summary:
-        recs.append(
-            Recommendation(
-                title="Launch 14-day exchange sprint",
-                description="Target the highest-risk SKUs and automate exchange bonus flows for the next 14 days.",
-                expected_impact=f"+{summary.get('annualized_margin_recovery', 0):,} projected annualized margin saved.",
-                automation_actions=[
-                    "Bulk-update Shopify return reasons to enable exchange defaults.",
-                    "Schedule Slack alerts for refund spikes by cohort.",
-                    "Trigger returnless mode for < $15 COGS SKUs once credit issued.",
-                ],
-            )
-        )
-
-    recs.append(
-        Recommendation(
-            title="Measure coach results",
-            description="Review weekly Coach summary to double down on winners and retire underperforming plays.",
-            expected_impact="Sustain >20% refund-to-exchange conversion.",
-            automation_actions=[
-                "Subscribe to weekly PostHog cohort digest.",
-                "Share highlights with CX leadership via Slack digest.",
-                "Capture learnings in the ReturnShield playbook library.",
-            ],
-        )
+    insights = build_returnless_insights()
+    candidates = sorted(
+        insights["candidates"],
+        key=lambda item: item["estimated_margin_recaptured"],
+        reverse=True,
     )
 
-    return recs
+    actions: List[Dict[str, Any]] = []
+    total_margin = sum(item["estimated_margin_recaptured"] for item in candidates)
+
+    for candidate in candidates:
+        projected_exchange_uplift = round(candidate["estimated_margin_recaptured"] * 0.38, 2)
+        impact_score = round(
+            candidate["estimated_margin_recaptured"] * 0.55
+            + candidate["return_volume_30d"] * 7.5
+            - candidate["avg_unit_cost"] * 2.8,
+            2,
+        )
+        actions.append(
+            {
+                "sku": candidate["sku"],
+                "headline": f"Convert {candidate['product_name']} refunds into bonus exchanges",
+                "description": candidate["reason_driver"],
+                "recommended_play": [
+                    "Swap refund CTA with exchange-first modal offering 12% bonus credit.",
+                    "Pre-build Shopify exchange templates for the top three replacement SKUs.",
+                    "Trigger PostHog alert if refund intent stays above 15% after 7 days.",
+                ],
+                "estimated_monthly_uplift": projected_exchange_uplift,
+                "impact_score": impact_score,
+                "metrics": {
+                    "return_volume_30d": candidate["return_volume_30d"],
+                    "avg_unit_cost": candidate["avg_unit_cost"],
+                    "margin_at_risk": candidate["estimated_margin_recaptured"],
+                },
+            }
+        )
+
+    actions.insert(
+        0,
+        {
+            "sku": "PORTFOLIO",
+            "headline": "Activate keep-it credits for low-margin SKUs",
+            "description": "Returnless automation prevents unnecessary shipping and accelerates repeat orders.",
+            "recommended_play": [
+                "Enable keep-it mode when reverse logistics cost is >65% of unit margin.",
+                "Auto-enroll shoppers receiving keep-it credit into the loyalty win-back flow.",
+                "Highlight sustainability impact in the follow-up email to reinforce loyalty.",
+            ],
+            "estimated_monthly_uplift": round(total_margin * 0.41, 2),
+            "impact_score": round(total_margin * 0.23, 2),
+            "metrics": {
+                "return_volume_30d": sum(item["return_volume_30d"] for item in candidates),
+                "avg_unit_cost": round(
+                    sum(item["avg_unit_cost"] for item in candidates) / len(candidates), 2
+                ),
+                "margin_at_risk": total_margin,
+            },
+        },
+    )
+
+    return {
+        "actions": actions[:4],
+        "summary": {
+            "period": insights["summary"]["period"],
+            "aggregate_margin_at_risk": total_margin,
+            "projected_exchange_uplift": round(sum(a["estimated_monthly_uplift"] for a in actions[:4]), 2),
+        },
+    }
 
 
-def build_vip_resolution_queue() -> List[Dict[str, Any]]:
-    """Generate VIP queue entries highlighting loyalty-aware actions."""
-    return [
-        {
-            "customer": "Alicia Gomez",
-            "segment": "Top 1% LTV · Apparel",
-            "order_value": 286,
-            "lifetime_value": 6120,
-            "ticket_age_hours": 3,
-            "recommended_action": "Issue instant exchange with complimentary 2-day shipping upgrade.",
+def build_vip_resolution_queue() -> Dict[str, Any]:
+    """
+    Assemble a loyalty-aware queue of high-value return tickets with suggested resolutions.
+    """
+
+    candidates = _returnless_candidates()
+    customers = ["Leah Ortega", "Marcus Lin", "Kaya Gomez", "Dev Reddy"]
+    queue: List[Dict[str, Any]] = []
+
+    for idx, candidate in enumerate(candidates):
+        loyalty_segment = ["Platinum", "Gold", "Gold"][idx if idx < 3 else 2]
+        ltv = round(candidate["avg_unit_cost"] * candidate["return_volume_30d"] * (4.8 + idx), 2)
+        hours_open = round(2.5 + idx * 1.3, 1)
+        churn_risk = round(max(8.0, (candidate["return_volume_30d"] * 0.38) - idx * 4), 2)
+
+        queue.append(
+            {
+                "ticket_id": f"VIP-RS-{1420 + idx}",
+                "customer": customers[idx],
+                "loyalty_segment": loyalty_segment,
+                "ltv": ltv,
+                "order_value": round(candidate["avg_unit_cost"] * (3.3 + idx), 2),
+                "return_reason": candidate["reason_driver"],
+                "recommended_action": (
+                    "Concierge exchange with complimentary shipping upgrade"
+                    if idx <= 1
+                    else "Instant keep-it refund with sustainability reinforcement"
+                ),
+                "hours_open": hours_open,
+                "predicted_churn_risk": churn_risk,
+                "sku": candidate["sku"],
+            }
+        )
+
+    aggregate_hours_saved = round(sum(item["handling_minutes_reduced"] for item in candidates) / 60, 1)
+
+    return {
+        "queue": queue,
+        "summary": {
+            "open_tickets": len(queue),
+            "avg_hours_open": round(sum(item["hours_open"] for item in queue) / len(queue), 2),
+            "revenue_defended": round(sum(item["ltv"] for item in queue) * 0.07, 2),
+            "ops_hours_returned": aggregate_hours_saved,
         },
-        {
-            "customer": "Noah Chen",
-            "segment": "Subscription VIP · Beauty",
-            "order_value": 148,
-            "lifetime_value": 3320,
-            "ticket_age_hours": 5,
-            "recommended_action": "Returnless refund + 10% loyalty credit, trigger concierge follow-up email.",
-        },
-        {
-            "customer": "Harper Singh",
-            "segment": "Wholesale · High repeat",
-            "order_value": 812,
-            "lifetime_value": 9410,
-            "ticket_age_hours": 2,
-            "recommended_action": "Flag CX lead, schedule live call, pre-create exchange with expedited warehouse routing.",
-        },
-    ]
+    }
 
 
 def build_exchange_playbook(

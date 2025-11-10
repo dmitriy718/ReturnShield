@@ -135,6 +135,12 @@ export default function ExchangeAutopilotPage() {
           <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('impact')}>
             Impact
           </button>
+          <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('coach')}>
+            AI Coach
+          </button>
+          <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('vip')}>
+            VIP Hub
+          </button>
           <span className="nav-active">Exchange Autopilot</span>
           <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('pricing')}>
             Pricing
@@ -143,7 +149,11 @@ export default function ExchangeAutopilotPage() {
             Customer Wins
           </button>
           <div className="nav-mobile-cta">
-            <a className="link-muted" href="/#demo" onClick={() => setNavOpen(false)}>
+            <a
+              className="link-muted"
+              href="mailto:hello@returnshield.app?subject=ReturnShield%20Demo"
+              onClick={() => setNavOpen(false)}
+            >
               Book a call
             </a>
             <a
@@ -159,7 +169,7 @@ export default function ExchangeAutopilotPage() {
           </div>
         </nav>
         <div className="nav-actions">
-          <a className="link-muted" href="/#demo">
+          <a className="link-muted" href="mailto:hello@returnshield.app?subject=ReturnShield%20Demo">
             Book a call
           </a>
           <a
