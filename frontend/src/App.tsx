@@ -1,4 +1,5 @@
 import posthog from 'posthog-js'
+import logo from './assets/logo.svg'
 import './App.css'
 
 function App() {
@@ -119,7 +120,7 @@ function App() {
     <div className="page">
       <header className="top-nav">
         <div className="brand">
-          <span className="brand-icon" aria-hidden>🛡️</span>
+          <img src={logo} alt="ReturnShield" className="brand-logo" />
           <span className="brand-name">ReturnShield</span>
         </div>
         <nav className="nav-links">
@@ -365,7 +366,7 @@ function App() {
       <footer className="footer">
         <div>
           <div className="brand">
-            <span className="brand-icon" aria-hidden>🛡️</span>
+            <img src={logo} alt="ReturnShield" className="brand-logo" />
             <span className="brand-name">ReturnShield</span>
           </div>
           <p>Premium return analytics that defend every dollar of profit.</p>

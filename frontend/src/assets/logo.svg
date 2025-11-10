@@ -1,0 +1,22 @@
+<svg width="160" height="180" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="returnShieldLogoTitle">
+  <title id="returnShieldLogoTitle">ReturnShield Logo</title>
+  <defs>
+    <linearGradient id="shieldOuterGradient" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#2E7DFF"/>
+      <stop offset="100%" stop-color="#1040B5"/>
+    </linearGradient>
+    <linearGradient id="shieldInnerGradient" x1="0%" y1="20%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E5F0FF"/>
+    </linearGradient>
+    <linearGradient id="crestGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0C1F64"/>
+      <stop offset="100%" stop-color="#031135"/>
+    </linearGradient>
+  </defs>
+  <path d="M80 175c-40-18-70-50-70-108V37L80 5l70 32v40c0 58-30 90-70 108Z" fill="url(#shieldOuterGradient)"/>
+  <path d="M80 152c-30-13-54-38-54-84V52l54-24 54 24v16c0 46-24 71-54 84Z" fill="url(#shieldInnerGradient)" opacity="0.85"/>
+  <path d="M86 52c-28.5 0-47 17.4-47 43.6 0 17 10.4 31.5 31.2 38.4 5.3 1.7 8.4-6 3-8.8-9.8-5.1-16.5-13.1-16.5-25.8 0-19.3 14.5-30.6 32.6-30.6 8.6 0 15.7 2.5 21.8 6.9 5 3.6 11.2-2.9 7.7-7.7C112.8 57.2 100.6 52 86 52Z" fill="url(#crestGradient)"/>
+  <path d="M70 112c10.3 13.8 29.3 19.9 40 19.9 12 0 21-7.6 21-18.5 0-8.9-4.9-15.9-12-21.1-5-3.7-0.8-10.7 4.5-8.1 9.9 4.7 27.5 18.4 27.5 40.4 0 22.8-18.9 36.4-40.4 36.4-17.8 0-35.9-9.5-46.5-24.5-3.8-5.5 3.5-11.4 5.9-5.5Z" fill="url(#crestGradient)"/>
+</svg>
+
