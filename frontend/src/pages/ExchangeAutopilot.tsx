@@ -105,8 +105,11 @@ export default function ExchangeAutopilotPage() {
     }
   }
 
-  const handleDemoClick = (cta: string) => {
+  const handleDemoClick = (cta: string, destination?: string) => {
     posthog.capture('exchange_autopilot_cta', { cta })
+    if (destination) {
+      window.location.href = destination
+    }
   }
 
   return (
@@ -151,14 +154,14 @@ export default function ExchangeAutopilotPage() {
           <div className="nav-mobile-cta">
             <a
               className="link-muted"
-              href="mailto:hello@returnshield.app?subject=ReturnShield%20Demo"
+              href="https://app.returnshield.app/register?plan=scale"
               onClick={() => setNavOpen(false)}
             >
               Book a call
             </a>
             <a
               className="btn btn-primary"
-              href="/#signup"
+              href="https://app.returnshield.app/register"
               onClick={() => {
                 setNavOpen(false)
                 posthog.capture('exchange_autopilot_cta', { cta: 'start_preventing_returns' })
@@ -169,12 +172,12 @@ export default function ExchangeAutopilotPage() {
           </div>
         </nav>
         <div className="nav-actions">
-          <a className="link-muted" href="mailto:hello@returnshield.app?subject=ReturnShield%20Demo">
+          <a className="link-muted" href="https://app.returnshield.app/register?plan=scale">
             Book a call
           </a>
           <a
             className="btn btn-primary btn-trial"
-            href="/#signup"
+            href="https://app.returnshield.app/register"
             onClick={() => posthog.capture('exchange_autopilot_cta', { cta: 'start_preventing_returns' })}
           >
             Start Preventing Returns
@@ -195,19 +198,19 @@ export default function ExchangeAutopilotPage() {
             <div className="hero-cta">
               <button
                 className="btn btn-primary"
-                onClick={() => handleDemoClick('start_preventing_returns')}
+                onClick={() => handleDemoClick('start_preventing_returns', 'https://app.returnshield.app/register')}
               >
                 Start Preventing Returns
               </button>
               <button
                 className="btn btn-secondary"
-                onClick={() => handleDemoClick('turn_returns_into_relationships')}
+                onClick={() => handleDemoClick('turn_returns_into_relationships', 'https://app.returnshield.app/register')}
               >
                 Turn Returns into Relationships
               </button>
               <button
                 className="btn btn-link"
-                onClick={() => handleDemoClick('see_the_why')}
+                onClick={() => handleDemoClick('see_the_why', 'https://returnshield.app/#features')}
               >
                 See the Why Behind Returns
               </button>
@@ -233,7 +236,10 @@ export default function ExchangeAutopilotPage() {
                   <p className="visual-metric">38 exchanges</p>
                   <p className="visual-subtext">$8,540 margin protected</p>
                 </div>
-                <button className="btn btn-primary btn-small" onClick={() => handleDemoClick('unlock_returnshield_effect')}>
+                <button
+                  className="btn btn-primary btn-small"
+                  onClick={() => handleDemoClick('unlock_returnshield_effect', 'https://app.returnshield.app/register')}
+                >
                   Unlock Your ReturnShield Effect
                 </button>
               </div>
@@ -305,13 +311,13 @@ export default function ExchangeAutopilotPage() {
           <div className="hero-cta">
             <button
               className="btn btn-primary"
-              onClick={() => handleDemoClick('start_now')}
+              onClick={() => handleDemoClick('start_now', 'https://app.returnshield.app/register?plan=scale')}
             >
               Start Exchange Autopilot
             </button>
             <button
               className="btn btn-secondary"
-              onClick={() => handleDemoClick('speak_to_specialist')}
+              onClick={() => handleDemoClick('speak_to_specialist', 'https://app.returnshield.app/register?concierge=1')}
             >
               Talk to a specialist
             </button>
