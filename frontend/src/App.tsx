@@ -372,7 +372,12 @@ function App() {
                   <p className="visual-metric">53 return claims</p>
                   <p className="visual-subtext">$12,480 at risk · 61% size-related</p>
                 </div>
-                <button className="btn btn-primary btn-small">Deploy playbook</button>
+                <button
+                  className="btn btn-primary btn-small"
+                  onClick={() => posthog.capture('cta_click', { cta: 'unlock_returnshield_effect' })}
+                >
+                  Unlock Your ReturnShield Effect
+                </button>
               </div>
               <footer>
                 <p>Suggested actions:</p>
@@ -486,12 +491,12 @@ function App() {
               <span className="brand-tagline">Turn Your Returns Into Relationships</span>
             </div>
           </Link>
-          <p>Premium return analytics that defend every dollar of profit.</p>
+          <p>ReturnShield helps brands convert refunds into loyalty-building exchanges.</p>
         </div>
         <div className="footer-links">
           <a href="mailto:hello@returnshield.app">hello@returnshield.app</a>
-          <a href="#privacy">Privacy</a>
-          <a href="#terms">Terms</a>
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/terms">Terms of Service</Link>
         </div>
       </footer>
     </div>
