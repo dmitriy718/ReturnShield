@@ -26,10 +26,10 @@ h3,
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  padding: 1.5rem 0 1rem;
+  padding: 1.4rem 0 1rem;
   position: sticky;
   top: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.78) 70%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 55%, rgba(255, 255, 255, 0.55) 82%, rgba(255, 255, 255, 0) 100%);
   backdrop-filter: blur(14px);
   z-index: 30;
   border-bottom: 1px solid rgba(17, 28, 63, 0.06);
@@ -167,7 +167,7 @@ h3,
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.1rem;
 }
 
 .link-muted {
@@ -303,7 +303,7 @@ h3,
 }
 
 .btn-trial {
-  padding: 0.85rem 1.7rem;
+  padding: 0.75rem 1.55rem;
   border-radius: 999px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -1161,4 +1161,11 @@ h3,
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-outline,
+.btn-link {
+  font-size: 0.85rem;
 }
