@@ -69,6 +69,47 @@ h3,
   color: var(--color-muted);
 }
 
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 46px;
+  height: 46px;
+  border: none;
+  background: rgba(20, 27, 51, 0.06);
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease;
+}
+
+.nav-toggle:hover {
+  background: rgba(20, 27, 51, 0.12);
+}
+
+.nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  margin: 0 auto;
+}
+
+.nav-toggle.is-open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.nav-toggle.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.is-open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
 .brand-logo {
   width: 180px;
   height: auto;
@@ -84,6 +125,10 @@ h3,
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-weight: 600;
+}
+
+.nav-mobile-cta {
+  display: none;
 }
 
 .nav-links a {
@@ -113,6 +158,19 @@ h3,
 .nav-links a:hover::after,
 .nav-links .nav-active::after {
   transform: scaleX(1);
+}
+
+.btn-trial {
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  box-shadow: 0 14px 28px rgba(12, 87, 178, 0.28);
+}
+
+.btn-trial:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 34px rgba(12, 87, 178, 0.34);
 }
 
 .nav-actions {
@@ -757,31 +815,71 @@ h3,
     align-items: flex-start;
     gap: 1rem;
     position: static;
-    background: rgba(255, 255, 255, 0.98);
+    background: transparent;
   }
 
-  .brand-icon {
-    width: 48px;
-  }
-
-  .brand-title {
-    font-size: 1.22rem;
-  }
-
-  .brand-tagline {
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
+  .nav-toggle {
+    display: flex;
+    margin-left: auto;
   }
 
   .nav-links {
-    flex-wrap: wrap;
-    gap: 0.75rem 1.25rem;
-    font-size: 0.82rem;
-    letter-spacing: 0.16em;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
   }
 
-  .nav-actions {
+  .nav-links.nav-open {
+    max-height: 400px;
+  }
+
+  .nav-links a,
+  .nav-links .nav-active {
+    padding-bottom: 0.1rem;
+  }
+
+  .nav-links a::after,
+  .nav-links .nav-active::after {
+    display: none;
+  }
+
+  .nav-mobile-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
     width: 100%;
+    padding-top: 0.5rem;
+  }
+
+  .brand-icon {
+    width: 54px;
+  }
+
+  .brand-text {
+    gap: 0.18rem;
+  }
+
+  .brand-title {
+    font-size: 1.3rem;
+  }
+
+  .brand-tagline {
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+  }
+
+  .roi-callout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand-logo {
+    width: 150px;
   }
 
   .hero-content h1 {
