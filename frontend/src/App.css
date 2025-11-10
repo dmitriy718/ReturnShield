@@ -25,12 +25,14 @@
   color: var(--color-primary);
 }
 
-.brand-icon {
-  font-size: 1.4rem;
-}
-
 .brand-name {
   letter-spacing: 0.02em;
+}
+
+.brand-logo {
+  width: 40px;
+  height: auto;
+  display: block;
 }
 
 .nav-links {
