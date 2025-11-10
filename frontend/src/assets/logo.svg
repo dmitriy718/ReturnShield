@@ -1,33 +1,36 @@
-<svg width="720" height="300" viewBox="0 0 720 300" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rsTitle rsDesc">
+<svg width="720" height="320" viewBox="0 0 720 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="rsTitle rsDesc">
   <title id="rsTitle">ReturnShield logo</title>
-  <desc id="rsDesc">Shield emblem with stylized R and the word ReturnShield</desc>
-
+  <desc id="rsDesc">Modern shield with interlocking shapes suggesting a stylised R and handshake, next to the ReturnShield wordmark and tagline</desc>
+  <defs>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1C64B5"/>
+      <stop offset="100%" stop-color="#0F2F69"/>
+    </linearGradient>
+    <linearGradient id="innerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4AC6FF"/>
+      <stop offset="100%" stop-color="#1C64B5"/>
+    </linearGradient>
+  </defs>
   <style>
     :root{
-      --rs-blue:#1563AD;
-      --rs-navy:#110B3B;
-      --rs-white:#FFFFFF;
+      --rs-blue:#1C64B5;
+      --rs-navy:#0F1C3F;
+      --rs-light:#4AC6FF;
     }
-    .rs-blue { fill: var(--rs-blue); }
-    .rs-navy { fill: var(--rs-navy); }
-    .rs-white { fill: var(--rs-white); }
+    .word-primary{fill:var(--rs-navy);}
+    .word-accent{fill:var(--rs-blue);}
+    .tagline{fill:var(--rs-navy);}
   </style>
-
-  <g transform="translate(80,12)">
-    <path class="rs-blue" d="M140 0 C112 16, 76 24, 40 28 C36 132, 84 186, 140 216 C196 186, 244 132, 240 28 C204 24, 168 16, 140 0Z" />
-    <path class="rs-white" d="M202 110 C206 81, 183 58, 148 58 C120 58, 95 72, 78 97 C73 104, 66 118, 66 118 C66 118, 86 86, 120 78 C162 68, 196 94, 191 124 C182 126, 171 127, 160 127 C126 127, 100 119, 85 110 C97 139, 131 157, 173 157 C185 157, 196 156, 206 154 C208 139, 205 124, 202 110Z" />
-    <path class="rs-navy" d="M81 138 C90 170, 118 194, 156 205 C170 201, 183 193, 194 183 C175 184, 156 181, 139 174 C119 166, 101 153, 90 139 C87 138, 84 138, 81 138Z" />
+  <g transform="translate(70,30)">
+    <path d="M140 0C110 18 74 30 32 36C28 158 96 224 140 246C184 224 252 158 248 36C206 30 170 18 140 0Z" fill="url(#shieldGradient)"/>
+    <path d="M204 113C206 74 176 46 134 46C104 46 80 58 62 82C56 90 50 102 50 102C50 102 74 70 120 62C170 54 206 82 200 120C186 122 170 123 154 123C120 123 92 114 76 104C90 139 130 161 176 161C190 161 202 159 212 155C214 139 206 121 204 113Z" fill="#F4FBFF"/>
+    <path d="M70 136C84 174 118 208 158 219C178 213 194 202 206 188C182 188 154 182 128 168C104 156 86 140 74 126C72 128 70 132 70 136Z" fill="url(#innerGradient)"/>
+    <path d="M110 128C120 140 138 150 156 155C172 150 188 140 196 126C200 128 204 132 206 136C196 152 176 166 156 172C134 166 118 154 106 142C108 138 108 132 110 128Z" fill="var(--rs-blue)" opacity="0.45"/>
   </g>
-
-  <g transform="translate(330,225)">
-    <text x="0"  y="0"  font-family="Poppins, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
-          font-weight="700" font-size="72" class="rs-navy" letter-spacing="0.2">
-      Return
-    </text>
-    <text x="282" y="0"  font-family="Poppins, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
-          font-weight="700" font-size="72" class="rs-blue" letter-spacing="0.2">
-      Shield
-    </text>
+  <g transform="translate(330,190)">
+    <text x="0" y="0" font-family="Poppins, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-weight="700" font-size="70" class="word-primary" letter-spacing="0.12em">Return</text>
+    <text x="304" y="0" font-family="Poppins, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-weight="700" font-size="70" class="word-accent" letter-spacing="0.12em">Shield</text>
+    <text x="0" y="52" font-family="Poppins, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-weight="500" font-size="24" class="tagline" letter-spacing="0.08em">Turn Your Returns Into Relationships</text>
   </g>
 </svg>
 
