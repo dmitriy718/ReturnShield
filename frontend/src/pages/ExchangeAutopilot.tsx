@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
 import posthog from 'posthog-js'
 
 import logoMark from '../assets/logo-mark.svg'
@@ -94,6 +95,14 @@ export default function ExchangeAutopilotPage() {
   const scrollHomeSection = (id: string) => {
      setNavOpen(false)
     navigate('/', { state: { scrollTo: id } })
+  }
+
+  const handleFooterLink = (event: ReactMouseEvent<HTMLAnchorElement>, path: string) => {
+    setNavOpen(false)
+    if (window.location.pathname === path) {
+      event.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   const handleDemoClick = (cta: string) => {
@@ -299,19 +308,30 @@ export default function ExchangeAutopilotPage() {
 
       <footer className="footer">
         <div>
-          <Link to="/" className="brand" aria-label="ReturnShield home">
+          <Link
+            to="/"
+            className="brand"
+            aria-label="ReturnShield home"
+            onClick={(event) => handleFooterLink(event, '/')}
+          >
             <img src={logoMark} alt="ReturnShield shield" className="brand-icon" />
             <div className="brand-text">
               <span className="brand-title">ReturnShield</span>
               <span className="brand-tagline">Turn Your Returns Into Relationships</span>
             </div>
           </Link>
-          <p>Premium return analytics that defend every dollar of profit.</p>
         </div>
         <div className="footer-links">
           <a href="mailto:hello@returnshield.app">hello@returnshield.app</a>
-          <a href="/#privacy">Privacy</a>
-          <a href="/#terms">Terms</a>
+          <Link to="/privacy" onClick={(event) => handleFooterLink(event, '/privacy')}>
+            Privacy Policy
+          </Link>
+          <Link to="/terms" onClick={(event) => handleFooterLink(event, '/terms')}>
+            Terms of Service
+          </Link>
+          <Link to="/dmarc" onClick={(event) => handleFooterLink(event, '/dmarc')}>
+            DMARC Policy
+          </Link>
         </div>
       </footer>
     </div>
