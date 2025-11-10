@@ -80,7 +80,9 @@ class SupportMessageViewTests(APITestCase):
             "customer_email": "ops@returnshield.app",
         }
 
-        with mock.patch("support.views.HelpScoutClient") as mock_client_cls:
+        with mock.patch("support.views.HelpScoutClient") as mock_client_cls, mock.patch(
+            "support.views.capture_event"
+        ) as mock_capture_event:
             mock_client = mock_client_cls.return_value
             mock_client.create_conversation.return_value = {
                 "id": 321,
@@ -93,3 +95,4 @@ class SupportMessageViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mock_client.create_conversation.assert_called_once()
         self.assertEqual(response.data["status"], "submitted")
+        mock_capture_event.assert_called_once()

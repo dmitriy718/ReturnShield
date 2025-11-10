@@ -1,6 +1,10 @@
+import posthog from 'posthog-js'
 import './App.css'
 
 function App() {
+  const handlePlanSelect = (planName: string) => {
+    posthog.capture('pricing_plan_interest', { plan: planName })
+  }
   const metrics = [
     {
       label: 'Return rate reduction',
@@ -143,10 +147,18 @@ function App() {
               ReturnShield turns messy return data into revenue-saving actions. Detect operational leaks, automate smarter policies, and prove the ROI of every fulfillment decision.
             </p>
             <div className="hero-cta">
-              <a className="btn btn-primary" href="#signup">
+              <a
+                className="btn btn-primary"
+                href="#signup"
+                onClick={() => posthog.capture('cta_click', { cta: 'launch_returnshield' })}
+              >
                 Launch ReturnShield
               </a>
-              <a className="btn btn-secondary" href="#demo">
+              <a
+                className="btn btn-secondary"
+                href="#demo"
+                onClick={() => posthog.capture('cta_click', { cta: 'see_live_dashboard' })}
+              >
                 See a live dashboard
               </a>
             </div>
@@ -297,7 +309,11 @@ function App() {
                     </li>
                   ))}
                 </ul>
-                <a className="btn btn-primary" href="#signup">
+                <a
+                  className="btn btn-primary"
+                  href="#signup"
+                  onClick={() => handlePlanSelect(plan.name)}
+                >
                   {plan.cta}
                 </a>
               </article>

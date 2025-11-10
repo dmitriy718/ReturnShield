@@ -30,6 +30,7 @@ ReturnShield is a returns intelligence platform for Shopify brands. The stack is
    ```bash
    cd frontend
    npm install
+   cp .env.example .env  # set VITE_POSTHOG_KEY (and optional VITE_POSTHOG_HOST)
    npm run dev
    ```
 
@@ -39,7 +40,7 @@ ReturnShield is a returns intelligence platform for Shopify brands. The stack is
    cp backend/.env.example backend/.env
    cp backend/compose.env.example .env
    ```
-   Then edit `.env` with real credentials (Postgres, Stripe, Shopify, OpenAI, etc.).
+   Then edit `.env` with real credentials (Postgres, Stripe, Shopify, OpenAI, SendGrid, HelpScout, PostHog, etc.). Supply `VITE_POSTHOG_KEY` for the frontend when using Docker (expose it in the `frontend` service environment).
 2. Start services:
    ```bash
    docker compose up --build
@@ -68,7 +69,9 @@ npm run build  # runs TypeScript + Vite checks
 - Shopify Partner API key & secret
 - Stripe live publishable & secret keys
 - OpenAI API key
-- Email provider (SendGrid/Postmark) & analytics tracking keys
+- Email provider (SendGrid API key + sender details)
+- HelpScout app ID/secret + mailbox ID
+- Analytics (PostHog project API key + host)
 
 ## License
 All rights reserved. Internal use only.

@@ -8,8 +8,15 @@ from accounts.models import User
 
 
 class AuthAPITestCase(APITestCase):
+    @mock.patch("accounts.views.capture_event")
+    @mock.patch("accounts.views.identify")
     @mock.patch("accounts.views.send_onboarding_email")
-    def test_register_creates_user_and_token(self, mock_send_email):
+    def test_register_creates_user_and_token(
+        self,
+        mock_send_email,
+        mock_identify,
+        mock_capture_event,
+    ):
         url = reverse("accounts:register")
         payload = {
             "username": "founder",
@@ -28,6 +35,8 @@ class AuthAPITestCase(APITestCase):
         self.assertEqual(user.company_name, payload["company_name"])
         self.assertEqual(user.onboarding_stage, "sync")
         mock_send_email.assert_called_once_with(user)
+        mock_identify.assert_called_once()
+        mock_capture_event.assert_called_once()
 
     def test_login_returns_token(self):
         user = User.objects.create_user(
@@ -45,3 +54,19 @@ class AuthAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("token", response.data)
+
+    @mock.patch("accounts.views.capture_event")
+    def test_onboarding_stage_updates_tracked(self, mock_capture_event):
+        user = User.objects.create_user(
+            username="stageuser",
+            email="stage@returnshield.app",
+            password="StrongPass123!",
+        )
+        self.client.force_authenticate(user)
+        response = self.client.post(
+            reverse("accounts:onboarding"),
+            {"stage": "insights"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        mock_capture_event.assert_called_once()
