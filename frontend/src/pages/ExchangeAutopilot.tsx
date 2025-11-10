@@ -92,14 +92,8 @@ export default function ExchangeAutopilotPage() {
   }, [navOpen])
 
   const scrollHomeSection = (id: string) => {
-    setNavOpen(false)
-    navigate('/')
-    requestAnimationFrame(() => {
-      const el = document.getElementById(id)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    })
+     setNavOpen(false)
+    navigate('/', { state: { scrollTo: id } })
   }
 
   const handleDemoClick = (cta: string) => {

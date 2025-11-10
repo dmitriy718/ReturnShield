@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import posthog from 'posthog-js'
 import logoMark from './assets/logo-mark.svg'
@@ -6,6 +6,8 @@ import './App.css'
 
 function App() {
   const [navOpen, setNavOpen] = useState(false)
+  const location = useLocation()
+  const navigateInternal = useNavigate()
 
   useEffect(() => {
     if (navOpen) {
@@ -14,6 +16,19 @@ function App() {
       document.body.classList.remove('no-scroll')
     }
   }, [navOpen])
+
+  useEffect(() => {
+    const state = (location.state as { scrollTo?: string } | null) || {}
+    if (state.scrollTo) {
+      requestAnimationFrame(() => {
+        const target = document.getElementById(state.scrollTo!)
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+        navigateInternal(location.pathname, { replace: true, state: {} })
+      })
+    }
+  }, [location, navigateInternal])
 
   const scrollToId = (id: string) => {
     const el = document.getElementById(id)
@@ -24,7 +39,11 @@ function App() {
 
   const handleNavScroll = (id: string) => {
     setNavOpen(false)
-    scrollToId(id)
+    if (window.location.pathname === '/') {
+      scrollToId(id)
+    } else {
+      navigateInternal('/', { state: { scrollTo: id } })
+    }
   }
 
   const handlePlanSelect = (planName: string) => {
