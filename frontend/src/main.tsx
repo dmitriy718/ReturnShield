@@ -5,6 +5,8 @@ import posthog from 'posthog-js'
 import './index.css'
 import App from './App.tsx'
 import ExchangeAutopilotPage from './pages/ExchangeAutopilot.tsx'
+import PrivacyPolicyPage from './pages/PrivacyPolicy.tsx'
+import TermsOfServicePage from './pages/TermsOfService.tsx'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com'
@@ -32,6 +34,8 @@ function RoutedApp() {
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/exchange-automation" element={<ExchangeAutopilotPage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms" element={<TermsOfServicePage />} />
     </Routes>
   )
 }

@@ -133,10 +133,10 @@ export default function ExchangeAutopilotPage() {
               href="/#signup"
               onClick={() => {
                 setNavOpen(false)
-                posthog.capture('exchange_autopilot_cta', { cta: 'convert_returns_to_exchanges' })
+                posthog.capture('exchange_autopilot_cta', { cta: 'start_preventing_returns' })
               }}
             >
-              Convert Returns to Exchanges
+              Start Preventing Returns
             </a>
           </div>
         </nav>
@@ -147,9 +147,9 @@ export default function ExchangeAutopilotPage() {
           <a
             className="btn btn-primary btn-trial"
             href="/#signup"
-            onClick={() => posthog.capture('exchange_autopilot_cta', { cta: 'convert_returns_to_exchanges' })}
+            onClick={() => posthog.capture('exchange_autopilot_cta', { cta: 'start_preventing_returns' })}
           >
-            Convert Returns to Exchanges
+            Start Preventing Returns
           </a>
         </div>
       </header>
