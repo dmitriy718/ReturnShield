@@ -793,6 +793,205 @@ h3,
   border: 1px solid rgba(0, 102, 255, 0.35);
 }
 
+.impact {
+  margin: 4rem 0;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(17, 11, 59, 0.05), rgba(21, 99, 173, 0.08));
+  border-radius: 24px;
+  border: 1px solid rgba(45, 27, 105, 0.1);
+  display: grid;
+  gap: 2.5rem;
+}
+
+.impact header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.impact header p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+
+.impact-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.75rem;
+  border: 1px solid rgba(45, 27, 105, 0.08);
+  box-shadow: 0 18px 40px rgba(45, 27, 105, 0.08);
+  display: grid;
+  gap: 0.6rem;
+}
+
+.impact-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.impact-label {
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.impact-card p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.impact-timeline {
+  background: rgba(17, 11, 59, 0.06);
+  border-radius: 18px;
+  padding: 2rem;
+  border: 1px solid rgba(17, 11, 59, 0.08);
+}
+
+.impact-timeline h3 {
+  margin: 0 0 1rem;
+  color: var(--color-primary);
+  font-size: 1.15rem;
+}
+
+.impact-timeline ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.impact-timeline li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: var(--color-muted);
+}
+
+.impact-timeline li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(21, 99, 173, 0.18);
+}
+
+.returnless {
+  margin: 5rem 0;
+  display: grid;
+  gap: 2.5rem;
+}
+
+.returnless header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.returnless header p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.returnless-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.75rem;
+}
+
+.returnless-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(45, 27, 105, 0.08);
+  box-shadow: 0 18px 40px rgba(45, 27, 105, 0.08);
+  display: grid;
+  gap: 1.5rem;
+}
+
+.returnless-card header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.returnless-sku {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.returnless-card h3 {
+  margin: 0;
+  color: var(--color-primary);
+}
+
+.returnless-card p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.returnless-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.returnless-stats .label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.returnless-stats strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.returnless-actions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.returnless-actions li {
+  position: relative;
+  padding-left: 1.3rem;
+  color: var(--color-muted);
+}
+
+.returnless-actions li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
 .features header,
 .pricing header {
   text-align: center;
@@ -1188,6 +1387,18 @@ h3,
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .impact {
+    padding: 2.5rem;
+  }
+
+  .impact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .returnless-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .feature-grid,
   .pricing-grid,
   .faq-grid {
@@ -1315,6 +1526,22 @@ h3,
 
   .roi-card strong {
     font-size: 1.4rem;
+  }
+
+  .impact {
+    padding: 2rem 1.5rem;
+  }
+
+  .impact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .returnless-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .returnless-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1480,6 +1707,16 @@ h3,
   .roi-callout {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .impact {
+    padding: 1.75rem 1.2rem;
+  }
+
+  .returnless-stats {
+    grid-template-columns: 1fr;
   }
 }
 

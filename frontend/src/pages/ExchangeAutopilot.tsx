@@ -132,6 +132,9 @@ export default function ExchangeAutopilotPage() {
           <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('features')}>
             Platform
           </button>
+          <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('impact')}>
+            Impact
+          </button>
           <span className="nav-active">Exchange Autopilot</span>
           <button type="button" className="nav-link-button" onClick={() => scrollHomeSection('pricing')}>
             Pricing

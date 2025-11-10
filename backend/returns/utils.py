@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -10,6 +10,88 @@ class Recommendation:
     description: str
     expected_impact: str
     automation_actions: List[str]
+
+
+def _returnless_candidates() -> List[Dict[str, Any]]:
+    return [
+        {
+            "sku": "RS-014",
+            "product_name": "Luxe Knit Throw",
+            "avg_unit_cost": 18.5,
+            "return_volume_30d": 42,
+            "reason_driver": "Texture / feel not as expected",
+            "estimated_margin_recaptured": 1240,
+            "carbon_kg_prevented": 85,
+            "landfill_lbs_prevented": 180,
+            "handling_minutes_reduced": 96,
+            "recommended_actions": [
+                "Auto-approve returnless refund with 12% exchange credit coupon.",
+                "Tag SKU for donation pickup with GiveBack Box.",
+            ],
+        },
+        {
+            "sku": "RS-221",
+            "product_name": "Everyday Bamboo Tee",
+            "avg_unit_cost": 9.25,
+            "return_volume_30d": 136,
+            "reason_driver": "Fit feedback · relaxed cut",
+            "estimated_margin_recaptured": 2280,
+            "carbon_kg_prevented": 132,
+            "landfill_lbs_prevented": 264,
+            "handling_minutes_reduced": 168,
+            "recommended_actions": [
+                "Serve AI sizing quiz before checkout for repeat buyers.",
+                "Offer returnless refund with keep-it note referencing sustainability pledge.",
+            ],
+        },
+        {
+            "sku": "RS-091",
+            "product_name": "Ceramic Mood Candle",
+            "avg_unit_cost": 7.4,
+            "return_volume_30d": 58,
+            "reason_driver": "Minor packaging blemish",
+            "estimated_margin_recaptured": 940,
+            "carbon_kg_prevented": 64,
+            "landfill_lbs_prevented": 148,
+            "handling_minutes_reduced": 72,
+            "recommended_actions": [
+                "Bundle blemished units for outlet flash sale.",
+                "Message VIP segment with 2-for-1 rescue offer.",
+            ],
+        },
+    ]
+
+
+def build_returnless_insights() -> Dict[str, Any]:
+    candidates = _returnless_candidates()
+
+    total_margin = sum(item["estimated_margin_recaptured"] for item in candidates)
+    total_carbon_tonnes = round(
+        sum(item["carbon_kg_prevented"] for item in candidates) / 1000, 2
+    )
+    total_landfill_lbs = sum(item["landfill_lbs_prevented"] for item in candidates)
+    total_minutes_saved = sum(item["handling_minutes_reduced"] for item in candidates)
+
+    summary = {
+        "period": "last_30_days",
+        "annualized_margin_recovery": int(total_margin * 12),
+        "carbon_tonnes_prevented": total_carbon_tonnes,
+        "landfill_lbs_prevented": total_landfill_lbs,
+        "manual_hours_reduced": round(total_minutes_saved / 60, 1),
+    }
+
+    playbook = [
+        "Keep-it refund for sub-$15 cost of goods when reverse logistics > 65% of margin.",
+        "Tag donation-ready SKUs in Shopify metafields and sync nightly with fulfillment center.",
+        "Trigger SendGrid sustainability story 48h after refund to reinforce loyalty.",
+        "Track impact dashboards weekly: landfill diverted, CO₂e prevented, margin recaptured.",
+    ]
+
+    return {
+        "summary": summary,
+        "candidates": candidates,
+        "playbook": playbook,
+    }
 
 
 def build_exchange_playbook(

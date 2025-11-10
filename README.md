@@ -64,6 +64,8 @@ npm run build  # runs TypeScript + Vite checks
 ## Deployment Notes
 - Stage 1 deploy target: IONOS VPS `65.38.99.52` (Ubuntu). Recommend Docker + Nginx reverse proxy.
 - Domain ready: `returnshield.app`, plus `.store`, `.io`, `.us`, `.me`.
+- Nginx site: `/etc/nginx/sites-available/returnshield` proxies `https://returnshield.app/` → frontend (`8080`) and `https://returnshield.app/api/` → Django API (`8000`). Certbot manages TLS (`certbot renew --dry-run` to check automation).
+- Docker stack is supervised by `systemd` (`returnshield.service`) and runs `docker-compose up`; restart via `sudo systemctl restart returnshield.service`.
 
 ## Credentials Needed
 - Shopify Partner API key & secret
@@ -77,7 +79,12 @@ npm run build  # runs TypeScript + Vite checks
 ## Billing & Checkout
 - Configure `STRIPE_PRICE_LAUNCH`, `STRIPE_PRICE_SCALE`, and `STRIPE_PRICE_ELITE` in `backend/.env` (and Docker compose env) with subscription price IDs from Stripe.
 - Frontend pricing CTAs call `POST /api/billing/create-checkout-session/` and redirect merchants to Stripe Checkout.
-- Update `FRONTEND_URL` in the backend environment so success and cancel URLs resolve correctly.
+- Update `FRONTEND_URL` / `BACKEND_URL` / `VITE_API_URL` to point at `https://returnshield.app` so the marketing site and API share the same secure origin.
+
+## Sustainability & Returnless Insights
+- Marketing page now showcases landfill/carbon savings plus a returnless refund command center fed by `GET /api/returns/returnless-insights/`.
+- Endpoint returns summary metrics (`annualized_margin_recovery`, `carbon_tonnes_prevented`, `landfill_lbs_prevented`, `manual_hours_reduced`), candidate SKU cards, and recommended automation steps.
+- Frontend falls back to bundled insight data if the API is unreachable, then hydrates with live numbers when available.
 
 ## Shopify Integration Flow
 1. Provide `SHOPIFY_CLIENT_ID`, `SHOPIFY_CLIENT_SECRET`, and `SHOPIFY_APP_URL` in `backend/.env`.

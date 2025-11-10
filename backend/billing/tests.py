@@ -49,3 +49,27 @@ class CheckoutSessionViewTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)
         self.assertIn("detail", response.json())
+
+    def test_mismatched_price_id_returns_error(self) -> None:
+        response = self.client.post(
+            reverse("billing:create-checkout-session"),
+            data={"plan": "launch", "price_id": "price_wrong"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        body = response.json()
+        self.assertIn("detail", body)
+        self.assertEqual(body["detail"], "Submitted plan details do not match.")
+
+    @patch("billing.views.stripe.checkout.Session.create")
+    def test_matching_price_id_accepted(self, mock_create) -> None:
+        mock_create.return_value = SimpleNamespace(url="https://stripe.test/checkout")
+        response = self.client.post(
+            reverse("billing:create-checkout-session"),
+            data={"plan": "launch", "price_id": "price_launch"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), {"checkout_url": "https://stripe.test/checkout"})
