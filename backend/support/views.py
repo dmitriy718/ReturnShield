@@ -1,4 +1,5 @@
 from django.conf import settings
+from analytics.posthog import capture as capture_event
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -43,6 +44,17 @@ class SupportMessageView(APIView, HelpScoutConfiguredMixin):
             tags=data.get("tags"),
             metadata={"source": "ReturnShield Dashboard"},
         )
+        try:
+            capture_event(
+                "support_ticket_created",
+                distinct_id=str(request.user.pk),
+                properties={
+                    "subject": data["subject"],
+                    "tags": data.get("tags") or [],
+                },
+            )
+        except Exception:  # pragma: no cover
+            pass
 
         return Response(
             {
