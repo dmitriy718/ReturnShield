@@ -73,3 +73,43 @@ class CheckoutSessionViewTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), {"checkout_url": "https://stripe.test/checkout"})
+
+
+class ActivateSubscriptionViewTests(APITestCase):
+    def test_activate_subscription_updates_user(self) -> None:
+        user = self._create_user()
+        self.client.force_authenticate(user)
+
+        response = self.client.post(
+            reverse("billing:activate"),
+            data={"plan": "scale"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), {"subscription_status": "scale"})
+        user.refresh_from_db()
+        self.assertEqual(user.subscription_status, "scale")
+
+    def test_invalid_plan_rejected(self) -> None:
+        user = self._create_user()
+        self.client.force_authenticate(user)
+
+        response = self.client.post(
+            reverse("billing:activate"),
+            data={"plan": "invalid"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def _create_user():
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        return User.objects.create_user(
+            username="activator",
+            email="activator@returnshield.app",
+            password="StrongPass123!",
+        )

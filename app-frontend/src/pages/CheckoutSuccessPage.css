@@ -28,6 +28,16 @@
   font-weight: 700;
 }
 
+.success-icon.loading {
+  background: rgba(15, 23, 42, 0.08);
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.success-icon.error {
+  background: rgba(248, 113, 113, 0.12);
+  color: #dc2626;
+}
+
 .success-card h2 {
   margin: 0;
   font-size: 1.8rem;
@@ -38,6 +48,20 @@
   margin: 0;
   color: rgba(15, 23, 42, 0.65);
   line-height: 1.6;
+}
+
+.plan-summary {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.success-support {
+  font-size: 0.95rem;
+}
+
+.success-support a {
+  color: #2563eb;
+  font-weight: 600;
 }
 
 .success-actions {

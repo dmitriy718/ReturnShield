@@ -74,7 +74,7 @@ export function BillingPage() {
     setLoadingPlan(plan.slug)
     setError(null)
     try {
-      const successUrl = `${window.location.origin}/billing/success`
+      const successUrl = `${window.location.origin}/billing/success?plan=${plan.slug}`
       const cancelUrl = `${window.location.origin}/billing`
       const response = await apiFetch<{ checkout_url: string }>('/billing/create-checkout-session/', {
         method: 'POST',
