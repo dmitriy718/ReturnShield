@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { apiFetch, ApiError } from '../services/api'
+import { useAuth } from '../providers/AuthProvider'
 import './BillingPage.css'
 
 type Plan = {
@@ -9,6 +10,7 @@ type Plan = {
   description: string
   features: string[]
   priceId?: string
+  idealFor: string
 }
 
 const plans: Plan[] = [
@@ -17,6 +19,7 @@ const plans: Plan[] = [
     name: 'Launch',
     price: '$29 / month',
     description: 'Foundational insights and policy automation for emerging brands.',
+    idealFor: 'Operators validating return insights and building the first policy library.',
     features: [
       'Return & exchange analytics updated daily',
       'Email notifications for at-risk SKUs',
@@ -29,6 +32,7 @@ const plans: Plan[] = [
     name: 'Scale',
     price: '$99 / month',
     description: 'Automate exchange-first workflows and unlock VIP resolution hub.',
+    idealFor: 'Fast-growing Shopify brands prioritising exchange automation and VIP retention.',
     features: [
       'Everything in Launch',
       'AI Exchange Coach with weekly playbooks',
@@ -41,6 +45,7 @@ const plans: Plan[] = [
     name: 'Elite',
     price: '$249 / month',
     description: 'Advanced automation with concierge support for high-volume operators.',
+    idealFor: 'Large CX teams needing bespoke automation, quarterly workshops, and concierge support.',
     features: [
       'Everything in Scale',
       'Returnless keep-it routing engine',
@@ -50,10 +55,33 @@ const plans: Plan[] = [
   },
 ]
 
+const BILLING_TAKEAWAYS = [
+  {
+    title: 'Trial preview',
+    detail: 'Live KPIs stay blurred until you activate Launch, Scale, or Elite. You can replay the guided tour any time.',
+  },
+  {
+    title: 'Scale unlocks automation',
+    detail: 'Exchange Autopilot, AI Coach, and VIP Resolution Hub go live the moment you select the Scale plan.',
+  },
+  {
+    title: 'Elite adds concierge strategy',
+    detail: 'Elite customers receive quarterly revenue workshops, custom reports, and direct access to our automation team.',
+  },
+]
+
 export function BillingPage() {
+  const { user } = useAuth()
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const currentPlanSlug =
+    user && user.subscription_status && user.subscription_status !== 'trial' ? user.subscription_status : null
+  const isTrial = !user || user.subscription_status === 'trial'
+  const recommendedPlan = user?.has_shopify_store ? 'scale' : 'launch'
+  const currentPlanName = currentPlanSlug
+    ? plans.find((plan) => plan.slug === currentPlanSlug)?.name ?? currentPlanSlug.toUpperCase()
+    : 'Trial preview'
 
   const priceMap = useMemo(
     () => ({
@@ -104,6 +132,20 @@ export function BillingPage() {
           Upgrade in seconds with Stripe. Plans can be changed or cancelled any time. Exchange automation and VIP hub
           unlock on the Scale tier.
         </p>
+        <div className="billing-status">
+          <span className="status-label">Current status</span>
+          <span className="status-pill">{currentPlanName}</span>
+          <span className="status-note">
+            {isTrial
+              ? 'Preview mode — live data unblurs once a plan is active.'
+              : 'You can adjust plans at any time from this screen.'}
+          </span>
+          {!currentPlanSlug ? (
+            <span className="status-recommendation">
+              Recommended next: <strong>{plans.find((plan) => plan.slug === recommendedPlan)?.name ?? 'Scale'}</strong>
+            </span>
+          ) : null}
+        </div>
       </header>
 
       {error && (
@@ -119,6 +161,13 @@ export function BillingPage() {
               <h3>{plan.name}</h3>
               <p className="plan-price">{plan.price}</p>
               <p className="plan-description">{plan.description}</p>
+              <p className="plan-ideal">{plan.idealFor}</p>
+              <div className="plan-tags">
+                {currentPlanSlug === plan.slug ? <span className="plan-tag plan-tag-current">Current</span> : null}
+                {currentPlanSlug !== plan.slug && plan.slug === recommendedPlan ? (
+                  <span className="plan-tag plan-tag-recommended">Recommended</span>
+                ) : null}
+              </div>
             </header>
             <ul>
               {plan.features.map((feature) => (
@@ -128,14 +177,27 @@ export function BillingPage() {
             <button
               type="button"
               onClick={() => startCheckout(plan)}
-              disabled={loadingPlan === plan.slug}
+              disabled={currentPlanSlug === plan.slug || loadingPlan === plan.slug}
               className="plan-cta"
             >
-              {loadingPlan === plan.slug ? 'Redirecting to Stripe…' : 'Start subscription'}
+              {currentPlanSlug === plan.slug
+                ? 'Current plan'
+                : loadingPlan === plan.slug
+                ? 'Redirecting to Stripe…'
+                : 'Start subscription'}
             </button>
           </article>
         ))}
       </div>
+
+      <section className="billing-takeaways">
+        {BILLING_TAKEAWAYS.map((item) => (
+          <article key={item.title}>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+          </article>
+        ))}
+      </section>
 
       <footer className="billing-footer">
         <p>
