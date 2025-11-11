@@ -22,9 +22,10 @@ Practice this script aloud three times before every conversation. Keep it short 
 ---
 
 ## 3. Core Assets To Use
-- **Marketing site:** `https://returnshield.app` (hero metrics, feature breakdown).
-- **Dashboard demo:** `https://app.returnshield.app` (use a demo login when ready).
-- **One-pager PDF:** Export homepage as PDF for email attachments.
+- **Marketing site:** `https://returnshield.app` (hero metrics, feature breakdown, Autopilot primer).
+- **Dashboard demo:** `https://app.returnshield.app` *(use trial mode with sample data until billing is active)*.
+- **Resource library:** See `docs/marketing-assets.md` for links to screenshots, pitch decks, and snippets.
+- **Guided console tour:** From the dashboard, click **Replay guided tour** to rehearse the in-app walk-through.
 - **Stripe checkout:** Uses live price IDs—always test with the provided checkout buttons after major changes.
 
 ---
@@ -53,14 +54,15 @@ Track every outreach in a simple Google Sheet: columns for name, channel, last t
 1. **Kickoff (1 minute)**
    - Ask: “What’s your current monthly return rate and average order value?”
 2. **Show dashboard (7 minutes)**
-   - Insights overview → AI Exchange Coach → VIP queue.
-   - Tie each module back to their numbers.
+   - Run the built-in guided tour so prospects see the reveal effect.
+   - Insights overview → AI Exchange Coach → VIP queue → Checklist + Resource library.
+   - Call out that data unblurs after checkout for live stores.
 3. **Checkout CTA (1 minute)**
    - Click pricing button → show Stripe checkout page.
 4. **Close**
    - Offer concierge onboarding (`?concierge=1` link) if they need white-glove setup.
 
-Always finish by sending them the operator playbook (see `docs/operator-playbook.md`).
+Always finish by sending them the operator playbook (see `docs/operator-playbook.md`) and the resource bundle (`docs/marketing-assets.md`).
 
 ---
 
