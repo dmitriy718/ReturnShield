@@ -1,5 +1,7 @@
 export type OnboardingStage = 'connect' | 'sync' | 'insights' | 'complete'
 
+export type StorePlatform = 'none' | 'shopify' | 'bigcommerce' | 'woocommerce'
+
 export type User = {
   id: number
   username: string
@@ -9,6 +11,8 @@ export type User = {
   company_name: string
   has_shopify_store: boolean
   shopify_domain: string
+  store_platform: StorePlatform
+  store_domain: string
   stripe_customer_id: string
   onboarding_stage: OnboardingStage
   subscription_status: 'trial' | 'launch' | 'scale' | 'elite'

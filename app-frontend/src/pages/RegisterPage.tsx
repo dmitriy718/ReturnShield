@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../providers/AuthProvider'
+import type { StorePlatform } from '../types'
 import './AuthPages.css'
 
 export function RegisterPage() {
@@ -10,8 +11,8 @@ export function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [companyName, setCompanyName] = useState('')
-  const [hasShopifyStore, setHasShopifyStore] = useState<'yes' | 'no' | ''>('')
-  const [shopifyDomain, setShopifyDomain] = useState('')
+  const [storePlatform, setStorePlatform] = useState<StorePlatform>('shopify')
+  const [storeDomain, setStoreDomain] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,13 +21,19 @@ export function RegisterPage() {
     setSubmitting(true)
     setError(null)
     try {
-      const normalizedHasStore = hasShopifyStore === 'yes'
+      const requiresDomain = storePlatform !== 'none'
+      const trimmedDomain = storeDomain.trim()
+      if (requiresDomain && !trimmedDomain) {
+        setError('Please provide your storefront domain or URL.')
+        setSubmitting(false)
+        return
+      }
       await register({
         email: email.trim(),
         password,
         companyName: companyName.trim(),
-        hasShopifyStore: normalizedHasStore,
-        shopifyDomain: shopifyDomain.trim(),
+        storePlatform,
+        storeDomain: trimmedDomain,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to create account. Please try again.')
@@ -81,47 +88,81 @@ export function RegisterPage() {
           </label>
 
           <fieldset className="auth-fieldset">
-            <legend>Do you currently run a Shopify store?</legend>
+            <legend>Where do you manage your storefront today?</legend>
             <label className="auth-radio">
               <input
                 type="radio"
-                name="has_shopify_store"
-                value="yes"
-                checked={hasShopifyStore === 'yes'}
-                onChange={() => setHasShopifyStore('yes')}
-                required
+                name="store_platform"
+                value="shopify"
+                checked={storePlatform === 'shopify'}
+                onChange={() => setStorePlatform('shopify')}
               />
-              <span>Yes, I operate a Shopify storefront</span>
+              <span>Shopify</span>
             </label>
             <label className="auth-radio">
               <input
                 type="radio"
-                name="has_shopify_store"
-                value="no"
-                checked={hasShopifyStore === 'no'}
-                onChange={() => {
-                  setHasShopifyStore('no')
-                  setShopifyDomain('')
-                }}
-                required
+                name="store_platform"
+                value="bigcommerce"
+                checked={storePlatform === 'bigcommerce'}
+                onChange={() => setStorePlatform('bigcommerce')}
               />
-              <span>No, I’m validating workflows first</span>
+              <span>BigCommerce</span>
+            </label>
+            <label className="auth-radio">
+              <input
+                type="radio"
+                name="store_platform"
+                value="woocommerce"
+                checked={storePlatform === 'woocommerce'}
+                onChange={() => setStorePlatform('woocommerce')}
+              />
+              <span>WooCommerce</span>
+            </label>
+            <label className="auth-radio">
+              <input
+                type="radio"
+                name="store_platform"
+                value="none"
+                checked={storePlatform === 'none'}
+                onChange={() => {
+                  setStorePlatform('none')
+                  setStoreDomain('')
+                }}
+              />
+              <span>Not yet connected</span>
             </label>
           </fieldset>
 
-          <label className={hasShopifyStore === 'yes' ? '' : 'input-disabled'}>
-            <span>Primary Shopify domain</span>
+          <label className={storePlatform === 'none' ? 'input-disabled' : ''}>
+            <span>
+              {storePlatform === 'shopify'
+                ? 'Shopify domain'
+                : storePlatform === 'bigcommerce'
+                ? 'BigCommerce store domain'
+                : storePlatform === 'woocommerce'
+                ? 'WooCommerce site URL'
+                : 'Storefront domain'}
+            </span>
             <input
               type="text"
-              value={shopifyDomain}
-              onChange={(event) => setShopifyDomain(event.target.value)}
-              placeholder="brand.myshopify.com"
-              required={hasShopifyStore === 'yes'}
-              disabled={hasShopifyStore !== 'yes'}
+              value={storeDomain}
+              onChange={(event) => setStoreDomain(event.target.value)}
+              placeholder={
+                storePlatform === 'shopify'
+                  ? 'brand.myshopify.com'
+                  : storePlatform === 'bigcommerce'
+                  ? 'store.example.com'
+                  : storePlatform === 'woocommerce'
+                  ? 'https://store.example.com'
+                  : 'Provide when you connect your store'
+              }
+              required={storePlatform !== 'none'}
+              disabled={storePlatform === 'none'}
             />
             <small>
-              We’ll blur live metrics until billing is active. If you’re exploring without a store, we’ll guide you with
-              sample data.
+              We’ll blur live metrics until billing is active. If you’re exploring without a store, choose “Not yet
+              connected” and you can add your platform later in Integrations.
             </small>
           </label>
 
@@ -130,7 +171,7 @@ export function RegisterPage() {
           <button
             type="submit"
             className="auth-submit"
-            disabled={submitting || hasShopifyStore === ''}
+            disabled={submitting}
           >
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
