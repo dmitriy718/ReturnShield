@@ -193,8 +193,8 @@ export function DashboardPage() {
       setJustRevealed(null)
       return
     }
-    const isTrial = user.subscription_status === 'trial'
-    if (isTrial && !user.has_completed_walkthrough) {
+    const shouldLaunchTour = !user.has_completed_walkthrough
+    if (shouldLaunchTour) {
       setIsWalkthroughActive(true)
       setCurrentStepIndex(0)
       setRevealedSections([])
