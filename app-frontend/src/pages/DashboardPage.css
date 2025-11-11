@@ -42,6 +42,70 @@
   gap: 1.75rem;
 }
 
+.data-gate {
+  position: relative;
+  border-radius: 20px;
+}
+
+.data-gate__content {
+  position: relative;
+  z-index: 1;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.data-gate--blurred .data-gate__content {
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.data-gate--preview .data-gate__content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.data-gate__overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(15, 23, 42, 0.82);
+  color: #f8fafc;
+  display: grid;
+  place-content: center;
+  gap: 1.25rem;
+  text-align: center;
+  padding: 2rem 2.5rem;
+  z-index: 2;
+}
+
+.data-gate__overlay h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.data-gate__overlay p {
+  margin: 0;
+  line-height: 1.6;
+  max-width: 460px;
+  justify-self: center;
+}
+
+.data-gate__cta {
+  border: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.9rem;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.data-gate__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 44px rgba(124, 58, 237, 0.35);
+}
+
 .panel {
   background: #ffffff;
   border-radius: 20px;
@@ -227,6 +291,146 @@
   color: #2563eb;
 }
 
+.plan-panel {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(14, 165, 233, 0.1)), #ffffff;
+}
+
+.plan-options {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.plan-options div {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.08);
+}
+
+.plan-options strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.plan-options p {
+  margin: 0;
+  line-height: 1.45;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.plan-cta {
+  margin-top: 1.2rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.75rem;
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plan-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 24px 48px rgba(56, 189, 248, 0.25);
+}
+
+.walkthrough-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  z-index: 1200;
+  padding: 1.5rem;
+}
+
+.walkthrough-card {
+  width: min(520px, 100%);
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 2.25rem 2.4rem;
+  display: grid;
+  gap: 1.5rem;
+  box-shadow: 0 40px 70px rgba(15, 23, 42, 0.35);
+}
+
+.walkthrough-card header {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.walkthrough-progress-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.walkthrough-progress {
+  height: 6px;
+  width: 100%;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
+
+.walkthrough-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+.walkthrough-body h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.6rem;
+  color: #0f172a;
+}
+
+.walkthrough-body p {
+  margin: 0;
+  line-height: 1.6;
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.walkthrough-helper {
+  color: #2563eb !important;
+  font-weight: 600;
+}
+
+.walkthrough-card footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.walkthrough-card footer button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.9rem;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.walkthrough-card footer button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 42px rgba(37, 99, 235, 0.3);
+}
+
+.walkthrough-card footer button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+  box-shadow: none;
+}
+
 .dashboard-error {
   padding: 1rem 1.25rem;
   border-radius: 1rem;
@@ -250,6 +454,10 @@
 @media (max-width: 960px) {
   .panel {
     padding: 1.35rem 1.4rem;
+  }
+
+  .walkthrough-card {
+    padding: 1.85rem;
   }
 }
 

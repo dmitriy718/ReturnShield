@@ -26,6 +26,7 @@ type AuthState = {
   logout: () => void
   refreshUser: () => Promise<void>
   updateOnboarding: (stage: OnboardingStage) => Promise<void>
+  completeWalkthrough: (completed: boolean) => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined)
@@ -152,6 +153,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [token, loadUser],
   )
 
+  const completeWalkthrough = useCallback(
+    async (completed: boolean) => {
+      if (!token) {
+        throw new Error('You must be signed in to update walkthrough status.')
+      }
+      await apiFetch('/accounts/walkthrough/', {
+        method: 'POST',
+        body: JSON.stringify({ completed }),
+        token,
+      })
+      await loadUser(token)
+    },
+    [token, loadUser],
+  )
+
   const value = useMemo<AuthState>(
     () => ({
       user,
@@ -162,8 +178,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout: handleLogout,
       refreshUser,
       updateOnboarding,
+      completeWalkthrough,
     }),
-    [user, token, loading, handleLogin, handleRegister, handleLogout, refreshUser, updateOnboarding],
+    [
+      user,
+      token,
+      loading,
+      handleLogin,
+      handleRegister,
+      handleLogout,
+      refreshUser,
+      updateOnboarding,
+      completeWalkthrough,
+    ],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
