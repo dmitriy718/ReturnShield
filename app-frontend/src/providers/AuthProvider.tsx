@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useCallback,
@@ -19,6 +20,7 @@ type AuthState = {
     email: string
     password: string
     companyName: string
+    hasShopifyStore: boolean
     shopifyDomain: string
   }) => Promise<void>
   logout: () => void
@@ -91,11 +93,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       companyName,
+      hasShopifyStore,
       shopifyDomain,
     }: {
       email: string
       password: string
       companyName: string
+      hasShopifyStore: boolean
       shopifyDomain: string
     }) => {
       try {
@@ -105,7 +109,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email,
             password,
             company_name: companyName,
-            shopify_domain: shopifyDomain,
+            has_shopify_store: hasShopifyStore,
+            shopify_domain: hasShopifyStore ? shopifyDomain : '',
             username: email,
           }),
         })

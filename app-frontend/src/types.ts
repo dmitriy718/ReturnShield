@@ -7,9 +7,12 @@ export type User = {
   first_name: string
   last_name: string
   company_name: string
+  has_shopify_store: boolean
   shopify_domain: string
   stripe_customer_id: string
   onboarding_stage: OnboardingStage
+  subscription_status: 'trial' | 'launch' | 'scale' | 'elite'
+  has_completed_walkthrough: boolean
 }
 
 export type ReturnlessCandidate = {

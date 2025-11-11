@@ -23,6 +23,7 @@ class AuthAPITestCase(APITestCase):
             "email": "founder@returnshield.app",
             "password": "StrongPass123!",
             "company_name": "ReturnShield Labs",
+            "has_shopify_store": True,
             "shopify_domain": "returnshield.myshopify.com",
         }
 
@@ -33,7 +34,8 @@ class AuthAPITestCase(APITestCase):
         self.assertEqual(User.objects.count(), 1)
         user = User.objects.first()
         self.assertEqual(user.company_name, payload["company_name"])
-        self.assertEqual(user.onboarding_stage, "sync")
+        self.assertEqual(user.onboarding_stage, "connect")
+        self.assertTrue(user.has_shopify_store)
         mock_send_email.assert_called_once_with(user)
         mock_identify.assert_called_once()
         mock_capture_event.assert_called_once()
@@ -54,6 +56,24 @@ class AuthAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("token", response.data)
+
+    def test_register_without_shopify_store(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            {
+                "username": "founder2",
+                "email": "founder2@returnshield.app",
+                "password": "StrongPass123!",
+                "company_name": "ReturnShield Labs",
+                "has_shopify_store": False,
+                "shopify_domain": "",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        user = User.objects.get(username="founder2")
+        self.assertFalse(user.has_shopify_store)
+        self.assertEqual(user.shopify_domain, "")
 
     @mock.patch("accounts.views.capture_event")
     def test_onboarding_stage_updates_tracked(self, mock_capture_event):
