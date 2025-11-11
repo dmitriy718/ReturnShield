@@ -284,12 +284,15 @@ export function DashboardPage() {
       if (!revealed) {
         return 'preview'
       }
+      if (isWalkthroughActive) {
+        return 'open'
+      }
       if (hasShopifyStore && !isPaid && key !== 'plan') {
         return 'blurred'
       }
       return 'open'
     },
-    [sectionRevealed, hasShopifyStore, isPaid],
+    [sectionRevealed, hasShopifyStore, isPaid, isWalkthroughActive],
   )
 
   const handlePlanSelection = useCallback(() => {
@@ -491,6 +494,7 @@ export function DashboardPage() {
         contentRef={summaryRef}
         freshlyRevealed={justRevealed === 'summary'}
         tip={TOOLTIP_COPY.summary}
+        spotlight={isWalkthroughActive && activeStep.key === 'summary'}
       >
         {isSampleData ? (
           <p className="sample-context">
@@ -516,7 +520,8 @@ export function DashboardPage() {
           contentRef={returnlessRef}
         freshlyRevealed={justRevealed === 'returnless'}
         tip={TOOLTIP_COPY.returnless}
-        >
+        spotlight={isWalkthroughActive && activeStep.key === 'returnless'}
+      >
           <header>
             <h2>Returnless intelligence</h2>
             <button type="button" onClick={loadDashboard} disabled={state.loading}>
@@ -573,7 +578,8 @@ export function DashboardPage() {
           contentRef={coachRef}
         freshlyRevealed={justRevealed === 'coach'}
         tip={TOOLTIP_COPY.coach}
-        >
+        spotlight={isWalkthroughActive && activeStep.key === 'coach'}
+      >
           <header>
             <h2>AI Exchange Coach queue</h2>
           </header>
@@ -628,7 +634,8 @@ export function DashboardPage() {
           contentRef={vipRef}
         freshlyRevealed={justRevealed === 'vip'}
         tip={TOOLTIP_COPY.vip}
-        >
+        spotlight={isWalkthroughActive && activeStep.key === 'vip'}
+      >
           <header>
             <h2>VIP resolution queue</h2>
           </header>
@@ -697,7 +704,8 @@ export function DashboardPage() {
           contentRef={planRef}
         freshlyRevealed={justRevealed === 'plan'}
         tip={TOOLTIP_COPY.plan}
-        >
+        spotlight={isWalkthroughActive && activeStep.key === 'plan'}
+      >
           <header>
             <h2>Unlock live automation</h2>
           </header>
@@ -860,6 +868,7 @@ type GateWrapperProps = {
   hideOverlay?: boolean
   tip?: string
   freshlyRevealed?: boolean
+  spotlight?: boolean
   children: ReactNode
 }
 
@@ -872,12 +881,14 @@ function GateWrapper({
   hideOverlay = false,
   tip,
   freshlyRevealed = false,
+  spotlight = false,
   children,
 }: GateWrapperProps) {
   const Component = as
-  const gateClass = mode !== 'open' ? ` data-gate--${mode}` : ''
+  const gateClass = `${mode !== 'open' ? ` data-gate--${mode}` : ''}${spotlight && mode === 'open' ? ' data-gate--spotlight' : ''}`
   return (
     <Component className={`data-gate${gateClass}${containerClassName ? ` ${containerClassName}` : ''}`}>
+      {spotlight && mode === 'open' ? <span className="data-gate__spotlight" aria-hidden="true" /> : null}
       <div
         ref={(node) => {
           if (contentRef) {
