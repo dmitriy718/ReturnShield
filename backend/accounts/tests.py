@@ -25,6 +25,8 @@ class AuthAPITestCase(APITestCase):
             "company_name": "ReturnShield Labs",
             "has_shopify_store": True,
             "shopify_domain": "returnshield.myshopify.com",
+            "store_platform": "shopify",
+            "store_domain": "returnshield.myshopify.com",
         }
 
         response = self.client.post(url, payload, format="json")
@@ -36,6 +38,8 @@ class AuthAPITestCase(APITestCase):
         self.assertEqual(user.company_name, payload["company_name"])
         self.assertEqual(user.onboarding_stage, "connect")
         self.assertTrue(user.has_shopify_store)
+        self.assertEqual(user.store_platform, "shopify")
+        self.assertEqual(user.store_domain, "returnshield.myshopify.com")
         mock_send_email.assert_called_once_with(user)
         mock_identify.assert_called_once()
         mock_capture_event.assert_called_once()
@@ -67,6 +71,8 @@ class AuthAPITestCase(APITestCase):
                 "company_name": "ReturnShield Labs",
                 "has_shopify_store": False,
                 "shopify_domain": "",
+                "store_platform": "none",
+                "store_domain": "",
             },
             format="json",
         )
@@ -74,6 +80,8 @@ class AuthAPITestCase(APITestCase):
         user = User.objects.get(username="founder2")
         self.assertFalse(user.has_shopify_store)
         self.assertEqual(user.shopify_domain, "")
+        self.assertEqual(user.store_platform, "none")
+        self.assertEqual(user.store_domain, "")
 
     @mock.patch("accounts.views.capture_event")
     def test_onboarding_stage_updates_tracked(self, mock_capture_event):
@@ -108,3 +116,24 @@ class AuthAPITestCase(APITestCase):
         user.refresh_from_db()
         self.assertTrue(user.has_completed_walkthrough)
         mock_capture_event.assert_called_once()
+
+    def test_store_profile_update(self):
+        user = User.objects.create_user(
+            username="integrations",
+            email="integrations@returnshield.app",
+            password="StrongPass123!",
+        )
+        self.client.force_authenticate(user)
+        response = self.client.patch(
+            reverse("accounts:store-profile"),
+            {
+                "store_platform": "bigcommerce",
+                "store_domain": "store-bigcommerce.example.com",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user.refresh_from_db()
+        self.assertEqual(user.store_platform, "bigcommerce")
+        self.assertEqual(user.store_domain, "store-bigcommerce.example.com")
+        self.assertFalse(user.has_shopify_store)

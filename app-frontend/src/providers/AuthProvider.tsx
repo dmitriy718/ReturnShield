@@ -9,7 +9,7 @@ import {
 } from 'react'
 import type { ReactNode } from 'react'
 import { apiFetch, ApiError } from '../services/api'
-import type { OnboardingStage, User } from '../types'
+import type { OnboardingStage, StorePlatform, User } from '../types'
 
 type AuthState = {
   user: User | null
@@ -20,8 +20,8 @@ type AuthState = {
     email: string
     password: string
     companyName: string
-    hasShopifyStore: boolean
-    shopifyDomain: string
+    storePlatform: StorePlatform
+    storeDomain: string
   }) => Promise<void>
   logout: () => void
   refreshUser: () => Promise<void>
@@ -94,14 +94,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       companyName,
-      hasShopifyStore,
-      shopifyDomain,
+      storePlatform,
+      storeDomain,
     }: {
       email: string
       password: string
       companyName: string
-      hasShopifyStore: boolean
-      shopifyDomain: string
+      storePlatform: StorePlatform
+      storeDomain: string
     }) => {
       try {
         const payload = await apiFetch<{ token: string; username: string }>('/accounts/register/', {
@@ -110,8 +110,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email,
             password,
             company_name: companyName,
-            has_shopify_store: hasShopifyStore,
-            shopify_domain: hasShopifyStore ? shopifyDomain : '',
+            store_platform: storePlatform,
+            store_domain: storeDomain,
+            has_shopify_store: storePlatform === 'shopify',
+            shopify_domain: storePlatform === 'shopify' ? storeDomain : '',
             username: email,
           }),
         })

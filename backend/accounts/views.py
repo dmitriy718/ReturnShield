@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from analytics.posthog import capture as capture_event, identify
 from notifications.email import send_onboarding_email
 
-from .serializers import RegisterSerializer, UserSerializer
+from .serializers import RegisterSerializer, StoreProfileSerializer, UserSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,8 @@ class RegisterView(generics.CreateAPIView):
                     "onboarding_stage": user.onboarding_stage,
                     "has_shopify_store": user.has_shopify_store,
                     "subscription_status": user.subscription_status,
+                    "store_platform": user.store_platform,
+                    "store_domain": user.store_domain,
                 },
             )
             capture_event(
@@ -48,6 +50,8 @@ class RegisterView(generics.CreateAPIView):
                     "company_name": user.company_name,
                     "shopify_domain": user.shopify_domain,
                     "has_shopify_store": user.has_shopify_store,
+                    "store_platform": user.store_platform,
+                    "store_domain": user.store_domain,
                 },
             )
         except Exception:  # pragma: no cover
@@ -103,3 +107,35 @@ class WalkthroughCompletionView(APIView):
         except Exception:  # pragma: no cover
             logger.exception("Failed to record walkthrough completion for user %s", user.pk)
         return Response({"status": "updated", "has_completed_walkthrough": completed})
+
+
+class StoreProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        serializer = StoreProfileSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        user = request.user
+        user.store_platform = data["store_platform"]
+        user.store_domain = data.get("store_domain", "")
+        if user.store_platform == User.StorePlatform.SHOPIFY and user.store_domain:
+            user.has_shopify_store = True
+            user.shopify_domain = user.store_domain
+        else:
+            user.has_shopify_store = False
+            if user.store_platform != User.StorePlatform.SHOPIFY:
+                user.shopify_domain = ""
+        user.save()
+        try:
+            capture_event(
+                "store_profile_updated",
+                distinct_id=str(user.pk),
+                properties={
+                    "store_platform": user.store_platform,
+                    "store_domain": user.store_domain,
+                },
+            )
+        except Exception:  # pragma: no cover
+            logger.exception("Failed to record store profile update for user %s", user.pk)
+        return Response(UserSerializer(user).data, status=200)
