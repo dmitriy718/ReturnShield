@@ -11,7 +11,7 @@ import NotFoundPage from './pages/NotFound.tsx'
 import DMARCPolicyPage from './pages/DMARCPolicy.tsx'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
-const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com'
+const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://analytics.returnshield.app'
 
 if (POSTHOG_KEY) {
   posthog.init(POSTHOG_KEY, {

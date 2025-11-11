@@ -4,6 +4,7 @@ import type { ChangeEvent, MouseEvent as ReactMouseEvent } from 'react'
 import posthog from 'posthog-js'
 import logoMark from './assets/logo-mark.svg'
 import './App.css'
+import { withUtm } from './utils/utm'
 
 type ReturnlessCandidate = {
   sku: string
@@ -758,7 +759,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
       headline: 'Subscription beauty merchant recovered $94K in Q2.',
       detail: 'VIP Resolution Hub prioritized top 5% customers and automated keep-it credits.',
       cta: 'Book a concierge review',
-    href: 'https://app.returnshield.app/register?plan=scale',
+      href: withUtm('https://app.returnshield.app/register?plan=scale', 'success_story_scale'),
     },
     {
       headline: 'Lifestyle retailer diverted 18K lbs from landfill.',
@@ -910,14 +911,14 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           <div className="nav-mobile-cta">
             <a
               className="link-muted"
-              href="https://app.returnshield.app/login"
+              href={withUtm('https://app.returnshield.app/login', 'nav_mobile_login')}
               onClick={() => setNavOpen(false)}
             >
               Log in
             </a>
             <a
               className="btn btn-primary"
-              href="https://app.returnshield.app/register"
+              href={withUtm('https://app.returnshield.app/register', 'nav_mobile_primary_cta')}
               onClick={() => {
                 setNavOpen(false)
                 posthog.capture('cta_click', { cta: 'start_preventing_returns' })
@@ -928,12 +929,12 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           </div>
         </nav>
         <div className="nav-actions">
-          <a className="link-muted" href="https://app.returnshield.app/login">
+          <a className="link-muted" href={withUtm('https://app.returnshield.app/login', 'nav_desktop_login')}>
             Log in
           </a>
           <a
             className="btn btn-primary btn-trial"
-            href="https://app.returnshield.app/register"
+            href={withUtm('https://app.returnshield.app/register', 'nav_desktop_primary_cta')}
             onClick={() => posthog.capture('cta_click', { cta: 'start_preventing_returns' })}
           >
             Start Preventing Returns
@@ -966,7 +967,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
             <div className="hero-cta">
               <a
                 className="btn btn-primary"
-                href="https://app.returnshield.app/register"
+                href={withUtm('https://app.returnshield.app/register', 'hero_primary_cta')}
                 onClick={() => posthog.capture('cta_click', { cta: 'start_preventing_returns' })}
               >
                 Start Preventing Returns
@@ -992,7 +993,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
                 <p>Connect, sync, and act in under 72 hours.</p>
                 <a
                   className="btn btn-secondary btn-compact"
-                  href="https://app.returnshield.app/register"
+                  href={withUtm('https://app.returnshield.app/register', 'hero_proof_start')}
                   onClick={() => posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })}
                 >
                   Turn Returns into Relationships
@@ -1354,7 +1355,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           <div className="cta-banner-actions">
             <a
               className="btn btn-primary"
-              href="https://app.returnshield.app/register"
+              href={withUtm('https://app.returnshield.app/register', 'cta_banner_primary')}
               onClick={() => posthog.capture('cta_click', { cta: 'unlock_returnshield_effect' })}
             >
               Unlock Your ReturnShield Effect
@@ -1374,7 +1375,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           <p>Start a live walkthrough and activate exchange-first automations within 72 hours.</p>
           <a
             className="btn btn-primary"
-            href="https://app.returnshield.app/register?concierge=1"
+            href={withUtm('https://app.returnshield.app/register?concierge=1', 'conversion_concierge')}
             onClick={() => posthog.capture('cta_click', { cta: 'schedule_concierge_onboarding' })}
           >
             Schedule concierge onboarding
@@ -1386,7 +1387,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           <p>Visit the ReturnShield operator console to monitor exchange wins and VIP queue updates.</p>
           <a
             className="btn btn-secondary btn-prominent"
-            href="https://app.returnshield.app"
+            href={withUtm('https://app.returnshield.app', 'conversion_operator_console')}
             onClick={() => posthog.capture('cta_click', { cta: 'operator_console' })}
           >
             Go to operator console
@@ -1426,7 +1427,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
             </Link>
             <a
               className="btn btn-secondary"
-              href="https://app.returnshield.app/register?plan=scale"
+              href={withUtm('https://app.returnshield.app/register?plan=scale', 'autopilot_launch_scale')}
               onClick={() => posthog.capture('cta_click', { cta: 'launch_exchange_autopilot' })}
             >
               Launch in my store
@@ -1567,7 +1568,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           ) : null}
           <div className="pricing-cta">
             <a
-              href="https://app.returnshield.app/register"
+              href={withUtm('https://app.returnshield.app/register', 'pricing_secondary_cta')}
               className="btn btn-secondary btn-prominent"
               onClick={() => posthog.capture('cta_click', { cta: 'turn_returns_into_relationships' })}
             >
@@ -1590,7 +1591,7 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
             <p>Ship ReturnShield today and be the success story we feature next week.</p>
           <a
             className="btn btn-secondary btn-prominent"
-            href="https://app.returnshield.app/register"
+              href={withUtm('https://app.returnshield.app/register', 'testimonial_walkthrough')}
             onClick={() => posthog.capture('cta_click', { cta: 'schedule_walkthrough' })}
           >
               Schedule 15-minute walkthrough

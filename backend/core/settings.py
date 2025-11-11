@@ -66,7 +66,7 @@ HELPSCOUT_APP_SECRET = os.getenv("HELPSCOUT_APP_SECRET", "")
 HELPSCOUT_MAILBOX_ID = os.getenv("HELPSCOUT_MAILBOX_ID", "")
 
 POSTHOG_API_KEY = os.getenv("POSTHOG_API_KEY", "")
-POSTHOG_HOST = os.getenv("POSTHOG_HOST", "https://app.posthog.com")
+POSTHOG_HOST = os.getenv("POSTHOG_HOST", "https://analytics.returnshield.app")
 
 
 # Application definition
@@ -86,6 +86,8 @@ INSTALLED_APPS = [
     'support',
     'notifications',
     'shopify_integration',
+    'bigcommerce_integration',
+    'woocommerce_integration',
     'returns',
 ]
 

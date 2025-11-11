@@ -7,7 +7,7 @@ export default defineConfig({
   define: {
     'import.meta.env.VITE_POSTHOG_KEY': JSON.stringify(process.env.VITE_POSTHOG_KEY || ''),
     'import.meta.env.VITE_POSTHOG_HOST': JSON.stringify(
-      process.env.VITE_POSTHOG_HOST || 'https://app.posthog.com',
+      process.env.VITE_POSTHOG_HOST || 'https://analytics.returnshield.app',
     ),
   },
 })
