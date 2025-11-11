@@ -90,3 +90,21 @@ class AuthAPITestCase(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         mock_capture_event.assert_called_once()
+
+    @mock.patch("accounts.views.capture_event")
+    def test_walkthrough_completion_updates_flag(self, mock_capture_event):
+        user = User.objects.create_user(
+            username="walkthrough",
+            email="walkthrough@returnshield.app",
+            password="StrongPass123!",
+        )
+        self.client.force_authenticate(user)
+        response = self.client.post(
+            reverse("accounts:walkthrough"),
+            {"completed": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user.refresh_from_db()
+        self.assertTrue(user.has_completed_walkthrough)
+        mock_capture_event.assert_called_once()

@@ -84,3 +84,22 @@ class OnboardingProgressView(APIView):
         except Exception:  # pragma: no cover
             logger.exception("Failed to record onboarding stage for user %s", user.pk)
         return Response({"status": "updated", "onboarding_stage": stage})
+
+
+class WalkthroughCompletionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        completed = bool(request.data.get("completed"))
+        user = request.user
+        user.has_completed_walkthrough = completed
+        user.save(update_fields=["has_completed_walkthrough"])
+        try:
+            capture_event(
+                "walkthrough_completed" if completed else "walkthrough_reset",
+                distinct_id=str(user.pk),
+                properties={"completed": completed},
+            )
+        except Exception:  # pragma: no cover
+            logger.exception("Failed to record walkthrough completion for user %s", user.pk)
+        return Response({"status": "updated", "has_completed_walkthrough": completed})

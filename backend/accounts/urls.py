@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import MeView, OnboardingProgressView, RegisterView
+from .views import MeView, OnboardingProgressView, RegisterView, WalkthroughCompletionView
 
 app_name = "accounts"
 
@@ -10,5 +10,6 @@ urlpatterns = [
     path("login/", obtain_auth_token, name="login"),
     path("me/", MeView.as_view(), name="me"),
     path("onboarding/", OnboardingProgressView.as_view(), name="onboarding"),
+    path("walkthrough/", WalkthroughCompletionView.as_view(), name="walkthrough"),
 ]
 
