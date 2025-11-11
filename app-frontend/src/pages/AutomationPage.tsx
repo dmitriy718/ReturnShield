@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { apiFetch, ApiError } from '../services/api'
 import type { ExchangePlaybookResponse } from '../types'
@@ -21,13 +21,58 @@ const DEFAULT_FORM: AutomationForm = {
   top_return_reason: 'Size / fit mismatch',
 }
 
+const FORM_STORAGE_PREFIX = 'returnshield_automation_form'
+
+function sanitizeFormPayload(payload: Partial<AutomationForm>): AutomationForm {
+  return {
+    return_rate:
+      typeof payload.return_rate === 'number' && Number.isFinite(payload.return_rate)
+        ? payload.return_rate
+        : DEFAULT_FORM.return_rate,
+    exchange_rate:
+      typeof payload.exchange_rate === 'number' && Number.isFinite(payload.exchange_rate)
+        ? payload.exchange_rate
+        : DEFAULT_FORM.exchange_rate,
+    average_order_value:
+      typeof payload.average_order_value === 'number' && Number.isFinite(payload.average_order_value)
+        ? payload.average_order_value
+        : DEFAULT_FORM.average_order_value,
+    logistic_cost_per_return:
+      typeof payload.logistic_cost_per_return === 'number' && Number.isFinite(payload.logistic_cost_per_return)
+        ? payload.logistic_cost_per_return
+        : DEFAULT_FORM.logistic_cost_per_return,
+    top_return_reason: payload.top_return_reason ?? DEFAULT_FORM.top_return_reason,
+  }
+}
+
 export function AutomationPage() {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
 
   const [form, setForm] = useState(DEFAULT_FORM)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [playbook, setPlaybook] = useState<ExchangePlaybookResponse | null>(null)
+  const storageKey = user ? `${FORM_STORAGE_PREFIX}_${user.id}` : FORM_STORAGE_PREFIX
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<AutomationForm>
+        setForm(sanitizeFormPayload(parsed))
+      }
+    } catch (storageError) {
+      console.warn('Unable to load saved automation defaults', storageError)
+    }
+  }, [storageKey])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(form))
+    } catch (storageError) {
+      console.warn('Unable to persist automation defaults', storageError)
+    }
+  }, [form, storageKey])
 
   const handleChange = (field: keyof AutomationForm, value: string) => {
     setForm((prev) => ({
@@ -39,6 +84,15 @@ export function AutomationPage() {
             ? ''
             : Number(value),
     }))
+  }
+
+  const handleResetForm = () => {
+    setForm(DEFAULT_FORM)
+    try {
+      localStorage.removeItem(storageKey)
+    } catch (storageError) {
+      console.warn('Unable to clear automation defaults', storageError)
+    }
   }
 
   const handleSubmit = async (event: FormEvent) => {
@@ -153,6 +207,10 @@ export function AutomationPage() {
           </label>
 
           {error && <p className="automation-error">{error}</p>}
+
+          <button type="button" className="automation-reset" onClick={handleResetForm} disabled={submitting}>
+            Reset to defaults
+          </button>
 
           <button type="submit" disabled={submitting}>
             {submitting ? 'Generating recommendations…' : 'Generate playbook'}
