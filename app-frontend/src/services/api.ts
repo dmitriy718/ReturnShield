@@ -58,7 +58,7 @@ export async function apiFetch<T = unknown>(
       try {
         const payload = await response.json()
         detail = payload?.detail ?? JSON.stringify(payload)
-      } catch (parseError) {
+      } catch {
         detail = response.statusText
       }
     } else {

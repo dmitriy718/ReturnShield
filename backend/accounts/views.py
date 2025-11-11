@@ -37,6 +37,8 @@ class RegisterView(generics.CreateAPIView):
                     "email": user.email,
                     "company_name": user.company_name,
                     "onboarding_stage": user.onboarding_stage,
+                    "has_shopify_store": user.has_shopify_store,
+                    "subscription_status": user.subscription_status,
                 },
             )
             capture_event(
@@ -45,6 +47,7 @@ class RegisterView(generics.CreateAPIView):
                 properties={
                     "company_name": user.company_name,
                     "shopify_domain": user.shopify_domain,
+                    "has_shopify_store": user.has_shopify_store,
                 },
             )
         except Exception:  # pragma: no cover

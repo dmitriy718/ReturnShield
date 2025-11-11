@@ -10,6 +10,7 @@ export function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [companyName, setCompanyName] = useState('')
+  const [hasShopifyStore, setHasShopifyStore] = useState<'yes' | 'no' | ''>('')
   const [shopifyDomain, setShopifyDomain] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -19,10 +20,12 @@ export function RegisterPage() {
     setSubmitting(true)
     setError(null)
     try {
+      const normalizedHasStore = hasShopifyStore === 'yes'
       await register({
         email: email.trim(),
         password,
         companyName: companyName.trim(),
+        hasShopifyStore: normalizedHasStore,
         shopifyDomain: shopifyDomain.trim(),
       })
     } catch (err) {
@@ -77,19 +80,58 @@ export function RegisterPage() {
             />
           </label>
 
-          <label>
+          <fieldset className="auth-fieldset">
+            <legend>Do you currently run a Shopify store?</legend>
+            <label className="auth-radio">
+              <input
+                type="radio"
+                name="has_shopify_store"
+                value="yes"
+                checked={hasShopifyStore === 'yes'}
+                onChange={() => setHasShopifyStore('yes')}
+                required
+              />
+              <span>Yes, I operate a Shopify storefront</span>
+            </label>
+            <label className="auth-radio">
+              <input
+                type="radio"
+                name="has_shopify_store"
+                value="no"
+                checked={hasShopifyStore === 'no'}
+                onChange={() => {
+                  setHasShopifyStore('no')
+                  setShopifyDomain('')
+                }}
+                required
+              />
+              <span>No, I’m validating workflows first</span>
+            </label>
+          </fieldset>
+
+          <label className={hasShopifyStore === 'yes' ? '' : 'input-disabled'}>
             <span>Primary Shopify domain</span>
             <input
               type="text"
               value={shopifyDomain}
               onChange={(event) => setShopifyDomain(event.target.value)}
               placeholder="brand.myshopify.com"
+              required={hasShopifyStore === 'yes'}
+              disabled={hasShopifyStore !== 'yes'}
             />
+            <small>
+              We’ll blur live metrics until billing is active. If you’re exploring without a store, we’ll guide you with
+              sample data.
+            </small>
           </label>
 
           {error && <p className="auth-error">{error}</p>}
 
-          <button type="submit" className="auth-submit" disabled={submitting}>
+          <button
+            type="submit"
+            className="auth-submit"
+            disabled={submitting || hasShopifyStore === ''}
+          >
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
         </form>
