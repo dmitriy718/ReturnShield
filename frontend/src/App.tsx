@@ -191,6 +191,58 @@ type VIPQueuePayload = {
   summary: VIPQueueSummary
 }
 
+type ExchangeCoachApiMetrics = {
+  return_volume_30d?: number
+  avg_unit_cost?: number
+  margin_at_risk?: number
+}
+
+type ExchangeCoachApiAction = {
+  sku?: string
+  headline?: string
+  description?: string
+  recommended_play?: string[]
+  estimated_monthly_uplift?: number
+  impact_score?: number
+  metrics?: ExchangeCoachApiMetrics
+}
+
+type ExchangeCoachApiSummary = {
+  period?: string
+  aggregate_margin_at_risk?: number
+  projected_exchange_uplift?: number
+}
+
+type ExchangeCoachApiPayload = {
+  actions?: ExchangeCoachApiAction[]
+  summary?: ExchangeCoachApiSummary
+}
+
+type VIPQueueApiEntry = {
+  ticket_id?: string
+  customer?: string
+  loyalty_segment?: string
+  ltv?: number
+  order_value?: number
+  return_reason?: string
+  recommended_action?: string
+  hours_open?: number
+  predicted_churn_risk?: number
+  sku?: string
+}
+
+type VIPQueueApiSummary = {
+  open_tickets?: number
+  avg_hours_open?: number
+  revenue_defended?: number
+  ops_hours_returned?: number
+}
+
+type VIPQueueApiPayload = {
+  queue?: VIPQueueApiEntry[]
+  summary?: VIPQueueApiSummary
+}
+
 const fallbackCoach: ExchangeCoachPayload = {
   actions: [
     {
@@ -419,10 +471,10 @@ function App() {
     }
   }
 
-const transformCoachPayload = (payload: any): ExchangeCoachPayload => {
+const transformCoachPayload = (payload: ExchangeCoachApiPayload | null | undefined): ExchangeCoachPayload => {
   const summary = payload?.summary ?? {}
   const actions = Array.isArray(payload?.actions)
-    ? payload.actions.map((item: any) => ({
+    ? payload.actions.map((item: ExchangeCoachApiAction) => ({
         sku: item?.sku ?? '',
         headline: item?.headline ?? '',
         description: item?.description ?? '',
@@ -449,10 +501,10 @@ const transformCoachPayload = (payload: any): ExchangeCoachPayload => {
   }
 }
 
-const transformVipPayload = (payload: any): VIPQueuePayload => {
+const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VIPQueuePayload => {
   const summary = payload?.summary ?? {}
   const queue = Array.isArray(payload?.queue)
-    ? payload.queue.map((item: any) => ({
+    ? payload.queue.map((item: VIPQueueApiEntry) => ({
         ticketId: item?.ticket_id ?? '',
         customer: item?.customer ?? '',
         loyaltySegment: item?.loyalty_segment ?? '',
@@ -608,7 +660,7 @@ const transformVipPayload = (payload: any): VIPQueuePayload => {
     }
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/billing/create-checkout-session/`, {
+      const response = await fetch(`${apiBaseUrl}/billing/create-checkout-session/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
