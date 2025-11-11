@@ -59,6 +59,13 @@ type ChecklistItem = {
   }
 }
 
+type ResourceLink = {
+  title: string
+  detail: string
+  href?: string
+  to?: string
+}
+
 const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
     key: 'summary',
@@ -111,6 +118,24 @@ const TOOLTIP_COPY: Record<WalkthroughKey, string> = {
   vip: 'VIP Resolution Hub keeps loyalty-rich tickets front and centre for concierge action.',
   plan: 'Choose a plan when you’re ready to unlock live store data and automation.',
 }
+
+const RESOURCE_LINKS: ResourceLink[] = [
+  {
+    title: 'Marketing launch kit',
+    detail: 'Step-by-step campaign plan with positioning, outreach channels, and demo flow.',
+    href: 'https://raw.githubusercontent.com/dmitriy718/ReturnShield/master/docs/marketing-plan.md',
+  },
+  {
+    title: 'Operator playbook',
+    detail: 'Daily dashboard workflow for your CX team to review insights, coach plays, and VIP queue.',
+    href: 'https://raw.githubusercontent.com/dmitriy718/ReturnShield/master/docs/operator-playbook.md',
+  },
+  {
+    title: 'Stripe billing checklist',
+    detail: 'Verify live keys, price IDs, and success URLs before inviting your finance team.',
+    to: '/billing',
+  },
+]
 
 export function DashboardPage() {
   const navigate = useNavigate()
@@ -734,6 +759,36 @@ export function DashboardPage() {
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="panel resource-panel">
+          <header>
+            <h2>Resource library</h2>
+          </header>
+          <p className="panel-subtitle">
+            Share these guides with marketing, CX, and finance so every stakeholder knows how ReturnShield operates.
+          </p>
+          <div className="resource-grid">
+            {RESOURCE_LINKS.map((resource) => (
+              <div key={resource.title} className="resource-card">
+                <h3>{resource.title}</h3>
+                <p>{resource.detail}</p>
+                {resource.href ? (
+                  <a className="resource-link" href={resource.href} target="_blank" rel="noreferrer">
+                    View resource
+                  </a>
+                ) : resource.to ? (
+                  <button
+                    type="button"
+                    className="resource-link"
+                    onClick={() => navigate(resource.to!)}
+                  >
+                    Open section
+                  </button>
+                ) : null}
+              </div>
+            ))}
+          </div>
         </article>
       </section>
     </div>
