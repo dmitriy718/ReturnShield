@@ -9,6 +9,8 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from analytics.posthog import capture as capture_event
+
 logger = logging.getLogger(__name__)
 
 
@@ -64,3 +66,27 @@ class CreateCheckoutSessionView(APIView):
             )
 
         return Response({"checkout_url": session.url})
+
+
+class ActivateSubscriptionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args: Any, **kwargs: Any) -> Response:
+        plan = (request.data.get("plan") or "").lower()
+        if plan not in {"launch", "scale", "elite"}:
+            return Response({"detail": "Unknown plan."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        user.subscription_status = plan
+        user.save(update_fields=["subscription_status"])
+
+        try:
+            capture_event(
+                "subscription_plan_activated",
+                distinct_id=str(user.pk),
+                properties={"plan": plan},
+            )
+        except Exception:  # pragma: no cover
+            logger.exception("Failed to record subscription activation for user %s", user.pk)
+
+        return Response({"subscription_status": plan}, status=status.HTTP_200_OK)
