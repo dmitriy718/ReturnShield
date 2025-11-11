@@ -9,6 +9,7 @@ import type {
   VipQueuePayload,
 } from '../types'
 import { useAuth } from '../providers/AuthProvider'
+import { LoadingScreen } from '../components/ui/LoadingScreen'
 import './DashboardPage.css'
 
 type DashboardState = {
@@ -45,6 +46,18 @@ type WalkthroughStep = {
 }
 
 type GateMode = 'open' | 'blurred' | 'preview'
+
+type ChecklistItem = {
+  id: string
+  label: string
+  detail: string
+  status: 'done' | 'todo' | 'progress'
+  action?: {
+    label: string
+    onClick?: () => void
+    href?: string
+  }
+}
 
 const WALKTHROUGH_STEPS: WalkthroughStep[] = [
   {
@@ -91,9 +104,17 @@ const WALKTHROUGH_STEPS: WalkthroughStep[] = [
 
 const ALL_WALKTHROUGH_KEYS: WalkthroughKey[] = WALKTHROUGH_STEPS.map((step) => step.key)
 
+const TOOLTIP_COPY: Record<WalkthroughKey, string> = {
+  summary: 'These KPIs show how ReturnShield protects margin, landfill, and team time each month.',
+  returnless: 'Spot high-risk SKUs and the policy moves that prevent refunds before they happen.',
+  coach: 'AI Exchange Coach recommends the next exchanges to approve for maximum uplift.',
+  vip: 'VIP Resolution Hub keeps loyalty-rich tickets front and centre for concierge action.',
+  plan: 'Choose a plan when you’re ready to unlock live store data and automation.',
+}
+
 export function DashboardPage() {
   const navigate = useNavigate()
-  const { token, user, updateOnboarding, refreshUser, completeWalkthrough } = useAuth()
+  const { token, user, loading: authLoading, updateOnboarding, refreshUser, completeWalkthrough } = useAuth()
   const [state, setState] = useState<DashboardState>(INITIAL_STATE)
   const [updatingStage, setUpdatingStage] = useState(false)
   const [isWalkthroughActive, setIsWalkthroughActive] = useState(false)
@@ -105,8 +126,37 @@ export function DashboardPage() {
   const coachRef = useRef<HTMLDivElement | null>(null)
   const vipRef = useRef<HTMLDivElement | null>(null)
   const planRef = useRef<HTMLDivElement | null>(null)
+  const tipTimeoutRef = useRef<number | null>(null)
 
-  const loadDashboard = async () => {
+  const [justRevealed, setJustRevealed] = useState<WalkthroughKey | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (tipTimeoutRef.current !== null) {
+        window.clearTimeout(tipTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  const loadDashboard = useCallback(async () => {
+    if (!user) {
+      return
+    }
+
+    const isTrialPlan = user.subscription_status === 'trial'
+    const requiresSubscriptionForData = user.has_shopify_store && isTrialPlan
+
+    if (requiresSubscriptionForData) {
+      setState({
+        insights: null,
+        coach: null,
+        vip: null,
+        loading: false,
+        error: null,
+      })
+      return
+    }
+
     setState((prev) => ({ ...prev, loading: true, error: null }))
     try {
       const [insights, coach, vip] = await Promise.all([
@@ -127,16 +177,20 @@ export function DashboardPage() {
         error instanceof ApiError ? error.detail ?? error.message : 'Unable to load dashboard data.'
       setState((prev) => ({ ...prev, loading: false, error: message }))
     }
-  }
+  }, [user])
 
   useEffect(() => {
+    if (!user) {
+      return
+    }
     void loadDashboard()
-  }, [])
+  }, [user, loadDashboard])
 
   useEffect(() => {
     if (!user) {
       setIsWalkthroughActive(false)
       setRevealedSections([])
+      setJustRevealed(null)
       return
     }
     const isTrial = user.subscription_status === 'trial'
@@ -144,16 +198,32 @@ export function DashboardPage() {
       setIsWalkthroughActive(true)
       setCurrentStepIndex(0)
       setRevealedSections([])
+      setJustRevealed(null)
     } else {
       setIsWalkthroughActive(false)
       setRevealedSections(ALL_WALKTHROUGH_KEYS)
+      setJustRevealed(null)
     }
   }, [user])
+
+  useEffect(() => {
+    if (isWalkthroughActive) {
+      document.body.classList.add('dashboard-tour-active')
+    } else {
+      document.body.classList.remove('dashboard-tour-active')
+    }
+    return () => {
+      document.body.classList.remove('dashboard-tour-active')
+    }
+  }, [isWalkthroughActive])
 
   const hasShopifyStore = user?.has_shopify_store ?? false
   const isTrial = user?.subscription_status === 'trial'
   const isPaid = !!user && user.subscription_status !== 'trial'
   const walkthroughComplete = user?.has_completed_walkthrough ?? false
+  const isSampleData = !hasShopifyStore && isTrial
+  const sampleBannerVisible = isSampleData && !isWalkthroughActive
+  const showLoadingScreen = authLoading && !user
 
   const startWalkthrough = useCallback(() => {
     if (!isTrial) {
@@ -205,6 +275,13 @@ export function DashboardPage() {
     const currentStep = WALKTHROUGH_STEPS[currentStepIndex]
     const stepKey = currentStep.key
     setRevealedSections((prev) => (prev.includes(stepKey) ? prev : [...prev, stepKey]))
+    setJustRevealed(stepKey)
+    if (tipTimeoutRef.current !== null) {
+      window.clearTimeout(tipTimeoutRef.current)
+    }
+    tipTimeoutRef.current = window.setTimeout(() => {
+      setJustRevealed(null)
+    }, 3200)
 
     if (stepKey === 'plan') {
       await completeWalkthrough(true)
@@ -230,7 +307,7 @@ export function DashboardPage() {
     window.setTimeout(() => {
       targetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }, 250)
-  }, [completeWalkthrough, currentStepIndex, handlePlanSelection])
+  }, [completeWalkthrough, currentStepIndex, handlePlanSelection, setJustRevealed])
 
   const gateContext = useMemo(
     () => ({
@@ -253,7 +330,65 @@ export function DashboardPage() {
   const coachCopy = getGateCopy(coachMode, 'coach', gateContext)
   const vipCopy = getGateCopy(vipMode, 'vip', gateContext)
   const planCopy = getGateCopy(planMode, 'plan', gateContext)
-
+  const checklistItems = useMemo<ChecklistItem[]>(() => {
+    return [
+      {
+        id: 'shopify',
+        label: hasShopifyStore ? 'Shopify storefront verified' : 'Confirm your Shopify storefront',
+        detail: hasShopifyStore
+          ? 'We sync your return events nightly so insights stay fresh.'
+          : 'Tell us which Shopify domain to connect so we can prepare live data.',
+        status: hasShopifyStore ? 'done' : 'todo',
+        action: hasShopifyStore
+          ? undefined
+          : {
+              label: 'Email onboarding',
+              href: 'mailto:concierge@returnshield.app?subject=Connect%20Shopify%20store',
+            },
+      },
+      {
+        id: 'walkthrough',
+        label: walkthroughComplete ? 'Guided tour completed' : 'Complete the guided dashboard tour',
+        detail: walkthroughComplete
+          ? 'Revisit sections any time using the checklist below.'
+          : 'We reveal each dashboard module step-by-step before unlocking data.',
+        status: walkthroughComplete ? 'done' : 'progress',
+        action:
+          !walkthroughComplete && isTrial
+            ? {
+                label: 'Resume guided tour',
+                onClick: startWalkthrough,
+              }
+            : undefined,
+      },
+      {
+        id: 'plan',
+        label: isPaid ? `Plan active: ${user?.subscription_status.toUpperCase()}` : 'Choose a plan to unblur live data',
+        detail: isPaid
+          ? 'Manage billing or upgrade anytime inside the Billing tab.'
+          : 'Live returns stay blurred until you pick Launch, Scale, or Elite.',
+        status: isPaid ? 'done' : 'todo',
+        action: isPaid
+          ? {
+              label: 'Manage billing',
+              onClick: () => navigate('/billing'),
+            }
+          : {
+              label: 'Choose plan',
+              onClick: handlePlanSelection,
+            },
+      },
+    ]
+  }, [
+    hasShopifyStore,
+    walkthroughComplete,
+    isTrial,
+    isPaid,
+    startWalkthrough,
+    handlePlanSelection,
+    navigate,
+    user?.subscription_status,
+  ])
   const summaryCards = useMemo(() => {
     const insights = state.insights
     if (!insights) {
@@ -293,6 +428,10 @@ export function DashboardPage() {
     }
   }
 
+  if (showLoadingScreen) {
+    return <LoadingScreen message="Preparing your dashboard..." />
+  }
+
   return (
     <div className="dashboard">
       <WalkthroughWizard
@@ -311,6 +450,12 @@ export function DashboardPage() {
           </button>
         </div>
       )}
+      {sampleBannerVisible ? (
+        <div className="sample-banner">
+          <strong>Preview mode.</strong> You’re exploring ReturnShield’s guided sample workspace. Connect Shopify and
+          activate billing to replace this with your live data.
+        </div>
+      ) : null}
 
       <GateWrapper
         as="section"
@@ -319,7 +464,14 @@ export function DashboardPage() {
         hideOverlay={isWalkthroughActive}
         containerClassName="dashboard-summary"
         contentRef={summaryRef}
+        freshlyRevealed={justRevealed === 'summary'}
+        tip={TOOLTIP_COPY.summary}
       >
+        {isSampleData ? (
+          <p className="sample-context">
+            These KPIs reflect a simulated merchant so you can practise reading the dashboard before your data syncs.
+          </p>
+        ) : null}
         {summaryCards.map((card) => (
           <article key={card.label}>
             <span className="summary-label">{card.label}</span>
@@ -337,6 +489,8 @@ export function DashboardPage() {
           hideOverlay={isWalkthroughActive}
           containerClassName="panel"
           contentRef={returnlessRef}
+        freshlyRevealed={justRevealed === 'returnless'}
+        tip={TOOLTIP_COPY.returnless}
         >
           <header>
             <h2>Returnless intelligence</h2>
@@ -344,6 +498,11 @@ export function DashboardPage() {
               Refresh
             </button>
           </header>
+          {isSampleData ? (
+            <p className="sample-context">
+              Sample SKUs illustrate how we rank refund risk. Connect your store to see your product catalogue here.
+            </p>
+          ) : null}
           <p className="panel-subtitle">
             Top SKUs flagged for keep-it credits and donation routing. Use this to update policies weekly.
           </p>
@@ -387,6 +546,8 @@ export function DashboardPage() {
           hideOverlay={isWalkthroughActive}
           containerClassName="panel"
           contentRef={coachRef}
+        freshlyRevealed={justRevealed === 'coach'}
+        tip={TOOLTIP_COPY.coach}
         >
           <header>
             <h2>AI Exchange Coach queue</h2>
@@ -394,6 +555,11 @@ export function DashboardPage() {
           <p className="panel-subtitle">
             Highest leverage exchange plays with projected uplift. Greenlight the ones that match your objectives.
           </p>
+          {isSampleData ? (
+            <p className="sample-context">
+              These plays demonstrate the guidance you’ll receive once Exchange Coach analyses your live return reasons.
+            </p>
+          ) : null}
           <div className="coach-list">
             {state.coach?.actions.map((action) => (
               <div className="coach-card" key={`${action.sku}-${action.headline}`}>
@@ -435,11 +601,18 @@ export function DashboardPage() {
           hideOverlay={isWalkthroughActive}
           containerClassName="panel"
           contentRef={vipRef}
+        freshlyRevealed={justRevealed === 'vip'}
+        tip={TOOLTIP_COPY.vip}
         >
           <header>
             <h2>VIP resolution queue</h2>
           </header>
           <p className="panel-subtitle">Prioritise these loyalty-rich tickets to keep high-value revenue in play.</p>
+          {isSampleData ? (
+            <p className="sample-context">
+              We populate this queue with example VIPs so you can practise concierge workflows before connecting a store.
+            </p>
+          ) : null}
           <div className="table-scroll">
             <table>
               <thead>
@@ -497,6 +670,8 @@ export function DashboardPage() {
           hideOverlay={isWalkthroughActive}
           containerClassName="panel plan-panel"
           contentRef={planRef}
+        freshlyRevealed={justRevealed === 'plan'}
+        tip={TOOLTIP_COPY.plan}
         >
           <header>
             <h2>Unlock live automation</h2>
@@ -523,6 +698,43 @@ export function DashboardPage() {
             Choose my package
           </button>
         </GateWrapper>
+
+        <article className="panel checklist-panel">
+          <header>
+            <h2>Quick start checklist</h2>
+          </header>
+          <p className="panel-subtitle">
+            Work through these steps to replace the guided preview with live automations from your brand.
+          </p>
+          <ul className="checklist">
+            {checklistItems.map((item) => (
+              <li key={item.id} className={`checklist-item checklist-item--${item.status}`}>
+                <div className="checklist-copy">
+                  <span className="checklist-label">{item.label}</span>
+                  <p>{item.detail}</p>
+                </div>
+                <div className="checklist-meta">
+                  <span className="checklist-status">{item.status === 'done' ? 'Done' : item.status === 'progress' ? 'In progress' : 'To do'}</span>
+                  {item.action ? (
+                    item.action.href ? (
+                      <a className="checklist-action" href={item.action.href}>
+                        {item.action.label}
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        className="checklist-action"
+                        onClick={item.action.onClick}
+                      >
+                        {item.action.label}
+                      </button>
+                    )
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </article>
       </section>
     </div>
   )
@@ -591,6 +803,8 @@ type GateWrapperProps = {
   containerClassName?: string
   contentRef?: MutableRefObject<HTMLDivElement | null> | null
   hideOverlay?: boolean
+  tip?: string
+  freshlyRevealed?: boolean
   children: ReactNode
 }
 
@@ -601,6 +815,8 @@ function GateWrapper({
   containerClassName,
   contentRef,
   hideOverlay = false,
+  tip,
+  freshlyRevealed = false,
   children,
 }: GateWrapperProps) {
   const Component = as
@@ -617,6 +833,11 @@ function GateWrapper({
       >
         {children}
       </div>
+      {mode === 'open' && tip && freshlyRevealed ? (
+        <div className="gate-tip">
+          <span>{tip}</span>
+        </div>
+      ) : null}
       {!hideOverlay && mode !== 'open' && copy ? (
         <div className="data-gate__overlay">
           <h3>{copy.title}</h3>
