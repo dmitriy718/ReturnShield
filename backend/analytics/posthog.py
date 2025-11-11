@@ -9,21 +9,27 @@ from posthog import Posthog
 logger = logging.getLogger(__name__)
 
 _client: Optional[Posthog] = None
+_client_api_key: Optional[str] = None
 
 
 def _get_client() -> Optional[Posthog]:
-    global _client
-    if _client is not None:
+    global _client, _client_api_key
+    api_key = getattr(settings, "POSTHOG_API_KEY", "")
+    if _client is not None and _client_api_key == api_key:
         return _client
 
-    if not settings.POSTHOG_API_KEY:
+    if not api_key:
+        _client = None
+        _client_api_key = None
         return None
 
     try:
-        _client = Posthog(settings.POSTHOG_API_KEY, host=settings.POSTHOG_HOST)
+        _client = Posthog(api_key, host=getattr(settings, "POSTHOG_HOST", "https://app.posthog.com"))
+        _client_api_key = api_key
     except Exception as exc:  # pragma: no cover
         logger.exception("Failed to initialize PostHog client: %s", exc)
         _client = None
+        _client_api_key = None
     return _client
 
 
