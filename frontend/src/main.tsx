@@ -23,7 +23,7 @@ if (POSTHOG_KEY) {
   })
 }
 
-function RoutedApp() {
+export function RoutedApp() {
   const location = useLocation()
 
   useEffect(() => {
