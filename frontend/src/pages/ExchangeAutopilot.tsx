@@ -5,6 +5,7 @@ import posthog from 'posthog-js'
 
 import logoMark from '../assets/logo-mark.svg'
 import '../App.css'
+import { withUtm } from '../utils/utm'
 
 const proofPoints = [
   {
@@ -105,10 +106,10 @@ export default function ExchangeAutopilotPage() {
     }
   }
 
-  const handleDemoClick = (cta: string, destination?: string) => {
+  const handleDemoClick = (cta: string, destination?: string, utmContent?: string) => {
     posthog.capture('exchange_autopilot_cta', { cta })
     if (destination) {
-      window.location.href = destination
+      window.location.href = withUtm(destination, utmContent ?? cta)
     }
   }
 
@@ -154,14 +155,14 @@ export default function ExchangeAutopilotPage() {
           <div className="nav-mobile-cta">
             <a
               className="link-muted"
-              href="https://app.returnshield.app/register?plan=scale"
+              href={withUtm('https://app.returnshield.app/register?plan=scale', 'exchange_mobile_book_call')}
               onClick={() => setNavOpen(false)}
             >
               Book a call
             </a>
             <a
               className="btn btn-primary"
-              href="https://app.returnshield.app/register"
+              href={withUtm('https://app.returnshield.app/register', 'exchange_mobile_primary_cta')}
               onClick={() => {
                 setNavOpen(false)
                 posthog.capture('exchange_autopilot_cta', { cta: 'start_preventing_returns' })
@@ -172,12 +173,15 @@ export default function ExchangeAutopilotPage() {
           </div>
         </nav>
         <div className="nav-actions">
-          <a className="link-muted" href="https://app.returnshield.app/register?plan=scale">
+          <a
+            className="link-muted"
+            href={withUtm('https://app.returnshield.app/register?plan=scale', 'exchange_header_book_call')}
+          >
             Book a call
           </a>
           <a
             className="btn btn-primary btn-trial"
-            href="https://app.returnshield.app/register"
+            href={withUtm('https://app.returnshield.app/register', 'exchange_header_primary_cta')}
             onClick={() => posthog.capture('exchange_autopilot_cta', { cta: 'start_preventing_returns' })}
           >
             Start Preventing Returns
@@ -198,19 +202,31 @@ export default function ExchangeAutopilotPage() {
             <div className="hero-cta">
               <button
                 className="btn btn-primary"
-                onClick={() => handleDemoClick('start_preventing_returns', 'https://app.returnshield.app/register')}
+              onClick={() =>
+                handleDemoClick(
+                  'start_preventing_returns',
+                  'https://app.returnshield.app/register',
+                  'exchange_hero_primary_cta',
+                )
+              }
               >
                 Start Preventing Returns
               </button>
               <button
                 className="btn btn-secondary"
-                onClick={() => handleDemoClick('turn_returns_into_relationships', 'https://app.returnshield.app/register')}
+              onClick={() =>
+                handleDemoClick(
+                  'turn_returns_into_relationships',
+                  'https://app.returnshield.app/register',
+                  'exchange_hero_secondary_cta',
+                )
+              }
               >
                 Turn Returns into Relationships
               </button>
               <button
                 className="btn btn-link"
-                onClick={() => handleDemoClick('see_the_why', 'https://returnshield.app/#features')}
+              onClick={() => handleDemoClick('see_the_why', 'https://returnshield.app/#features', 'exchange_hero_anchor')}
               >
                 See the Why Behind Returns
               </button>
@@ -238,7 +254,13 @@ export default function ExchangeAutopilotPage() {
                 </div>
                 <button
                   className="btn btn-primary btn-small"
-                  onClick={() => handleDemoClick('unlock_returnshield_effect', 'https://app.returnshield.app/register')}
+                  onClick={() =>
+                    handleDemoClick(
+                      'unlock_returnshield_effect',
+                      'https://app.returnshield.app/register',
+                      'exchange_card_unlock',
+                    )
+                  }
                 >
                   Unlock Your ReturnShield Effect
                 </button>
@@ -311,13 +333,25 @@ export default function ExchangeAutopilotPage() {
           <div className="hero-cta">
             <button
               className="btn btn-primary"
-              onClick={() => handleDemoClick('start_now', 'https://app.returnshield.app/register?plan=scale')}
+              onClick={() =>
+                handleDemoClick(
+                  'start_now',
+                  'https://app.returnshield.app/register?plan=scale',
+                  'exchange_roi_start_scale',
+                )
+              }
             >
               Start Exchange Autopilot
             </button>
             <button
               className="btn btn-secondary"
-              onClick={() => handleDemoClick('speak_to_specialist', 'https://app.returnshield.app/register?concierge=1')}
+              onClick={() =>
+                handleDemoClick(
+                  'speak_to_specialist',
+                  'https://app.returnshield.app/register?concierge=1',
+                  'exchange_roi_specialist',
+                )
+              }
             >
               Talk to a specialist
             </button>

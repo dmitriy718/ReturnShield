@@ -7,7 +7,8 @@ ReturnShield is a returns intelligence platform for Shopify brands. The stack is
 - `backend/` – Django project (`core`) with `accounts` app, REST endpoints, and auth tests.
 - `frontend/` – Vite + React + TypeScript marketing site served at `returnshield.app`.
 - `app-frontend/` – Authenticated dashboard (React + Vite) served at `app.returnshield.app`.
-- `docker-compose.yml` – Orchestrates backend, marketing frontend, dashboard frontend, and PostgreSQL for local development.
+- `posthog-proxy/` – Nginx reverse proxy that fronts PostHog Cloud for analytics.
+- `docker-compose.yml` – Orchestrates backend, marketing frontend, dashboard frontend, PostHog proxy, and PostgreSQL for local development.
 
 ## Getting Started
 
@@ -58,6 +59,7 @@ ReturnShield is a returns intelligence platform for Shopify brands. The stack is
    - API → `http://localhost:8000`
    - Marketing site → `http://localhost:3000`
    - Dashboard → `http://localhost:4173`
+   - PostHog proxy → `http://localhost:9000`
    - PostgreSQL → `localhost:5432`
 
 ### Testing
@@ -82,6 +84,7 @@ npm run build
   - `https://returnshield.app/` → marketing frontend (`127.0.0.1:8080`)  
   - `https://app.returnshield.app/` → dashboard frontend (`127.0.0.1:8081`)  
   - `https://*/api/` → Django API (`127.0.0.1:8000`)  
+  - `https://analytics.returnshield.app/` → PostHog proxy (`127.0.0.1:9000`)  
   Certbot manages TLS (`certbot renew --dry-run` to check automation).
 - Docker stack is supervised by `systemd` (`returnshield.service`) and runs `docker-compose up`; restart via `sudo systemctl restart returnshield.service`.
 
