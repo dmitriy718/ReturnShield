@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../providers/AuthProvider'
 import './AppLayout.css'
 
@@ -9,8 +10,29 @@ const navigation = [
 ]
 
 export function AppLayout() {
-  const { user, logout } = useAuth()
+  const { user, logout, completeWalkthrough } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
+  const [resettingTour, setResettingTour] = useState(false)
+
+  const canResetTour = Boolean(user?.has_completed_walkthrough)
+
+  const handleResetTour = async () => {
+    if (resettingTour) {
+      return
+    }
+    try {
+      setResettingTour(true)
+      await completeWalkthrough(false)
+      if (location.pathname !== '/') {
+        navigate('/')
+      }
+    } catch (error) {
+      console.error('Failed to reset guided tour', error)
+    } finally {
+      setResettingTour(false)
+    }
+  }
 
   return (
     <div className="app-shell">
@@ -52,6 +74,7 @@ export function AppLayout() {
               Stay on top of margins, exchanges, and VIP engagements in a single workspace.
             </p>
           </div>
+        <div className="app-header-actions">
           <div className="app-user">
             <span className="avatar">{getInitials(user?.company_name || user?.username || 'RS')}</span>
             <div>
@@ -59,6 +82,17 @@ export function AppLayout() {
               <p className="user-email">{user?.email}</p>
             </div>
           </div>
+          {canResetTour ? (
+            <button
+              type="button"
+              className="tour-reset-button"
+              onClick={handleResetTour}
+              disabled={resettingTour}
+            >
+              {resettingTour ? 'Resetting tour...' : 'Replay guided tour'}
+            </button>
+          ) : null}
+        </div>
         </header>
         <main>
           <Outlet />
