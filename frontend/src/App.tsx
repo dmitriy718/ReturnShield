@@ -192,6 +192,14 @@ type VIPQueuePayload = {
   summary: VIPQueueSummary
 }
 
+type RoiPreset = {
+  label: string
+  description: string
+  monthlyOrders: number
+  averageOrderValue: number
+  returnRate: number
+}
+
 type ExchangeCoachApiMetrics = {
   return_volume_30d?: number
   avg_unit_cost?: number
@@ -691,6 +699,37 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
       setCheckoutLoadingPlan(null)
     }
   }
+
+  const handleApplyRoiPreset = (preset: RoiPreset) => {
+    setMonthlyOrders(preset.monthlyOrders)
+    setAverageOrderValue(preset.averageOrderValue)
+    setReturnRate(preset.returnRate)
+    posthog.capture('roi_preset_applied', { preset: preset.label })
+  }
+  const roiPresets: RoiPreset[] = [
+    {
+      label: 'DTC Apparel',
+      description: 'Higher return rates driven by fit feedback.',
+      monthlyOrders: 780,
+      averageOrderValue: 82,
+      returnRate: 0.26,
+    },
+    {
+      label: 'Beauty & Wellness',
+      description: 'Subscription refills focused on loyalty retention.',
+      monthlyOrders: 430,
+      averageOrderValue: 64,
+      returnRate: 0.18,
+    },
+    {
+      label: 'Home Goods',
+      description: 'Bulkier SKUs with costly reverse logistics.',
+      monthlyOrders: 210,
+      averageOrderValue: 118,
+      returnRate: 0.14,
+    },
+  ]
+
   const metrics = [
     {
       label: 'Return rate reduction',
@@ -789,6 +828,33 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
       title: 'AI-written response templates',
       description:
         'Send empathetic, on-brand replies that deflect refunds and protect loyalty—ready in seconds, not hours.',
+    },
+  ]
+
+  const integrationHighlights = [
+    {
+      name: 'Shopify',
+      badge: 'Available now',
+      description:
+        'Native app install with Shopify OAuth, nightly order sync, and instant policy automation.',
+      ctaLabel: 'Install Shopify connector',
+      ctaHref: withUtm('https://app.returnshield.app/register?platform=shopify', 'integration_shopify'),
+    },
+    {
+      name: 'BigCommerce',
+      badge: 'Beta access',
+      description:
+        'Returns webhook automation, order ingestion, and VIP queue tagging for pilot merchants.',
+      ctaLabel: 'Join BigCommerce beta',
+      ctaHref: withUtm('https://app.returnshield.app/register?platform=bigcommerce', 'integration_bigcommerce'),
+    },
+    {
+      name: 'WooCommerce',
+      badge: 'Pilot waitlist',
+      description:
+        'Secure REST API integration with scheduled syncs and bespoke messaging playbooks for Woo retailers.',
+      ctaLabel: 'Request WooCommerce pilot',
+      ctaHref: withUtm('https://app.returnshield.app/register?platform=woocommerce', 'integration_woocommerce'),
     },
   ]
 
@@ -898,6 +964,9 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           </button>
           <button type="button" className="nav-link-button" onClick={() => handleNavScroll('autopilot')}>
             Exchange Autopilot
+          </button>
+          <button type="button" className="nav-link-button" onClick={() => handleNavScroll('integrations')}>
+            Integrations
           </button>
           <button type="button" className="nav-link-button" onClick={() => handleNavScroll('pricing')}>
             Pricing
@@ -1055,6 +1124,26 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
           </div>
           <div className="roi-layout">
             <form className="roi-form" aria-label="ROI assumptions">
+              <div className="roi-presets" role="group" aria-label="Industry presets">
+                {roiPresets.map((preset) => {
+                  const isActive =
+                    preset.monthlyOrders === monthlyOrders &&
+                    preset.averageOrderValue === averageOrderValue &&
+                    Math.abs(preset.returnRate - returnRate) < 0.0001
+                  return (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      className={`roi-preset ${isActive ? 'is-active' : ''}`}
+                      onClick={() => handleApplyRoiPreset(preset)}
+                      aria-pressed={isActive}
+                    >
+                      <span className="preset-label">{preset.label}</span>
+                      <span className="preset-description">{preset.description}</span>
+                    </button>
+                  )
+                })}
+              </div>
               <label>
                 <span>Monthly orders</span>
                 <input
@@ -1432,6 +1521,35 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
             >
               Launch in my store
             </a>
+          </div>
+        </section>
+
+        <section id="integrations" className="integrations">
+          <header>
+            <span className="tagline">Connect your stack</span>
+            <h2>Integrations purpose-built for return-heavy brands.</h2>
+            <p>
+              ReturnShield meets you where your orders already live. Activate connectors, sync historical returns, and keep
+              policies aligned across channels.
+            </p>
+          </header>
+          <div className="integration-grid">
+            {integrationHighlights.map((integration) => (
+              <article key={integration.name} className="integration-card">
+                <header>
+                  <span className="integration-badge">{integration.badge}</span>
+                  <h3>{integration.name}</h3>
+                </header>
+                <p>{integration.description}</p>
+                <a
+                  className="btn btn-outline integration-cta"
+                  href={integration.ctaHref}
+                  onClick={() => posthog.capture('cta_click', { cta: 'integration_cta', integration: integration.name })}
+                >
+                  {integration.ctaLabel}
+                </a>
+              </article>
+            ))}
           </div>
         </section>
 
