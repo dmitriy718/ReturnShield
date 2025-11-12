@@ -461,7 +461,8 @@
   color: #166534;
 }
 
-.resource-panel {
+.resource-panel,
+.integrations-panel {
   gap: 1.25rem;
 }
 
@@ -506,9 +507,86 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.resource-link:hover {
+.resource-link:hover,
+.integration-link:hover {
   transform: translateY(-1px);
   box-shadow: 0 18px 32px rgba(37, 99, 235, 0.18);
+}
+
+.integration-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.integration-card {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+}
+
+.integration-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.integration-card p {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.66);
+  line-height: 1.5;
+}
+
+.integration-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.integration-badge {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.integration-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.integration-status--live {
+  color: #16a34a;
+}
+
+.integration-status--beta {
+  color: #2563eb;
+}
+
+.integration-status--pilot {
+  color: #9333ea;
+}
+
+.integration-link {
+  justify-self: flex-start;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .plan-options {
