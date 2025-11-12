@@ -6,6 +6,7 @@ from typing import Any, Dict
 import stripe
 from django.conf import settings
 from rest_framework import permissions, status
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -90,3 +91,42 @@ class ActivateSubscriptionView(APIView):
             logger.exception("Failed to record subscription activation for user %s", user.pk)
 
         return Response({"subscription_status": plan}, status=status.HTTP_200_OK)
+
+
+class StripeWebhookView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes: list = []
+
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        webhook_secret = settings.STRIPE_WEBHOOK_SECRET
+
+        if not webhook_secret:
+            logger.warning("Stripe webhook called but STRIPE_WEBHOOK_SECRET is not configured.")
+            return Response({"detail": "Stripe webhook is not configured."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        payload_bytes = request.body
+        try:
+            payload = payload_bytes.decode("utf-8")
+        except UnicodeDecodeError:
+            logger.exception("Failed to decode Stripe webhook payload.")
+            return Response({"detail": "Invalid payload encoding."}, status=status.HTTP_400_BAD_REQUEST)
+
+        sig_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
+        if not sig_header:
+            logger.warning("Stripe webhook received without signature header.")
+            return Response({"detail": "Missing Stripe signature header."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
+        except ValueError:
+            logger.exception("Invalid payload for Stripe webhook.")
+            return Response({"detail": "Invalid payload."}, status=status.HTTP_400_BAD_REQUEST)
+        except stripe.error.SignatureVerificationError:
+            logger.exception("Stripe webhook signature verification failed.")
+            return Response({"detail": "Invalid signature."}, status=status.HTTP_400_BAD_REQUEST)
+
+        event_type = event.get("type", "unknown")
+        logger.info("Received Stripe webhook event: %s", event_type)
+
+        # Future handling: tie events to subscriptions/users once integration is complete.
+        return Response({"received": True}, status=status.HTTP_200_OK)

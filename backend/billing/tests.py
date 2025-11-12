@@ -113,3 +113,47 @@ class ActivateSubscriptionViewTests(APITestCase):
             email="activator@returnshield.app",
             password="StrongPass123!",
         )
+
+
+@override_settings(STRIPE_WEBHOOK_SECRET="whsec_test")
+class StripeWebhookViewTests(APITestCase):
+    def test_missing_webhook_secret_returns_503(self) -> None:
+        with self.settings(STRIPE_WEBHOOK_SECRET=""):
+            response = self.client.post(reverse("billing:webhook"), data="{}", content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    @patch("billing.views.stripe.Webhook.construct_event")
+    def test_invalid_payload_returns_400(self, mock_construct) -> None:
+        mock_construct.side_effect = ValueError("invalid payload")
+        response = self.client.post(
+            reverse("billing:webhook"),
+            data="{}",
+            content_type="application/json",
+            HTTP_STRIPE_SIGNATURE="sig_header",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("billing.views.stripe.Webhook.construct_event")
+    def test_invalid_signature_returns_400(self, mock_construct) -> None:
+        import stripe
+
+        mock_construct.side_effect = stripe.error.SignatureVerificationError("bad sig", "sig_header")
+        response = self.client.post(
+            reverse("billing:webhook"),
+            data="{}",
+            content_type="application/json",
+            HTTP_STRIPE_SIGNATURE="sig_header",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("billing.views.stripe.Webhook.construct_event")
+    def test_valid_event_returns_200(self, mock_construct) -> None:
+        mock_construct.return_value = {"type": "checkout.session.completed", "data": {"object": {"id": "cs_123"}}}
+        response = self.client.post(
+            reverse("billing:webhook"),
+            data="{}",
+            content_type="application/json",
+            HTTP_STRIPE_SIGNATURE="sig_header",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), {"received": True})
