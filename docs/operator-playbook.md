@@ -74,7 +74,30 @@ Need concierge support? Use the **Schedule onboarding** button in the billing fo
 
 ---
 
-## 6. Daily Workflow (10-Minute Checklist)
+## 6. Stripe Webhook Checklist
+Keep the billing webhook tied to Stripe so subscriptions update automatically.
+
+1. Webhook endpoint: `https://returnshield.app/api/billing/webhook/`.
+2. Enabled events (ALL must stay toggled on):
+   - `checkout.session.completed`
+   - `checkout.session.expired`
+   - `customer.subscription.created`
+   - `customer.subscription.deleted`
+   - `customer.subscription.updated`
+   - `invoice.payment_succeeded`
+   - `invoice.payment_failed`
+3. Current signing secret: stored in the `.env` file as `STRIPE_WEBHOOK_SECRET`.
+4. Rotation steps:
+   - Generate a new secret in the Stripe Dashboard.
+   - Update `/opt/ReturnShield/.env` on the VPS and `backend/.env` locally.
+   - Run `docker-compose restart backend` on the server (or recreate the container) so Django reloads the key.
+   - Send a test event from Stripe’s **Send test webhook** button to confirm you receive `{"received": true}`.
+
+If the endpoint returns `503` or `400`, double-check that the secret is set and the signature header is present.
+
+---
+
+## 7. Daily Workflow (10-Minute Checklist)
 1. Open the dashboard.
 2. Look at the **Returnless intelligence** table — action the top SKU.
 3. Open the **AI Exchange Coach** card #1 — deploy the listed steps.
@@ -85,7 +108,7 @@ Repeat this routine each workday. It keeps margin wins steady.
 
 ---
 
-## 7. Helpful Links
+## 8. Helpful Links
 - Marketing site: `https://returnshield.app`
 - Dashboard login: `https://app.returnshield.app`
 - Concierge onboarding: `https://app.returnshield.app/register?concierge=1`
