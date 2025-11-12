@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from .views import PlatformStatusView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls', namespace='accounts')),
@@ -26,4 +28,5 @@ urlpatterns = [
     path('api/platforms/bigcommerce/', include('bigcommerce_integration.urls', namespace='bigcommerce_integration')),
     path('api/platforms/woocommerce/', include('woocommerce_integration.urls', namespace='woocommerce_integration')),
     path('api/returns/', include('returns.urls', namespace='returns')),
+    path('api/platforms/status/', PlatformStatusView.as_view(), name='platform-status'),
 ]

@@ -200,6 +200,16 @@ type RoiPreset = {
   returnRate: number
 }
 
+type IntegrationHighlight = {
+  slug: string
+  name: string
+  badge: string
+  description: string
+  ctaLabel: string
+  ctaHref: string
+  status?: string
+}
+
 type ExchangeCoachApiMetrics = {
   return_volume_30d?: number
   avg_unit_cost?: number
@@ -377,6 +387,36 @@ const fallbackVip: VIPQueuePayload = {
   },
 }
 
+const DEFAULT_INTEGRATION_HIGHLIGHTS: IntegrationHighlight[] = [
+  {
+    slug: 'shopify',
+    name: 'Shopify',
+    badge: 'Available now',
+    description:
+      'Native app install with Shopify OAuth, nightly order sync, and instant policy automation.',
+    ctaLabel: 'Install Shopify connector',
+    ctaHref: withUtm('https://app.returnshield.app/register?platform=shopify', 'integration_shopify'),
+  },
+  {
+    slug: 'bigcommerce',
+    name: 'BigCommerce',
+    badge: 'Beta access',
+    description:
+      'Returns webhook automation, order ingestion, and VIP queue tagging for pilot merchants.',
+    ctaLabel: 'Join BigCommerce beta',
+    ctaHref: withUtm('https://app.returnshield.app/register?platform=bigcommerce', 'integration_bigcommerce'),
+  },
+  {
+    slug: 'woocommerce',
+    name: 'WooCommerce',
+    badge: 'Pilot waitlist',
+    description:
+      'Secure REST API integration with scheduled syncs and bespoke messaging playbooks for Woo retailers.',
+    ctaLabel: 'Request WooCommerce pilot',
+    ctaHref: withUtm('https://app.returnshield.app/register?platform=woocommerce', 'integration_woocommerce'),
+  },
+]
+
 function App() {
   const [navOpen, setNavOpen] = useState(false)
   const location = useLocation()
@@ -389,6 +429,8 @@ function App() {
   const [returnlessInsights, setReturnlessInsights] = useState<ReturnlessInsights>(fallbackReturnlessInsights)
   const [coachData, setCoachData] = useState<ExchangeCoachPayload>(fallbackCoach)
   const [vipData, setVipData] = useState<VIPQueuePayload>(fallbackVip)
+  const [integrationHighlights, setIntegrationHighlights] =
+    useState<IntegrationHighlight[]>(DEFAULT_INTEGRATION_HIGHLIGHTS)
 
   const apiBaseUrl = ((import.meta.env.VITE_API_URL as string | undefined) || '').replace(/\/$/, '')
 
@@ -606,6 +648,63 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
     }
 
     void loadCoachAndVip()
+    return () => controller.abort()
+  }, [apiBaseUrl])
+
+  useEffect(() => {
+    if (!apiBaseUrl) {
+      return
+    }
+
+    const controller = new AbortController()
+
+    const loadIntegrationStatus = async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/platforms/status/`, { signal: controller.signal })
+        if (!response.ok) {
+          throw new Error(`Integration status request failed with status ${response.status}`)
+        }
+
+        const payload = await response.json()
+        if (!controller.signal.aborted && Array.isArray(payload?.platforms)) {
+          const normalized = (payload.platforms as any[]).map((item) => {
+            const rawSlug =
+              (item?.slug as string | undefined)?.toLowerCase() ||
+              (item?.name as string | undefined)?.toLowerCase().replace(/\s+/g, '-')
+            const slug = rawSlug || 'platform'
+            const name = (item?.name as string | undefined) ?? slug.replace('-', ' ')
+            const badge =
+              (item?.badge as string | undefined) ??
+              (item?.status as string | undefined)?.replace(/^\w/, (ch: string) => ch.toUpperCase()) ??
+              ''
+            const description = (item?.description as string | undefined) ?? ''
+            const ctaLabel = (item?.cta_label as string | undefined) ?? 'Learn more'
+            const rawUrl =
+              (item?.cta_url as string | undefined) ??
+              `https://app.returnshield.app/register?platform=${slug}`
+            const ctaHref = withUtm(rawUrl, `integration_${slug}`)
+
+            return {
+              slug,
+              name,
+              badge,
+              description,
+              ctaLabel,
+              ctaHref,
+              status: item?.status as string | undefined,
+            }
+          })
+          setIntegrationHighlights(normalized)
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error('Unable to fetch integration status', error)
+        }
+      }
+    }
+
+    void loadIntegrationStatus()
+
     return () => controller.abort()
   }, [apiBaseUrl])
 
@@ -828,33 +927,6 @@ const transformVipPayload = (payload: VIPQueueApiPayload | null | undefined): VI
       title: 'AI-written response templates',
       description:
         'Send empathetic, on-brand replies that deflect refunds and protect loyalty—ready in seconds, not hours.',
-    },
-  ]
-
-  const integrationHighlights = [
-    {
-      name: 'Shopify',
-      badge: 'Available now',
-      description:
-        'Native app install with Shopify OAuth, nightly order sync, and instant policy automation.',
-      ctaLabel: 'Install Shopify connector',
-      ctaHref: withUtm('https://app.returnshield.app/register?platform=shopify', 'integration_shopify'),
-    },
-    {
-      name: 'BigCommerce',
-      badge: 'Beta access',
-      description:
-        'Returns webhook automation, order ingestion, and VIP queue tagging for pilot merchants.',
-      ctaLabel: 'Join BigCommerce beta',
-      ctaHref: withUtm('https://app.returnshield.app/register?platform=bigcommerce', 'integration_bigcommerce'),
-    },
-    {
-      name: 'WooCommerce',
-      badge: 'Pilot waitlist',
-      description:
-        'Secure REST API integration with scheduled syncs and bespoke messaging playbooks for Woo retailers.',
-      ctaLabel: 'Request WooCommerce pilot',
-      ctaHref: withUtm('https://app.returnshield.app/register?platform=woocommerce', 'integration_woocommerce'),
     },
   ]
 
