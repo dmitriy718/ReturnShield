@@ -19,6 +19,20 @@ export type User = {
   has_completed_walkthrough: boolean
 }
 
+export type PlatformStatus = {
+  slug: string
+  name: string
+  status: string
+  badge: string
+  description: string
+  cta_label: string
+  cta_url: string
+}
+
+export type PlatformStatusResponse = {
+  platforms: PlatformStatus[]
+}
+
 export type ReturnlessCandidate = {
   sku: string
   product_name: string

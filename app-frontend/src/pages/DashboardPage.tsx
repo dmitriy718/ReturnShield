@@ -5,6 +5,8 @@ import { apiFetch, ApiError } from '../services/api'
 import type {
   ExchangeCoachPayload,
   OnboardingStage,
+  PlatformStatus,
+  PlatformStatusResponse,
   ReturnlessInsights,
   VipQueuePayload,
 } from '../types'
@@ -137,6 +139,39 @@ const RESOURCE_LINKS: ResourceLink[] = [
   },
 ]
 
+const DEFAULT_PLATFORM_STATUS: PlatformStatus[] = [
+  {
+    slug: 'shopify',
+    name: 'Shopify',
+    status: 'live',
+    badge: 'Available now',
+    description:
+      'Install the ReturnShield Shopify app, sync order history, and deploy automation within hours.',
+    cta_label: 'Open Shopify install',
+    cta_url: 'https://app.returnshield.app/register?platform=shopify',
+  },
+  {
+    slug: 'bigcommerce',
+    name: 'BigCommerce',
+    status: 'beta',
+    badge: 'Beta access',
+    description:
+      'Pilot merchants can connect BigCommerce stores with guided onboarding and webhook automation.',
+    cta_label: 'Join beta waitlist',
+    cta_url: 'https://app.returnshield.app/register?platform=bigcommerce',
+  },
+  {
+    slug: 'woocommerce',
+    name: 'WooCommerce',
+    status: 'pilot',
+    badge: 'Pilot waitlist',
+    description:
+      'Enable secure API keys, nightly syncs, and custom playbooks for WooCommerce retailers.',
+    cta_label: 'Request WooCommerce pilot',
+    cta_url: 'https://app.returnshield.app/register?platform=woocommerce',
+  },
+]
+
 export function DashboardPage() {
   const navigate = useNavigate()
   const { token, user, loading: authLoading, updateOnboarding, refreshUser, completeWalkthrough } = useAuth()
@@ -154,6 +189,7 @@ export function DashboardPage() {
   const tipTimeoutRef = useRef<number | null>(null)
 
   const [justRevealed, setJustRevealed] = useState<WalkthroughKey | null>(null)
+  const [platformStatuses, setPlatformStatuses] = useState<PlatformStatus[]>(DEFAULT_PLATFORM_STATUS)
 
   useEffect(() => {
     return () => {
@@ -241,6 +277,37 @@ export function DashboardPage() {
       document.body.classList.remove('dashboard-tour-active')
     }
   }, [isWalkthroughActive])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadPlatformStatuses = async () => {
+      try {
+        const payload = await apiFetch<PlatformStatusResponse>('/platforms/status/')
+        if (cancelled || !payload?.platforms) {
+          return
+        }
+        const normalized = payload.platforms.map((item) => ({
+          slug: item.slug ?? item.name ?? 'platform',
+          name: item.name ?? 'Platform',
+          status: item.status ?? '',
+          badge: item.badge ?? '',
+          description: item.description ?? '',
+          cta_label: item.cta_label ?? 'Learn more',
+          cta_url: item.cta_url ?? '#',
+        }))
+        setPlatformStatuses(normalized)
+      } catch (error) {
+        console.error('Unable to load platform status metadata', error)
+      }
+    }
+
+    void loadPlatformStatuses()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const hasShopifyStore = user?.has_shopify_store ?? false
   const isTrial = user?.subscription_status === 'trial'
@@ -767,6 +834,43 @@ export function DashboardPage() {
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="panel integrations-panel">
+          <header>
+            <h2>Connect additional storefronts</h2>
+          </header>
+          <p className="panel-subtitle">
+            Shopify is production-ready today. BigCommerce and WooCommerce pilots are underway—join the waitlist to get early
+            access.
+          </p>
+          <div className="integration-grid">
+            {platformStatuses.map((platform) => {
+              const status = platform.status?.toLowerCase() ?? ''
+              const statusLabel = status ? status.toUpperCase() : ''
+              const isExternal = /^https?:/i.test(platform.cta_url)
+              return (
+                <div key={platform.slug} className="integration-card">
+                  <div className="integration-card-header">
+                    {platform.badge ? <span className="integration-badge">{platform.badge}</span> : null}
+                    {statusLabel ? (
+                      <span className={`integration-status integration-status--${status}`}>{statusLabel}</span>
+                    ) : null}
+                  </div>
+                  <h3>{platform.name}</h3>
+                  <p>{platform.description}</p>
+                  <a
+                    className="integration-link"
+                    href={platform.cta_url}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noreferrer' : undefined}
+                  >
+                    {platform.cta_label}
+                  </a>
+                </div>
+              )
+            })}
+          </div>
         </article>
 
         <article className="panel resource-panel">
