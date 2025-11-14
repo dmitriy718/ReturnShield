@@ -10,6 +10,7 @@ import {
 import type { ReactNode } from 'react'
 import { apiFetch, ApiError } from '../services/api'
 import type { OnboardingStage, StorePlatform, User } from '../types'
+import { identifyPosthogUser, resetPosthogUser } from '../lib/posthog'
 
 type AuthState = {
   user: User | null
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (nextToken: string | null) => {
       if (!nextToken) {
         setUser(null)
+        resetPosthogUser()
         setLoading(false)
         return
       }
@@ -54,10 +56,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           token: nextToken,
         })
         setUser(profile)
+        identifyPosthogUser(profile.id.toString(), {
+          email: profile.email,
+          company_name: profile.company_name,
+          store_platform: profile.store_platform,
+          store_domain: profile.store_domain,
+          onboarding_stage: profile.onboarding_stage,
+          subscription_status: profile.subscription_status,
+          has_shopify_store: profile.has_shopify_store,
+        })
       } catch (error) {
         console.error('Failed to fetch profile', error)
         setToken(null)
         localStorage.removeItem(TOKEN_STORAGE_KEY)
+        resetPosthogUser()
       } finally {
         setLoading(false)
       }
@@ -134,6 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
     setToken(null)
     localStorage.removeItem(TOKEN_STORAGE_KEY)
+    resetPosthogUser()
   }, [])
 
   const refreshUser = useCallback(async () => {
