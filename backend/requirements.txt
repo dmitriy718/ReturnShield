@@ -7,3 +7,4 @@ django==5.0.4
  sendgrid==6.11.0
  posthog==3.6.0
  stripe==10.6.0
+ gunicorn==23.0.0

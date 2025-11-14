@@ -79,6 +79,8 @@ services:
       VITE_STRIPE_PRICE_LAUNCH: ${VITE_STRIPE_PRICE_LAUNCH:-}
       VITE_STRIPE_PRICE_SCALE: ${VITE_STRIPE_PRICE_SCALE:-}
       VITE_STRIPE_PRICE_ELITE: ${VITE_STRIPE_PRICE_ELITE:-}
+      VITE_POSTHOG_KEY: ${VITE_POSTHOG_KEY:-}
+      VITE_POSTHOG_HOST: ${VITE_POSTHOG_HOST:-https://analytics.returnshield.app}
     ports:
       - "8081:4173"
     depends_on:
