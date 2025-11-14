@@ -5,6 +5,7 @@ import App from './App.tsx'
 import './index.css'
 import { AuthProvider } from './providers/AuthProvider.tsx'
 import { capturePageView, isPosthogEnabled } from './lib/posthog.ts'
+import { AlertProvider } from './providers/AlertProvider'
 
 function PosthogRouteTracker() {
   const location = useLocation()
@@ -22,9 +23,11 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <PosthogRouteTracker />
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <AlertProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </AlertProvider>
     </BrowserRouter>
   </StrictMode>,
 )

@@ -22,5 +22,19 @@ class PlatformStatusViewTests(APITestCase):
 
         sample = next(item for item in body['platforms'] if item['slug'] == 'shopify')
         self.assertIn('cta_url', sample)
-        self.assertTrue(sample['cta_url'].startswith('https://'))
+        self.assertIn('platform=shopify', sample['cta_url'])
         self.assertEqual(sample['status'], 'live')
+
+
+class HealthCheckViewTests(APITestCase):
+    def test_health_check_reports_database_status(self) -> None:
+        url = reverse('health-check')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body['status'], 'ok')
+        self.assertIn('checks', body)
+        self.assertIn('database', body['checks'])
+        self.assertTrue(body['checks']['database']['healthy'])
+        self.assertIn('latency_ms', body['checks']['database'])
