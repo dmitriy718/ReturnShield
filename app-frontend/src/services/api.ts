@@ -1,3 +1,5 @@
+import { API_ERROR_EVENT, type ApiErrorEventDetail } from '../lib/events'
+
 export class ApiError extends Error {
   status: number
   detail?: string
@@ -54,6 +56,8 @@ export async function apiFetch<T = unknown>(
 
   if (!response.ok) {
     let detail: string | undefined
+    let detailPayload: ApiErrorEventDetail | undefined
+
     if (isJson) {
       try {
         const payload = await response.json()
@@ -64,6 +68,14 @@ export async function apiFetch<T = unknown>(
     } else {
       detail = response.statusText
     }
+
+    detailPayload = {
+      path: resolvedPath,
+      status: response.status,
+      message: detail,
+    }
+    emitApiError(detailPayload)
+
     throw new ApiError(detail ?? 'Request failed', response.status, detail)
   }
 
@@ -72,5 +84,13 @@ export async function apiFetch<T = unknown>(
   }
 
   return (await response.json()) as T
+}
+
+function emitApiError(detail: ApiErrorEventDetail) {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.dispatchEvent(new CustomEvent(API_ERROR_EVENT, { detail }))
 }
 
