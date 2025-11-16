@@ -52,7 +52,7 @@ def verify_hmac(params: Dict[str, str], provided_hmac: str) -> bool:
     ).hexdigest()
 
     if dj_settings.DEBUG or bool(getattr(dj_settings, "SHOPIFY_HMAC_DEBUG", False)):
-        logger.debug(
+        logger.info(
             "Shopify HMAC verify | computed=%s provided=%s base='%s'",
             digest,
             provided_hmac,
