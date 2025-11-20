@@ -7,7 +7,7 @@ const navigation = [
   { to: '/', label: 'Overview', exact: true },
   { to: '/automation', label: 'Exchange Automation' },
   { to: '/billing', label: 'Billing' },
-  { to: '/integrations', label: 'Integrations' },
+  { to: '/integrations/health', label: 'Integrations' },
 ]
 
 export function AppLayout() {

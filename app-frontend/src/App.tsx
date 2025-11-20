@@ -7,9 +7,11 @@ import { DashboardPage } from './pages/DashboardPage'
 import { AutomationPage } from './pages/AutomationPage'
 import { BillingPage } from './pages/BillingPage'
 import { CheckoutSuccessPage } from './pages/CheckoutSuccessPage'
+import { IntegrationsHealthPage } from './pages/IntegrationsHealthPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { AppLayout } from './components/layout/AppLayout'
 import { LoadingScreen } from './components/ui/LoadingScreen'
+import { FeatureFlagProvider } from './providers/FeatureFlagProvider'
 
 function ProtectedRoute() {
   const { token, loading } = useAuth()
@@ -45,23 +47,26 @@ function GuestRoute() {
 
 function App() {
   return (
-    <Routes>
-      <Route element={<GuestRoute />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Route>
-
-      <Route element={<ProtectedRoute />}>
-        <Route element={<AppLayout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="/automation" element={<AutomationPage />} />
-          <Route path="/billing" element={<BillingPage />} />
-          <Route path="/billing/success" element={<CheckoutSuccessPage />} />
+    <FeatureFlagProvider>
+      <Routes>
+        <Route element={<GuestRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
-      </Route>
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route index element={<DashboardPage />} />
+            <Route path="/automation" element={<AutomationPage />} />
+            <Route path="/billing" element={<BillingPage />} />
+            <Route path="/billing/success" element={<CheckoutSuccessPage />} />
+            <Route path="/integrations/health" element={<IntegrationsHealthPage />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </FeatureFlagProvider>
   )
 }
 

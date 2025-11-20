@@ -60,7 +60,7 @@ services:
       VITE_STRIPE_SECRET_KEY: ${VITE_STRIPE_SECRET_KEY:-}
       VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-}
     ports:
-      - "8080:3000"
+      - "8088:3000"
     depends_on:
       - backend
 
