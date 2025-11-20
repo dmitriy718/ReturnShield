@@ -118,3 +118,11 @@ export type ExchangePlaybookResponse = {
   quick_wins?: ExchangePlaybookRecommendation[]
 }
 
+export type IntegrationHealth = {
+  platform: string
+  domain: string
+  status: 'healthy' | 'error' | 'warning'
+  message: string
+  last_checked_at: string
+}
+

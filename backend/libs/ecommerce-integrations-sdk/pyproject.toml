@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecom-sdk"
+version = "0.0.1"
+authors = [
+  { name="ReturnShield", email="dev@returnshield.app" },
+]
+description = "A Python SDK for integrating with various e-commerce platforms."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests",
+    "pydantic",
+    "ShopifyAPI==12.7.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/dmitriy718/ReturnShield"

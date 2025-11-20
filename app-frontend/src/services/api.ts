@@ -94,3 +94,11 @@ function emitApiError(detail: ApiErrorEventDetail) {
   window.dispatchEvent(new CustomEvent(API_ERROR_EVENT, { detail }))
 }
 
+export async function getIntegrationsHealth(token: string) {
+  return apiFetch<import('../types').IntegrationHealth[]>('/integrations/health/', { token })
+}
+
+export async function getFeatureFlags(token: string): Promise<string[]> {
+  return apiFetch<string[]>('/feature-flags/', { token })
+}
+
