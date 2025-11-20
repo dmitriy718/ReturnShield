@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import type { OnboardingStage } from '../types';
-import './SetupWizard.css'; // I will create this file later
+import './SetupWizard.css';
 
 interface WizardStep {
   key: OnboardingStage;
