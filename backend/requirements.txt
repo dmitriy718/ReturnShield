@@ -14,4 +14,3 @@ ShopifyAPI==12.7.0
 djangorestframework-api-key==3.1.0
 celery==5.3.4
 redis==5.0.1
-django-celery-beat==2.5.0
