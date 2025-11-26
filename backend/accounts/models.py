@@ -60,6 +60,14 @@ class User(AbstractUser):
         help_text="True once the guided dashboard walkthrough has been completed.",
     )
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["subscription_status"], name="user_subscription_idx"),
+            models.Index(fields=["store_platform"], name="user_platform_idx"),
+            models.Index(fields=["onboarding_stage"], name="user_onboarding_idx"),
+            models.Index(fields=["stripe_customer_id"], name="user_stripe_cust_idx"),
+        ]
+
     def __str__(self) -> str:
         name = self.get_full_name() or self.username
         company = f" @ {self.company_name}" if self.company_name else ""
