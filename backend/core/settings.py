@@ -58,8 +58,18 @@ SHOPIFY_CLIENT_SECRET = os.getenv("SHOPIFY_CLIENT_SECRET", "")
 SHOPIFY_SCOPES = ["read_orders", "write_orders", "read_returns"]
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
-SENDGRID_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL", "support@returnshield.app")
-SENDGRID_FROM_NAME = os.getenv("SENDGRID_FROM_NAME", "ReturnShield Concierge")
+SENDGRID_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL", "noreply@returnshield.app")
+SENDGRID_FROM_NAME = os.getenv("SENDGRID_FROM_NAME", "ReturnShield")
+
+# Celery Configuration
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
 
 HELPSCOUT_APP_ID = os.getenv("HELPSCOUT_APP_ID", "")
 HELPSCOUT_APP_SECRET = os.getenv("HELPSCOUT_APP_SECRET", "")
