@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import logging
 import secrets
 from typing import Dict
 from urllib.parse import urlencode
 
 from django.conf import settings
-from django.conf import settings as dj_settings
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +50,7 @@ def verify_hmac(params: Dict[str, str], provided_hmac: str) -> bool:
         hashlib.sha256,
     ).hexdigest()
 
-    if dj_settings.DEBUG or bool(getattr(dj_settings, "SHOPIFY_HMAC_DEBUG", False)):
+    if settings.DEBUG or bool(getattr(settings, "SHOPIFY_HMAC_DEBUG", False)):
         logger.info(
             "Shopify HMAC verify | computed=%s provided=%s base='%s'",
             digest,
