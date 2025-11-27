@@ -34,4 +34,4 @@ class ShopifyInstallation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.shop_domain} ({'active' if self.active else 'pending'})"
-```
+

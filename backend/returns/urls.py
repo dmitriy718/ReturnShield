@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ExchangeAutomationView, ExchangeCoachView, ReturnlessInsightsView, VIPResolutionView
+from .views import ExchangeAutomationView, ExchangeCoachView, ReturnlessInsightsView, VIPResolutionView, ShopperOrderLookupView, ShopperReturnSubmitView
 
 app_name = "returns"
 
@@ -20,6 +20,16 @@ urlpatterns = [
         "vip-resolution/",
         VIPResolutionView.as_view(),
         name="vip-resolution",
+    ),
+    path(
+        "lookup/",
+        ShopperOrderLookupView.as_view(),
+        name="order-lookup",
+    ),
+    path(
+        "submit/",
+        ShopperReturnSubmitView.as_view(),
+        name="return-submit",
     ),
 ]
 

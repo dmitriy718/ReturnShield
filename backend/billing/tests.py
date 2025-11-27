@@ -156,4 +156,4 @@ class StripeWebhookViewTests(APITestCase):
             HTTP_STRIPE_SIGNATURE="sig_header",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), {"received": True})
+        self.assertEqual(response.json(), {"received": True, "event_type": "checkout.session.completed"})

@@ -59,6 +59,11 @@ class ReturnRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # Sync details
+    shopify_refund_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
+    refund_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    restock = models.BooleanField(default=False)
+    
     # Items being returned
     items = models.JSONField(default=list, help_text="List of items being returned")
     

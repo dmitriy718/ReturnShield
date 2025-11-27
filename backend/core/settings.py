@@ -29,7 +29,10 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "change-me-immediately")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
+DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
+
+if not DEBUG and SECRET_KEY == "change-me-immediately":
+    raise ValueError("CRITICAL: DJANGO_SECRET_KEY must be set in production!")
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") if not DEBUG else ["*"]
 
@@ -60,6 +63,12 @@ SHOPIFY_SCOPES = ["read_orders", "write_orders", "read_returns"]
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", "")
 SENDGRID_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL", "noreply@returnshield.app")
 SENDGRID_FROM_NAME = os.getenv("SENDGRID_FROM_NAME", "ReturnShield")
+
+if not DEBUG:
+    if not STRIPE_SECRET_KEY:
+        print("WARNING: STRIPE_SECRET_KEY is missing in production!")
+    if not SENDGRID_API_KEY:
+        print("WARNING: SENDGRID_API_KEY is missing in production!")
 
 # Celery Configuration
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
@@ -225,6 +234,7 @@ CORS_ALLOW_CREDENTIALS = True
 _origin_candidates = {
     "http://localhost:3000",
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:8081",
     FRONTEND_URL,
     APP_FRONTEND_URL,
