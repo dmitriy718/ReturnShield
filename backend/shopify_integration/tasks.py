@@ -141,3 +141,56 @@ def _create_or_update_order(installation, shopify_order):
         user=installation.user,
         defaults=order_data
     )
+
+    # Process refunds/returns
+    if hasattr(shopify_order, 'refunds') and shopify_order.refunds:
+        _process_refunds(installation, shopify_order, shopify_order.refunds)
+
+
+def _process_refunds(installation, shopify_order, refunds):
+    """Helper to process refunds and create ReturnRequest records."""
+    from returns.models import Order, ReturnRequest
+    from decimal import Decimal
+    
+    try:
+        order = Order.objects.get(external_id=str(shopify_order.id), platform='shopify')
+    except Order.DoesNotExist:
+        return
+
+    for refund in refunds:
+        refund_id = str(refund.id)
+        
+        # Calculate refund amount
+        amount = Decimal('0.00')
+        if hasattr(refund, 'transactions'):
+            for transaction in refund.transactions:
+                if transaction.kind == 'refund' and transaction.status == 'success':
+                    amount += Decimal(str(transaction.amount))
+        
+        # Determine items
+        refund_items = []
+        restock = False
+        if hasattr(refund, 'refund_line_items'):
+            for rli in refund.refund_line_items:
+                refund_items.append({
+                    'line_item_id': str(rli.line_item_id),
+                    'quantity': rli.quantity,
+                    'restock_type': rli.restock_type if hasattr(rli, 'restock_type') else 'no_restock'
+                })
+                if hasattr(rli, 'restock_type') and rli.restock_type != 'no_restock':
+                    restock = True
+        
+        # Create or update ReturnRequest
+        ReturnRequest.objects.update_or_create(
+            shopify_refund_id=refund_id,
+            defaults={
+                'order': order,
+                'user': installation.user,
+                'status': 'completed',  # Shopify refunds are already completed
+                'refund_amount': amount,
+                'restock': restock,
+                'items': refund_items,
+                'reason': refund.note if hasattr(refund, 'note') else 'Shopify Sync',
+                'created_at': refund.created_at,
+            }
+        )

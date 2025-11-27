@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Dict, List
+from django.db.models import Sum, Count, F
+from .models import ReturnRequest, Order
 
 
 @dataclass
@@ -13,53 +15,58 @@ class Recommendation:
 
 
 def _returnless_candidates() -> List[Dict[str, Any]]:
-    return [
-        {
-            "sku": "RS-014",
-            "product_name": "Luxe Knit Throw",
-            "avg_unit_cost": 18.5,
-            "return_volume_30d": 42,
-            "reason_driver": "Texture / feel not as expected",
-            "estimated_margin_recaptured": 1240,
-            "carbon_kg_prevented": 85,
-            "landfill_lbs_prevented": 180,
-            "handling_minutes_reduced": 96,
-            "recommended_actions": [
-                "Auto-approve returnless refund with 12% exchange credit coupon.",
-                "Tag SKU for donation pickup with GiveBack Box.",
-            ],
-        },
-        {
-            "sku": "RS-221",
-            "product_name": "Everyday Bamboo Tee",
-            "avg_unit_cost": 9.25,
-            "return_volume_30d": 136,
-            "reason_driver": "Fit feedback · relaxed cut",
-            "estimated_margin_recaptured": 2280,
-            "carbon_kg_prevented": 132,
-            "landfill_lbs_prevented": 264,
-            "handling_minutes_reduced": 168,
-            "recommended_actions": [
-                "Serve AI sizing quiz before checkout for repeat buyers.",
-                "Offer returnless refund with keep-it note referencing sustainability pledge.",
-            ],
-        },
-        {
-            "sku": "RS-091",
-            "product_name": "Ceramic Mood Candle",
-            "avg_unit_cost": 7.4,
-            "return_volume_30d": 58,
-            "reason_driver": "Minor packaging blemish",
-            "estimated_margin_recaptured": 940,
-            "carbon_kg_prevented": 64,
-            "landfill_lbs_prevented": 148,
-            "handling_minutes_reduced": 72,
-            "recommended_actions": [
-                "Bundle blemished units for outlet flash sale.",
-                "Message VIP segment with 2-for-1 rescue offer.",
-            ],
-        },
-    ]
+    """
+    Identify SKUs that are candidates for returnless refunds based on real data.
+    """
+    # Group by SKU (from line items)
+    # Note: Since items is a JSONField, this is complex in pure SQL/ORM without Postgres specific JSON operators.
+    # For MVP, we will iterate over recent ReturnRequests.
+    
+    candidates = {}
+    
+    # Fetch completed returns
+    returns = ReturnRequest.objects.filter(status='completed').select_related('order')
+    
+    for req in returns:
+        for item in req.items:
+            # item structure from sync task: {'line_item_id': '...', 'quantity': 1, ...}
+            # We need to find the SKU from the Order line_items
+            line_item_id = item.get('line_item_id')
+            quantity = item.get('quantity', 1)
+            
+            # Find matching line item in order
+            sku = "UNKNOWN"
+            product_name = "Unknown Product"
+            price = 0.0
+            
+            for order_item in req.order.line_items:
+                if order_item.get('id') == line_item_id:
+                    sku = order_item.get('sku', 'UNKNOWN')
+                    product_name = order_item.get('name', 'Unknown Product')
+                    price = float(order_item.get('price', 0.0))
+                    break
+            
+            if sku not in candidates:
+                candidates[sku] = {
+                    "sku": sku,
+                    "product_name": product_name,
+                    "avg_unit_cost": price,
+                    "return_volume_30d": 0,
+                    "reason_driver": req.reason, # Just taking the last one for now
+                    "estimated_margin_recaptured": 0.0,
+                    "carbon_kg_prevented": 0.0,
+                    "landfill_lbs_prevented": 0.0,
+                    "handling_minutes_reduced": 0.0,
+                }
+            
+            candidates[sku]["return_volume_30d"] += quantity
+            candidates[sku]["estimated_margin_recaptured"] += (price * quantity)
+            # Dummy multipliers for impact metrics
+            candidates[sku]["carbon_kg_prevented"] += (2.5 * quantity)
+            candidates[sku]["landfill_lbs_prevented"] += (1.2 * quantity)
+            candidates[sku]["handling_minutes_reduced"] += (15 * quantity)
+
+    return list(candidates.values())
 
 
 def build_returnless_insights() -> Dict[str, Any]:
@@ -73,7 +80,7 @@ def build_returnless_insights() -> Dict[str, Any]:
     total_minutes_saved = sum(item["handling_minutes_reduced"] for item in candidates)
 
     summary = {
-        "period": "last_30_days",
+        "period": "all_time", # Changed from last_30_days for MVP
         "annualized_margin_recovery": int(total_margin * 12),
         "carbon_tonnes_prevented": total_carbon_tonnes,
         "landfill_lbs_prevented": total_landfill_lbs,
@@ -155,7 +162,7 @@ def build_exchange_coach_actions() -> Dict[str, Any]:
                 "return_volume_30d": sum(item["return_volume_30d"] for item in candidates),
                 "avg_unit_cost": round(
                     sum(item["avg_unit_cost"] for item in candidates) / len(candidates), 2
-                ),
+                ) if candidates else 0,
                 "margin_at_risk": total_margin,
             },
         },
@@ -175,43 +182,39 @@ def build_vip_resolution_queue() -> Dict[str, Any]:
     """
     Assemble a loyalty-aware queue of high-value return tickets with suggested resolutions.
     """
-
-    candidates = _returnless_candidates()
-    customers = ["Leah Ortega", "Marcus Lin", "Kaya Gomez", "Dev Reddy"]
+    # For MVP, we'll just return an empty queue or a placeholder if no real VIP logic exists yet.
+    # But let's try to pull from recent returns.
+    
+    returns = ReturnRequest.objects.filter(status='completed').order_by('-created_at')[:5]
     queue: List[Dict[str, Any]] = []
 
-    for idx, candidate in enumerate(candidates):
-        loyalty_segment = ["Platinum", "Gold", "Gold"][idx if idx < 3 else 2]
-        ltv = round(candidate["avg_unit_cost"] * candidate["return_volume_30d"] * (4.8 + idx), 2)
-        hours_open = round(2.5 + idx * 1.3, 1)
-        churn_risk = round(max(8.0, (candidate["return_volume_30d"] * 0.38) - idx * 4), 2)
-
+    for idx, req in enumerate(returns):
+        # Mocking VIP data based on real return
+        loyalty_segment = "Gold" 
+        ltv = float(req.refund_amount) * 5
+        
         queue.append(
             {
-                "ticket_id": f"VIP-RS-{1420 + idx}",
-                "customer": customers[idx],
+                "ticket_id": f"VIP-RS-{req.id}",
+                "customer": req.order.customer_email,
                 "loyalty_segment": loyalty_segment,
                 "ltv": ltv,
-                "order_value": round(candidate["avg_unit_cost"] * (3.3 + idx), 2),
-                "return_reason": candidate["reason_driver"],
-                "recommended_action": (
-                    "Concierge exchange with complimentary shipping upgrade"
-                    if idx <= 1
-                    else "Instant keep-it refund with sustainability reinforcement"
-                ),
-                "hours_open": hours_open,
-                "predicted_churn_risk": churn_risk,
-                "sku": candidate["sku"],
+                "order_value": float(req.order.total),
+                "return_reason": req.reason,
+                "recommended_action": "Concierge exchange",
+                "hours_open": 2.5,
+                "predicted_churn_risk": 45.0,
+                "sku": "VARIOUS",
             }
         )
 
-    aggregate_hours_saved = round(sum(item["handling_minutes_reduced"] for item in candidates) / 60, 1)
+    aggregate_hours_saved = 0.0 # Placeholder
 
     return {
         "queue": queue,
         "summary": {
             "open_tickets": len(queue),
-            "avg_hours_open": round(sum(item["hours_open"] for item in queue) / len(queue), 2),
+            "avg_hours_open": 2.5 if queue else 0,
             "revenue_defended": round(sum(item["ltv"] for item in queue) * 0.07, 2),
             "ops_hours_returned": aggregate_hours_saved,
         },
@@ -301,4 +304,5 @@ def build_exchange_playbook(
             for rec in recommendations
         ]
     }
+
 
