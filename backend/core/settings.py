@@ -21,6 +21,17 @@ from dotenv import load_dotenv
 
 load_dotenv(BASE_DIR / ".env")
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+if os.getenv("SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=os.getenv("SENTRY_DSN"),
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True
+    )
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -70,6 +81,18 @@ if not DEBUG:
     if not SENDGRID_API_KEY:
         print("WARNING: SENDGRID_API_KEY is missing in production!")
 
+# EasyPost Configuration
+EASYPOST_API_KEY = os.getenv("EASYPOST_API_KEY", "")
+EASYPOST_TEST_MODE = os.getenv("EASYPOST_TEST_MODE", "True") == "True"
+EASYPOST_FROM_ADDRESS = {
+    "name": "ReturnShield Returns",
+    "street1": "123 Return Way",
+    "city": "Returns City",
+    "state": "CA",
+    "zip": "90210",
+    "phone": "555-555-5555",
+}
+
 # Celery Configuration
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
@@ -108,6 +131,7 @@ INSTALLED_APPS = [
     'bigcommerce_integration',
     'woocommerce_integration',
     'returns',
+    'automation',
 ]
 
 MIDDLEWARE = [
@@ -227,6 +251,16 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle"
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/day",
+        "user": "1000/day",
+        "shopper_lookup": "10/minute",  # Specific rate for order lookup
+        "shopper_submit": "5/minute",   # Specific rate for return submission
+    }
 }
 
 CORS_ALLOW_CREDENTIALS = True

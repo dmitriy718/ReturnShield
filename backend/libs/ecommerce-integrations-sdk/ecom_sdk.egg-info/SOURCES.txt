@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+ecom_sdk/__init__.py
+ecom_sdk.egg-info/PKG-INFO
+ecom_sdk.egg-info/SOURCES.txt
+ecom_sdk.egg-info/dependency_links.txt
+ecom_sdk.egg-info/requires.txt
+ecom_sdk.egg-info/top_level.txt
+ecom_sdk/shopify/__init__.py
+ecom_sdk/shopify/client.py

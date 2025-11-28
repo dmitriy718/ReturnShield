@@ -11,12 +11,14 @@ export default function ExchangeOption() {
     const navigate = useNavigate();
     const location = useLocation();
     const [selectedOption, setSelectedOption] = useState<'exchange' | 'refund' | null>(null);
+    const [recipientEmail, setRecipientEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const order = location.state?.order as Order | undefined;
     const selectedItems = location.state?.selectedItems as Set<string> | undefined;
     const reason = location.state?.reason as string | undefined;
+    const isGift = location.state?.isGift as boolean | undefined;
 
     useEffect(() => {
         if (!order || !selectedItems || !reason) {
@@ -40,13 +42,15 @@ export default function ExchangeOption() {
         setError(null);
 
         try {
-            await submitReturn(
+            const response = await submitReturn(
                 order.id,
                 Array.from(selectedItems),
                 reason,
-                selectedOption
+                selectedOption,
+                isGift,
+                recipientEmail
             );
-            navigate('/success');
+            navigate('/success', { state: { labelUrl: response.label_url } });
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to submit return');
             setIsSubmitting(false);
@@ -92,7 +96,7 @@ export default function ExchangeOption() {
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        {/* Option 1: Exchange / Store Credit (The Hero) */}
+                        {/* Option 1: Instant Exchange (The Hero) */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -115,66 +119,76 @@ export default function ExchangeOption() {
                                     <RefreshCw className="w-8 h-8" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold">Store Credit</h3>
+                                    <h3 className="text-xl font-bold">Instant Exchange</h3>
                                     <p className="text-primary font-medium">+10% Bonus Value</p>
                                 </div>
                             </div>
 
                             <div className="mb-6">
                                 <p className="text-4xl font-bold text-white mb-1">${bonusAmount.toFixed(2)}</p>
-                                <p className="text-white/60 text-sm">Available immediately</p>
+                                <p className="text-white/60 text-sm">Shop now with instant credit</p>
                             </div>
 
                             <ul className="space-y-3 text-sm text-white/80">
                                 <li className="flex items-center gap-2">
+                                    <Check className="w-4 h-4 text-primary" /> Shop immediately
+                                </li>
+                                <li className="flex items-center gap-2">
                                     <Check className="w-4 h-4 text-primary" /> No return shipping fees
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-primary" /> Instant delivery via email
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-primary" /> Never expires
+                                    <Check className="w-4 h-4 text-primary" /> Bonus credit applied
                                 </li>
                             </ul>
                         </motion.div>
 
-                        {/* Option 2: Refund (The Boring Option) */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 }}
-                            onClick={() => setSelectedOption('refund')}
-                            className={`
-                p-8 rounded-2xl border cursor-pointer transition-all duration-300
-                ${selectedOption === 'refund'
-                                    ? 'border-white bg-white/10'
-                                    : 'border-white/5 bg-surface/10 hover:border-white/20 hover:bg-surface/30'}
-              `}
-                        >
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className={`p-3 rounded-full ${selectedOption === 'refund' ? 'bg-white text-black' : 'bg-white/5 text-white/40'}`}>
-                                    <DollarSign className="w-8 h-8" />
+                        {/* Option 2: Refund (The Boring Option) - Hidden for Gift Returns */}
+                        {!isGift && (
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.2 }}
+                                onClick={() => setSelectedOption('refund')}
+                                className={`
+                    p-8 rounded-2xl border cursor-pointer transition-all duration-300
+                    ${selectedOption === 'refund'
+                                        ? 'border-white bg-white/10'
+                                        : 'border-white/5 bg-surface/10 hover:border-white/20 hover:bg-surface/30'}
+                `}
+                            >
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className={`p-3 rounded-full ${selectedOption === 'refund' ? 'bg-white text-black' : 'bg-white/5 text-white/40'}`}>
+                                        <DollarSign className="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-white/80">Refund</h3>
+                                        <p className="text-white/40">Original Payment Method</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-white/80">Refund</h3>
-                                    <p className="text-white/40">Original Payment Method</p>
+                                <input
+                                    id="recipient-email"
+                                    type="email"
+                                    value={recipientEmail}
+                                    onChange={(e) => setRecipientEmail(e.target.value)}
+                                    placeholder="your-email@example.com"
+                                    className="input-field"
+                                    required
+                                />
+                                <div className="mb-6">
+                                    <p className="text-4xl font-bold text-white/60 mb-1">${refundAmount.toFixed(2)}</p>
+                                    <p className="text-white/40 text-sm">5-10 business days</p>
                                 </div>
-                            </div>
 
-                            <div className="mb-6">
-                                <p className="text-4xl font-bold text-white/60 mb-1">${refundAmount.toFixed(2)}</p>
-                                <p className="text-white/40 text-sm">5-10 business days</p>
-                            </div>
-
-                            <ul className="space-y-3 text-sm text-white/40">
-                                <li className="flex items-center gap-2">
-                                    <span className="w-4 h-4 block" /> May deduct shipping
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <span className="w-4 h-4 block" /> Wait for bank processing
-                                </li>
-                            </ul>
-                        </motion.div>
+                                <ul className="space-y-3 text-sm text-white/40">
+                                    <li className="flex items-center gap-2">
+                                        <span className="w-4 h-4 block" /> May deduct shipping
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <span className="w-4 h-4 block" /> Wait for bank processing
+                                    </li>
+                                </ul>
+                            </motion.div>
+                        )}
                     </div>
 
                     <GlassCard className="sticky bottom-4 border-t border-white/10 bg-surface/80 backdrop-blur-2xl">
@@ -182,7 +196,7 @@ export default function ExchangeOption() {
                             <div>
                                 <p className="text-sm text-white/60">Selected Option</p>
                                 <p className="text-xl font-bold">
-                                    {selectedOption === 'exchange' ? 'Store Credit' : selectedOption === 'refund' ? 'Refund' : 'None selected'}
+                                    {selectedOption === 'exchange' ? 'Instant Exchange' : selectedOption === 'refund' ? 'Refund' : 'None selected'}
                                 </p>
                             </div>
                             <NeonButton

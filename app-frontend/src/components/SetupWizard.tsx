@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate } from 'react-router-dom';
-import type { OnboardingStage } from '../types';
+import type { OnboardingStage, User } from '../types';
 import './SetupWizard.css';
 
 interface WizardStep {
@@ -12,12 +12,10 @@ interface WizardStep {
   component: ReactNode;
   ctaLabel?: string;
   helper?: string;
-  isCompletable?: (user: any) => boolean; // Function to check if the step can be marked as complete
+  isCompletable?: (user: User | null) => boolean; // Function to check if the step can be marked as complete
 }
 
-interface SetupWizardProps {}
-
-export const SetupWizard: React.FC<SetupWizardProps> = () => {
+export const SetupWizard: React.FC = () => {
   const navigate = useNavigate();
   const { user, updateOnboarding, refreshUser, completeWalkthrough } = useAuth();
   const isAuthenticated = !!user;
@@ -25,7 +23,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = () => {
   const [processing, setProcessing] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const wizardSteps: WizardStep[] = [
+  const wizardSteps: WizardStep[] = useMemo(() => [
     {
       key: 'connect',
       title: 'Connect Your Shopify Store',
@@ -40,7 +38,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = () => {
         </div>
       ),
       ctaLabel: 'I have connected my store',
-      isCompletable: (user) => user?.has_shopify_store,
+      isCompletable: (user) => user?.has_shopify_store ?? false,
     },
     {
       key: 'sync',
@@ -87,7 +85,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = () => {
       ),
       ctaLabel: 'Finish',
     },
-  ];
+  ], [isSyncing, navigate]);
 
   const currentStep = wizardSteps[currentStepIndex];
 
@@ -104,7 +102,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = () => {
       }
     }
   }, [user, shouldShowWizard, wizardSteps, currentStepIndex]);
-  
+
   useEffect(() => {
     if (currentStep.key === 'sync' && shouldShowWizard) {
       setIsSyncing(true);
@@ -126,7 +124,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = () => {
         setProcessing(false);
         return;
       }
-      
+
       const nextStepIndex = currentStepIndex + 1;
       if (nextStepIndex < wizardSteps.length) {
         const nextStageKey = wizardSteps[nextStepIndex].key;
@@ -144,7 +142,7 @@ export const SetupWizard: React.FC<SetupWizardProps> = () => {
       setProcessing(false);
     }
   }, [currentStepIndex, wizardSteps, updateOnboarding, refreshUser, completeWalkthrough, processing, currentStep, user]);
-  
+
   if (!shouldShowWizard || !currentStep) {
     return null;
   }

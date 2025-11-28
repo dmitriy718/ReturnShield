@@ -62,7 +62,27 @@ class ReturnRequest(models.Model):
     # Sync details
     shopify_refund_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
     refund_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    refund_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     restock = models.BooleanField(default=False)
+    
+    # Gift Returns
+    is_gift = models.BooleanField(default=False)
+    recipient_email = models.EmailField(blank=True, null=True)
+
+    # Fraud & Automation
+    is_flagged_fraud = models.BooleanField(default=False)
+    fraud_reason = models.TextField(blank=True, null=True)
+    automation_rule_applied = models.ForeignKey(
+        'automation.AutomationRule', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='applied_returns'
+    )
+    
+    # Shipping
+    shipping_label_url = models.URLField(blank=True, null=True)
+    tracking_number = models.CharField(max_length=100, blank=True, null=True)
     
     # Items being returned
     items = models.JSONField(default=list, help_text="List of items being returned")

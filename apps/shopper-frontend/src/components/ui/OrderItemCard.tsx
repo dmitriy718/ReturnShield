@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Check, RefreshCw, X } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface OrderItemProps {
@@ -11,7 +11,7 @@ interface OrderItemProps {
     onToggle: () => void;
 }
 
-export function OrderItemCard({ id, name, price, image, isSelected, onToggle }: OrderItemProps) {
+export function OrderItemCard({ name, price, image, isSelected, onToggle }: OrderItemProps) {
     return (
         <motion.div
             layout
