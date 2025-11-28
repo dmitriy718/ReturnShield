@@ -62,7 +62,7 @@ export default function SuccessPage() {
                         We've sent a confirmation email with your shipping label and instructions.
                     </p>
 
-                    import {QRCodeSVG} from 'qrcode.react';
+
 
                     // ... (imports)
 
@@ -92,7 +92,8 @@ export default function SuccessPage() {
                             {location.state?.labelUrl && (
                                 <div className="bg-white p-4 rounded-xl">
 
-                                    <QRCodeSVG value={location.state.labelUrl} size={128} />
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                    {(QRCodeSVG as any)({ value: location.state.labelUrl, size: 128 })}
                                 </div>
                             )}
                         </div>
