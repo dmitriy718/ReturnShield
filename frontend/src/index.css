@@ -1,22 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+
 :root {
-  font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
   font-weight: 400;
-  color: #0e1333;
-  background-color: #ffffff;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --color-primary: #2d1b69;
-  --color-primary-light: #4a2f8c;
-  --color-accent: #0066ff;
-  --color-accent-light: #3399ff;
-  --color-muted: #6f7390;
-  --color-soft: #e8e8e8;
-  --color-background: #f6f7fb;
-  --radius-base: 8px;
+
+  /* Color Palette - Premium Dark Mode */
+  --color-bg-main: #020617;
+  /* Slate 950 */
+  --color-bg-card: #0f172a;
+  /* Slate 900 */
+  --color-bg-card-hover: #1e293b;
+  /* Slate 800 */
+
+  --color-text-primary: #f8fafc;
+  /* Slate 50 */
+  --color-text-secondary: #94a3b8;
+  /* Slate 400 */
+  --color-text-muted: #64748b;
+  /* Slate 500 */
+
+  --color-accent: #3b82f6;
+  /* Blue 500 */
+  --color-accent-glow: rgba(59, 130, 246, 0.5);
+  --color-accent-light: #60a5fa;
+  /* Blue 400 */
+
+  --color-success: #10b981;
+  /* Emerald 500 */
+  --color-warning: #f59e0b;
+  /* Amber 500 */
+  --color-error: #ef4444;
+  /* Red 500 */
+
+  /* Glassmorphism */
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+  --backdrop-blur: 12px;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+
+  --container-width: 1280px;
+  --header-height: 80px;
 }
 
 *,
@@ -28,19 +57,36 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--color-background);
-  color: inherit;
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Outfit', system-ui, sans-serif;
+  color: var(--color-text-primary);
+  line-height: 1.1;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 button {
   font-family: inherit;
+  cursor: pointer;
 }
 
 #root {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

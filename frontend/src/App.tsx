@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import posthog from 'posthog-js'
+import { motion } from 'framer-motion'
 import './App.css'
 
 import { Header } from './components/Header'
@@ -157,7 +158,11 @@ function App() {
   return (
     <div className="page">
       <Header />
-      <main>
+      <motion.main
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <Hero liveImpact={liveImpact} />
         <Metrics />
         <RoiCalculator />
@@ -345,7 +350,7 @@ function App() {
         />
         <Testimonials />
         <FAQ />
-      </main>
+      </motion.main>
       <Footer />
     </div>
   )
