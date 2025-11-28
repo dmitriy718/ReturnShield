@@ -104,24 +104,38 @@ export const transformVipPayload = (payload: VIPQueueApiPayload | null | undefin
     }
 }
 
-export const transformIntegrationPayload = (payload: any): IntegrationHighlight[] => {
+interface IntegrationApiItem {
+    slug?: string
+    name?: string
+    badge?: string
+    status?: string
+    description?: string
+    cta_label?: string
+    cta_url?: string
+}
+
+interface IntegrationApiPayload {
+    platforms?: IntegrationApiItem[]
+}
+
+export const transformIntegrationPayload = (payload: IntegrationApiPayload | null | undefined): IntegrationHighlight[] => {
     if (!Array.isArray(payload?.platforms)) {
         return []
     }
-    return (payload.platforms as any[]).map((item) => {
+    return (payload?.platforms ?? []).map((item) => {
         const rawSlug =
-            (item?.slug as string | undefined)?.toLowerCase() ||
-            (item?.name as string | undefined)?.toLowerCase().replace(/\s+/g, '-')
+            item?.slug?.toLowerCase() ||
+            item?.name?.toLowerCase().replace(/\s+/g, '-')
         const slug = rawSlug || 'platform'
-        const name = (item?.name as string | undefined) ?? slug.replace('-', ' ')
+        const name = item?.name ?? slug.replace('-', ' ')
         const badge =
-            (item?.badge as string | undefined) ??
-            (item?.status as string | undefined)?.replace(/^\w/, (ch: string) => ch.toUpperCase()) ??
+            item?.badge ??
+            item?.status?.replace(/^\w/, (ch: string) => ch.toUpperCase()) ??
             ''
-        const description = (item?.description as string | undefined) ?? ''
-        const ctaLabel = (item?.cta_label as string | undefined) ?? 'Learn more'
+        const description = item?.description ?? ''
+        const ctaLabel = item?.cta_label ?? 'Learn more'
         const rawUrl =
-            (item?.cta_url as string | undefined) ??
+            item?.cta_url ??
             `https://app.returnshield.app/register?platform=${slug}`
         const ctaHref = withUtm(rawUrl, `integration_${slug}`)
 
@@ -132,7 +146,7 @@ export const transformIntegrationPayload = (payload: any): IntegrationHighlight[
             description,
             ctaLabel,
             ctaHref,
-            status: item?.status as string | undefined,
+            status: item?.status,
         }
     })
 }

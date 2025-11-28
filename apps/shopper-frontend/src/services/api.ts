@@ -15,7 +15,7 @@ export interface Order {
     items: OrderItem[];
 }
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000/api';
 
 export async function lookupOrder(orderNumber: string, email?: string, zipCode?: string, isGift = false): Promise<Order> {
     const response = await fetch(`${API_BASE_URL}/returns/lookup/`, {
