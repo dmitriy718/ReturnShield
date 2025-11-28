@@ -52,6 +52,7 @@ export const FeatureFlagProvider: React.FC<FeatureFlagProviderProps> = ({ childr
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useFeatureFlag = (flagName: string): boolean => {
   const context = useContext(FeatureFlagContext);
   if (context === undefined) {
@@ -60,6 +61,7 @@ export const useFeatureFlag = (flagName: string): boolean => {
   return context.isFeatureEnabled(flagName);
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useFeatureFlags = () => {
   const context = useContext(FeatureFlagContext);
   if (context === undefined) {

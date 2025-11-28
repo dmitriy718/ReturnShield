@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls', namespace='accounts')),
     path('api/support/', include('support.urls', namespace='support')),
     path('api/billing/', include('billing.urls', namespace='billing')),
+    path('api/automation/', include('automation.urls')),
     path('api/shopify/', include('shopify_integration.urls', namespace='shopify_integration')),
     path('api/platforms/bigcommerce/', include('bigcommerce_integration.urls', namespace='bigcommerce_integration')),
     path('api/platforms/woocommerce/', include('woocommerce_integration.urls', namespace='woocommerce_integration')),

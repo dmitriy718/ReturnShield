@@ -1,0 +1,194 @@
+.analytics-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+}
+
+.analytics-table-container {
+    overflow-x: auto;
+}
+
+.analytics-table {
+    width: 100%;
+    text-align: left;
+    font-size: 0.875rem;
+    color: #475569;
+    border-collapse: collapse;
+}
+
+.analytics-table th {
+    padding: 0.75rem 1rem;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #f8fafc;
+    color: #64748b;
+}
+
+.analytics-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.analytics-table tr:hover {
+    background-color: #f8fafc;
+}
+
+.reason-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Cohort Chart */
+.cohort-chart-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3rem;
+    height: 16rem;
+}
+
+.cohort-bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 6rem;
+}
+
+.cohort-bar {
+    width: 100%;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    transition: all 0.5s;
+}
+
+.cohort-bar.new {
+    background-color: rgba(59, 130, 246, 0.8);
+}
+
+.cohort-bar.returning {
+    background-color: rgba(168, 85, 247, 0.8);
+}
+
+.cohort-stats {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    text-align: center;
+}
+
+.stat-box {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background-color: #f8fafc;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.stat-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* Profitability Card */
+.profitability-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .profitability-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.profit-metric-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+}
+
+.profit-metric-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profit-metric-value.green {
+    color: #22c55e;
+}
+
+.profit-metric-value.red {
+    color: #f87171;
+}
+
+.profit-metric-sub {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+.retention-bar-container {
+    margin-top: 2rem;
+}
+
+.retention-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.retention-track {
+    height: 0.75rem;
+    background-color: #f1f5f9;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.retention-fill {
+    height: 100%;
+    background: linear-gradient(to right, #22c55e, #34d399);
+}
+
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 2rem;
+}
+
+.page-container {
+    padding: 2rem;
+    max-width: 80rem;
+    margin: 0 auto;
+}
+
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .grid-2-col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

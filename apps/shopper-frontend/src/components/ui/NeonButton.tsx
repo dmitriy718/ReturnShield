@@ -1,11 +1,11 @@
-import { motion } from 'framer-motion';
-import { clsx } from 'clsx';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 import { Loader2 } from 'lucide-react';
 
-interface NeonButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface NeonButtonProps extends HTMLMotionProps<"button"> {
     variant?: 'primary' | 'secondary';
     isLoading?: boolean;
+    children: React.ReactNode;
 }
 
 export function NeonButton({

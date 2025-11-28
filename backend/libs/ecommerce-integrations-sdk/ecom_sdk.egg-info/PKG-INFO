@@ -1,0 +1,35 @@
+Metadata-Version: 2.4
+Name: ecom-sdk
+Version: 0.0.1
+Summary: A Python SDK for integrating with various e-commerce platforms.
+Author-email: ReturnShield <dev@returnshield.app>
+Project-URL: Homepage, https://github.com/dmitriy718/ReturnShield
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: requests
+Requires-Dist: pydantic
+Requires-Dist: ShopifyAPI==12.7.0
+
+# E-commerce Integrations SDK
+
+A Python SDK for integrating with various e-commerce platforms.
+
+## Installation
+
+```bash
+pip install .
+```
+
+## Usage
+
+```python
+from ecom_sdk.shopify import ShopifyClient
+
+client = ShopifyClient(shop_domain="your-shop.myshopify.com", access_token="your-access-token")
+
+shop_info = client.get_shop_info()
+print(shop_info)
+```

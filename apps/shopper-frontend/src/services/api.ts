@@ -17,7 +17,7 @@ export interface Order {
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
-export async function lookupOrder(orderNumber: string, email: string): Promise<Order> {
+export async function lookupOrder(orderNumber: string, email?: string, zipCode?: string, isGift = false): Promise<Order> {
     const response = await fetch(`${API_BASE_URL}/returns/lookup/`, {
         method: 'POST',
         headers: {
@@ -26,6 +26,8 @@ export async function lookupOrder(orderNumber: string, email: string): Promise<O
         body: JSON.stringify({
             order_number: orderNumber,
             email: email,
+            zip_code: zipCode,
+            is_gift: isGift,
         }),
     });
 
@@ -41,8 +43,10 @@ export async function submitReturn(
     orderId: number,
     items: string[],
     reason: string,
-    resolution: 'exchange' | 'refund'
-): Promise<{ id: number; message: string }> {
+    resolution: 'exchange' | 'refund',
+    isGift = false,
+    recipientEmail?: string
+): Promise<{ id: number; message: string; label_url?: string }> {
     const response = await fetch(`${API_BASE_URL}/returns/submit/`, {
         method: 'POST',
         headers: {
@@ -53,6 +57,8 @@ export async function submitReturn(
             items,
             reason,
             resolution,
+            is_gift: isGift,
+            recipient_email: recipientEmail,
         }),
     });
 

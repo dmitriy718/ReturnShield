@@ -1,8 +1,12 @@
 import logging
 
-from rest_framework import permissions, status
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import permissions
+from rest_framework.throttling import AnonRateThrottle
+from django.shortcuts import get_object_or_404
 
 from analytics.posthog import capture as capture_event
 
@@ -79,33 +83,66 @@ class VIPResolutionView(APIView):
 class ShopperOrderLookupView(APIView):
     """
     Public endpoint for shoppers to look up their order.
-    Requires 'order_number' and 'email'.
+    Requires 'order_number' and 'email' OR 'zip_code' (for gift returns).
     """
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AnonRateThrottle]
+    throttle_scope = 'shopper_lookup'
 
     def post(self, request, *args, **kwargs):
         order_number = request.data.get("order_number")
         email = request.data.get("email")
+        zip_code = request.data.get("zip_code")
+        is_gift = request.data.get("is_gift", False)
 
-        if not order_number or not email:
+        if not order_number:
             return Response(
-                {"error": "Please provide both order number and email."},
+                {"error": "Please provide an order number."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Try to find the order
-        # Note: external_id is usually the ID, but for this MVP we might need to match 'name' or 'order_number'
-        # depending on how Shopify syncs. Assuming external_id matches the user input for now.
         from .models import Order
-        order = Order.objects.filter(
-            external_id=str(order_number),
-            customer_email__iexact=email
-        ).first()
+        
+        if is_gift and zip_code:
+            # Gift Return Lookup: Match Order Number + Zip Code
+            # We need to check the shipping_address JSON field
+            # This is a bit complex with JSONField, but for MVP we can filter in Python or use exact match if schema is consistent
+            # Assuming shipping_address has a 'zip' key
+            
+            # First find by order number
+            orders = Order.objects.filter(external_id=str(order_number))
+            
+            matched_order = None
+            for order in orders:
+                shipping_zip = order.shipping_address.get('zip', '')
+                # Simple loose match
+                if str(zip_code).strip() in str(shipping_zip):
+                    matched_order = order
+                    break
+            
+            if not matched_order:
+                 return Response(
+                    {"error": "Order not found with that Zip Code."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            order = matched_order
 
-        if not order:
-            return Response(
-                {"error": "Order not found. Please check your details."},
-                status=status.HTTP_404_NOT_FOUND
+        elif email:
+            # Standard Lookup: Match Order Number + Email
+            order = Order.objects.filter(
+                external_id=str(order_number),
+                customer_email__iexact=email
+            ).first()
+            
+            if not order:
+                return Response(
+                    {"error": "Order not found with that Email."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+             return Response(
+                {"error": "Please provide Email or Zip Code (for gifts)."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         # Build response
@@ -114,7 +151,8 @@ class ShopperOrderLookupView(APIView):
             "order_number": order.external_id,
             "created_at": order.created_at,
             "currency": order.currency,
-            "items": order.line_items,  # Assuming this is already a list of dicts
+            "items": order.line_items,
+            "is_gift_lookup": is_gift
         }, status=status.HTTP_200_OK)
 
 
@@ -123,12 +161,18 @@ class ShopperReturnSubmitView(APIView):
     Public endpoint for shoppers to submit a return.
     """
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [AnonRateThrottle]
+    throttle_scope = 'shopper_submit'
 
     def post(self, request, *args, **kwargs):
         order_id = request.data.get("order_id")
         items = request.data.get("items") # List of line_item_ids
         reason = request.data.get("reason")
         resolution = request.data.get("resolution") # 'exchange' or 'refund'
+        
+        # Gift Return Fields
+        is_gift = request.data.get("is_gift", False)
+        recipient_email = request.data.get("recipient_email")
 
         if not all([order_id, items, reason, resolution]):
             return Response(
@@ -148,6 +192,8 @@ class ShopperReturnSubmitView(APIView):
 
         # Append resolution to reason for MVP tracking
         full_reason = f"{reason} [{resolution.upper()}]"
+        if is_gift:
+            full_reason += " [GIFT RETURN]"
 
         # Calculate estimated refund (simple sum of item prices for MVP)
         # In a real app, we'd look up exact line item prices from the order
@@ -168,11 +214,50 @@ class ShopperReturnSubmitView(APIView):
             reason=full_reason,
             status='pending',
             items=return_items,
-            refund_amount=refund_amount
+            refund_amount=refund_amount,
+            is_gift=is_gift,
+            recipient_email=recipient_email
         )
+
+        # Generate Shipping Label
+        from .shipping import generate_return_label
+        label_data = generate_return_label(return_request)
+        
+        if label_data["label_url"]:
+            return_request.shipping_label_url = label_data["label_url"]
+            return_request.tracking_number = label_data["tracking_number"]
+            return_request.save()
+
+        # --- Automation & Fraud Detection ---
+        from automation.services import RuleEvaluator, FraudDetector
+        from automation.models import AutomationRule
+
+        # 1. Check Fraud
+        is_fraud, fraud_reason = FraudDetector.check_fraud(return_request)
+        if is_fraud:
+            return_request.is_flagged_fraud = True
+            return_request.fraud_reason = fraud_reason
+            return_request.save()
+            # We might still allow label generation but flag it for review
+            # Or we could block it. For MVP, we flag it.
+
+        # 2. Check Automation Rules (only if not fraud)
+        if not is_fraud:
+            matched_rule = RuleEvaluator.evaluate(return_request)
+            if matched_rule:
+                return_request.automation_rule_applied = matched_rule
+                if matched_rule.rule_type == AutomationRule.RuleType.APPROVE:
+                    return_request.status = 'approved'
+                elif matched_rule.rule_type == AutomationRule.RuleType.REJECT:
+                    return_request.status = 'rejected'
+                # FLAG is default 'pending' essentially
+                return_request.save()
+
+
 
         return Response({
             "id": return_request.id,
             "status": return_request.status,
-            "message": "Return submitted successfully"
+            "message": "Return submitted successfully",
+            "label_url": return_request.shipping_label_url
         }, status=status.HTTP_201_CREATED)

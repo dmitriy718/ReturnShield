@@ -56,7 +56,7 @@ export async function apiFetch<T = unknown>(
 
   if (!response.ok) {
     let detail: string | undefined
-    let detailPayload: ApiErrorEventDetail | undefined
+
 
     if (isJson) {
       try {
@@ -69,7 +69,7 @@ export async function apiFetch<T = unknown>(
       detail = response.statusText
     }
 
-    detailPayload = {
+    const detailPayload: ApiErrorEventDetail = {
       path: resolvedPath,
       status: response.status,
       message: detail,
@@ -100,5 +100,91 @@ export async function getIntegrationsHealth(token: string) {
 
 export async function getFeatureFlags(token: string): Promise<string[]> {
   return apiFetch<string[]>('/feature-flags/', { token })
+}
+
+export interface ReasonData {
+  sku: string;
+  reasons: Record<string, number>;
+  total_returns: number;
+}
+
+export async function getReasonAnalytics(token: string) {
+  return apiFetch<ReasonData[]>('/returns/analytics/reasons/', { token })
+}
+
+export interface CohortMetrics {
+  return_rate: number;
+  total_orders: number;
+  total_returns: number;
+}
+
+export interface CohortData {
+  new_customers: CohortMetrics;
+  returning_customers: CohortMetrics;
+}
+
+export async function getCohortAnalytics(token: string) {
+  return apiFetch<CohortData>('/returns/analytics/cohorts/', { token })
+}
+
+export interface ProfitabilityData {
+  revenue_retained: number;
+  revenue_refunded: number;
+  exchange_count: number;
+  refund_count: number;
+  retained_percentage: number;
+}
+
+export async function getProfitabilityAnalytics(token: string) {
+  return apiFetch<ProfitabilityData>('/returns/analytics/profitability/', { token })
+}
+
+// Automation
+export interface AutomationRule {
+  id: number;
+  name: string;
+  rule_type: 'APPROVE' | 'REJECT' | 'FLAG';
+  trigger_field: 'TOTAL_VALUE' | 'RETURN_REASON' | 'ITEM_CONDITION';
+  operator: 'eq' | 'gt' | 'lt' | 'contains';
+  value: string;
+  is_active: boolean;
+}
+
+export interface FraudSettings {
+  flag_high_velocity: boolean;
+  max_return_velocity: number;
+  flag_high_value: boolean;
+  high_value_threshold: number;
+}
+
+export async function getAutomationRules(token: string) {
+  return apiFetch<AutomationRule[]>('/automation/rules/', { token });
+}
+
+export async function createAutomationRule(token: string, rule: Omit<AutomationRule, 'id'>) {
+  return apiFetch<AutomationRule>('/automation/rules/', {
+    method: 'POST',
+    body: JSON.stringify(rule),
+    token
+  });
+}
+
+export async function deleteAutomationRule(token: string, id: number) {
+  return apiFetch<void>(`/automation/rules/${id}/`, {
+    method: 'DELETE',
+    token
+  });
+}
+
+export async function getFraudSettings(token: string) {
+  return apiFetch<FraudSettings>('/automation/fraud-settings/', { token });
+}
+
+export async function updateFraudSettings(token: string, settings: FraudSettings) {
+  return apiFetch<FraudSettings>('/automation/fraud-settings/', {
+    method: 'PUT',
+    body: JSON.stringify(settings),
+    token
+  });
 }
 

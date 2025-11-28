@@ -50,9 +50,10 @@ export function DashboardPage() {
   const tipTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
+    const timeoutId = tipTimeoutRef.current;
     return () => {
-      if (tipTimeoutRef.current !== null) {
-        window.clearTimeout(tipTimeoutRef.current);
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
       }
     };
   }, []);
@@ -116,7 +117,7 @@ export function DashboardPage() {
   const handlePlanSelection = useCallback(() => {
     navigate('/billing');
   }, [navigate]);
-  
+
   const checklistItems = useMemo<ChecklistItem[]>(() => {
     return [
       {
@@ -129,9 +130,9 @@ export function DashboardPage() {
         action: hasShopifyStore
           ? undefined
           : {
-              label: 'Email onboarding',
-              href: 'mailto:concierge@returnshield.app?subject=Connect%20Shopify%20store',
-            },
+            label: 'Email onboarding',
+            href: 'mailto:concierge@returnshield.app?subject=Connect%20Shopify%20store',
+          },
       },
       {
         id: 'walkthrough',
@@ -143,9 +144,9 @@ export function DashboardPage() {
         action:
           !walkthroughComplete && isTrial
             ? {
-                label: 'Resume guided tour',
-                onClick: () => setIsWalkthroughActive(true),
-              }
+              label: 'Resume guided tour',
+              onClick: () => setIsWalkthroughActive(true),
+            }
             : undefined,
       },
       {
@@ -157,18 +158,18 @@ export function DashboardPage() {
         status: isPaid ? 'done' : 'todo',
         action: isPaid
           ? {
-              label: 'Manage billing',
-              onClick: handlePlanSelection,
-            }
+            label: 'Manage billing',
+            onClick: handlePlanSelection,
+          }
           : {
-              label: 'Choose plan',
-              onClick: handlePlanSelection,
-            },
+            label: 'Choose plan',
+            onClick: handlePlanSelection,
+          },
       },
     ];
   }, [hasShopifyStore, walkthroughComplete, isTrial, isPaid, handlePlanSelection, user?.subscription_status]);
 
-  
+
 
   if (showLoadingScreen) {
     return <LoadingScreen message="Preparing your dashboard..." />;

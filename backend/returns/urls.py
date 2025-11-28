@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import ExchangeAutomationView, ExchangeCoachView, ReturnlessInsightsView, VIPResolutionView, ShopperOrderLookupView, ShopperReturnSubmitView
+from analytics.views import ReturnReasonAnalyticsView, CohortAnalysisView, ProfitabilityImpactView
 
 app_name = "returns"
 
@@ -31,5 +32,9 @@ urlpatterns = [
         ShopperReturnSubmitView.as_view(),
         name="return-submit",
     ),
+    # Analytics
+    path("analytics/reasons/", ReturnReasonAnalyticsView.as_view(), name="analytics-reasons"),
+    path("analytics/cohorts/", CohortAnalysisView.as_view(), name="analytics-cohorts"),
+    path("analytics/profitability/", ProfitabilityImpactView.as_view(), name="analytics-profitability"),
 ]
 

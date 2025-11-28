@@ -10,6 +10,8 @@ export default function FindOrder() {
     const navigate = useNavigate();
     const [orderNumber, setOrderNumber] = useState('');
     const [email, setEmail] = useState('');
+    const [zipCode, setZipCode] = useState('');
+    const [isGift, setIsGift] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -19,8 +21,8 @@ export default function FindOrder() {
         setError(null);
 
         try {
-            const order = await lookupOrder(orderNumber, email);
-            navigate('/select-items', { state: { order } });
+            const order = await lookupOrder(orderNumber, email, zipCode, isGift);
+            navigate('/select-items', { state: { order, isGift } });
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to find order');
         } finally {
@@ -74,16 +76,29 @@ export default function FindOrder() {
                             </div>
                         </div>
 
+                        <div className="flex items-center justify-end">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsGift(!isGift);
+                                    setError(null);
+                                }}
+                                className="text-sm text-primary hover:text-primary/80 transition-colors"
+                            >
+                                {isGift ? 'I have the email address' : 'Start a Gift Return?'}
+                            </button>
+                        </div>
+
                         <div className="space-y-2">
-                            <label htmlFor="email" className="text-sm font-medium text-white/80 ml-1">
-                                Email Address
+                            <label htmlFor="email_or_zip" className="text-sm font-medium text-white/80 ml-1">
+                                {isGift ? 'Shipping Zip Code' : 'Email Address'}
                             </label>
                             <input
-                                id="email"
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="hello@example.com"
+                                id="email_or_zip"
+                                type={isGift ? "text" : "email"}
+                                value={isGift ? zipCode : email}
+                                onChange={(e) => isGift ? setZipCode(e.target.value) : setEmail(e.target.value)}
+                                placeholder={isGift ? "90210" : "hello@example.com"}
                                 className="input-field"
                                 required
                             />

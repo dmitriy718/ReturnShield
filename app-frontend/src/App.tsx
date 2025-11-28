@@ -8,6 +8,7 @@ import { AutomationPage } from './pages/AutomationPage'
 import { BillingPage } from './pages/BillingPage'
 import { CheckoutSuccessPage } from './pages/CheckoutSuccessPage'
 import { IntegrationsHealthPage } from './pages/IntegrationsHealthPage'
+import AnalyticsPage from './pages/AnalyticsPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { AppLayout } from './components/layout/AppLayout'
 import { LoadingScreen } from './components/ui/LoadingScreen'
@@ -57,6 +58,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route index element={<DashboardPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/automation" element={<AutomationPage />} />
             <Route path="/billing" element={<BillingPage />} />
             <Route path="/billing/success" element={<CheckoutSuccessPage />} />
