@@ -25,6 +25,7 @@
 - **Backend Logic**:
     - `backend/returns/utils.py`: Replaced hardcoded VIP generation with dynamic logic based on `Order.total`. Implemented `aggregate_hours_saved` calculation.
     - `backend/returns/shipping.py`: Updated `generate_return_label` to pull real address data from `Order.shipping_address`.
+    - `backend/returns/views.py`: Hardened `ShopperOrderLookupView` to use strict zip code matching (exact string match vs `in` operator) for better security.
 
 ## Phase 3: Production Enhancements
 
@@ -49,3 +50,27 @@
 
 ### Frontend Optimization
 - Configured `manualChunks` in `vite.config.ts` for both `frontend` and `app-frontend` to split `react` and `framer-motion` into separate vendor chunks for better caching.
+
+## Phase 4: Second Review & Validation
+
+- Verified `ShopperOrderLookupView` logic and tightened security.
+- Confirmed `docker-compose.yml` service definitions.
+- Validated `settings.py` security configurations.
+
+## Phase 5: Testing
+
+- Created `e2e/tests/shopper.spec.ts` for Shopper Return Flow.
+- Created `e2e/tests/dashboard.spec.ts` for Merchant Dashboard smoke tests.
+- Configured `e2e/playwright.config.ts`.
+
+## Phase 6 & 7: Deployment & Wrap-Up
+
+- **Deployment**: Code is ready for deployment. Requires manual pull and restart on VPS due to missing local SSH key integration.
+- **Requirements**: Missing production secrets documented in `FinalRequirements.md`.
+- **Status**: Project is in "Top Production-Grade Shape". Core logic is real, security is tightened, and infrastructure is complete.
+
+### Mini Cheat Sheet
+- **Start All**: `docker compose up --build`
+- **Run Tests (Backend)**: `docker compose exec backend python manage.py test`
+- **Run Tests (E2E)**: `npx playwright test` (requires local dev server running)
+- **Deploy**: SSH to VPS -> `git pull` -> `docker compose up -d --build`
