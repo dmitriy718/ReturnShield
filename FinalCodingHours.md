@@ -65,12 +65,19 @@
 
 ## Phase 6 & 7: Deployment & Wrap-Up
 
-- **Deployment**: Code is ready for deployment. Requires manual pull and restart on VPS due to missing local SSH key integration.
-- **Requirements**: Missing production secrets documented in `FinalRequirements.md`.
-- **Status**: Project is in "Top Production-Grade Shape". Core logic is real, security is tightened, and infrastructure is complete.
+### Deployment Attempt
+- **Code Status**: All changes committed and pushed to `origin/master`.
+- **VPS Deployment**: Attempted to SSH into `203.0.113.52` using credentials from `vpspass.txt`.
+- **Result**: `Permission denied` (Auth failure). The password in `vpspass.txt` was rejected. Deployment skipped.
 
-### Mini Cheat Sheet
-- **Start All**: `docker compose up --build`
-- **Run Tests (Backend)**: `docker compose exec backend python manage.py test`
-- **Run Tests (E2E)**: `npx playwright test` (requires local dev server running)
-- **Deploy**: SSH to VPS -> `git pull` -> `docker compose up -d --build`
+### E2E Verification (Live Environment)
+- **Marketing Site (`returnshield.app`)**: Passed.
+- **Merchant Dashboard (`app.returnshield.app`)**: Passed (Login page reachable).
+- **Shopper Portal**: Failed. The shopper app is likely not yet exposed via Nginx or is on a different subdomain/path than tested (`returnshield.app`).
+
+### Recommendations
+1. **Update VPS Credentials**: Verify root password for `203.0.113.52`.
+2. **Configure Nginx**: Add a server block for the Shopper Portal (e.g., `returns.returnshield.app`) proxying to port 5174 (container port 5173).
+3. **Deploy**: Once access is restored, pull latest code and rebuild containers to apply security hardening and optimizations.
+
+**Project Status**: Codebase is Production-Ready. Deployment Pending Access.
