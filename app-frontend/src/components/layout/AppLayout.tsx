@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, Settings, CreditCard, LogOut, ShieldCheck, Activity, Plug } from "lucide-react"
+import { LayoutDashboard, CreditCard, LogOut, ShieldCheck, Activity, Plug } from "lucide-react"
 import { useAuth } from "../../providers/AuthProvider"
 import { Button } from "../ui/button"
 import { Separator } from "../ui/separator"

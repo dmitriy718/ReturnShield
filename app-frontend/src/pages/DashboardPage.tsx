@@ -2,12 +2,9 @@ import { useEffect, useState } from "react"
 import { ArrowUpRight, BarChart3, Clock, DollarSign, Package } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
-import { useAuth } from "../providers/AuthProvider"
-import { fetchReturnlessInsights, fetchExchangeCoach, fetchVIPResolution } from "../services/api" // Assuming these exist or I need to mock/fix them if they rely on old types
 
 export function DashboardPage() {
-  const { user } = useAuth()
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     revenueSaved: 12450,
     returnRate: 18.2,
     activeReturns: 42,

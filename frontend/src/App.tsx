@@ -10,7 +10,6 @@ import {
   CheckCircle2, 
   Menu, 
   X,
-  TrendingUp,
   RefreshCw,
   Box,
   Truck
