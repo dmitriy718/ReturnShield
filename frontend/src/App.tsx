@@ -1,310 +1,459 @@
-import { motion } from "framer-motion"
-import { ArrowRight, BarChart3, CheckCircle2, Globe, LayoutDashboard, ShieldCheck, Zap } from "lucide-react"
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  ShieldCheck, 
+  ArrowRight, 
+  BarChart3, 
+  Zap, 
+  Globe, 
+  LayoutDashboard, 
+  CheckCircle2, 
+  Menu, 
+  X,
+  TrendingUp,
+  RefreshCw,
+  Box,
+  Truck
+} from 'lucide-react'
 import { Button } from "./components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card"
 import { Badge } from "./components/ui/badge"
-import { Separator } from "./components/ui/separator"
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
+// --- Components ---
+
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  return (
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-background/80 backdrop-blur-md border-b border-border/50 py-4' : 'bg-transparent py-6'}`}>
+      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
+        <div className="flex items-center gap-2 font-heading font-bold text-xl tracking-tight text-foreground">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+          ReturnShield
+        </div>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-8">
+          <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Features</a>
+          <a href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">How it Works</a>
+          <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Pricing</a>
+        </div>
+
+        <div className="hidden md:flex items-center gap-4">
+          <a href="https://app.returnshield.app/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Log in</a>
+          <Button onClick={() => window.location.href = 'https://app.returnshield.app/register'} className="shadow-lg shadow-primary/20">
+            Start Free Trial
+          </Button>
+        </div>
+
+        {/* Mobile Toggle */}
+        <button className="md:hidden p-2 text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-background border-b border-border"
+          >
+            <div className="container mx-auto px-4 py-6 flex flex-col gap-4">
+              <a href="#features" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Features</a>
+              <a href="#how-it-works" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>How it Works</a>
+              <a href="#pricing" className="text-lg font-medium" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
+              <div className="h-px bg-border my-2" />
+              <a href="https://app.returnshield.app/login" className="text-lg font-medium">Log in</a>
+              <Button className="w-full" onClick={() => window.location.href = 'https://app.returnshield.app/register'}>Start Free Trial</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  )
 }
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
+const Hero = () => {
+  return (
+    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+      {/* Background Gradients */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50" />
+      <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-accent/10 blur-[100px] rounded-full pointer-events-none" />
+
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Badge variant="secondary" className="px-4 py-1.5 text-sm mb-6 border-primary/20 bg-primary/5 text-primary rounded-full">
+              <span className="relative flex h-2 w-2 mr-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              </span>
+              New: AI Exchange Coach™ is live
+            </Badge>
+          </motion.div>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-heading font-extrabold tracking-tight leading-tight text-foreground"
+          >
+            Turn Returns into <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Revenue & Loyalty</span>
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-xl text-muted-foreground max-w-2xl leading-relaxed"
+          >
+            Stop losing margin on refunds. ReturnShield automates exchanges, protects VIP customers, and recovers revenue with intelligent return routing.
+          </motion.p>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+          >
+            <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-xl shadow-primary/25 hover:shadow-primary/40 transition-all duration-300" onClick={() => window.location.href = 'https://app.returnshield.app/register'}>
+              Start Preventing Returns <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full bg-background/50 backdrop-blur border-border hover:bg-background/80">
+              View Live Demo
+            </Button>
+          </motion.div>
+
+          {/* Social Proof */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="pt-12 text-sm text-muted-foreground"
+          >
+            <p className="mb-4 font-medium uppercase tracking-wider text-xs opacity-70">Trusted by modern brands</p>
+            <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500">
+               {/* Placeholders for logos */}
+               <div className="flex items-center gap-2 font-bold text-lg"><Box className="h-5 w-5" /> AcmeCo</div>
+               <div className="flex items-center gap-2 font-bold text-lg"><Globe className="h-5 w-5" /> GlobalStyle</div>
+               <div className="flex items-center gap-2 font-bold text-lg"><Zap className="h-5 w-5" /> SwiftWear</div>
+               <div className="flex items-center gap-2 font-bold text-lg"><LayoutDashboard className="h-5 w-5" /> LuxeLiving</div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const FeatureCard = ({ icon: Icon, title, description, badge, delay }: { icon: any, title: string, description: string, badge?: string, delay: number }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay }}
+    className="group relative"
+  >
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    <Card className="relative h-full bg-card/50 backdrop-blur border-border/50 hover:border-primary/50 transition-colors duration-300">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="mb-4 w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
+            <Icon className="w-6 h-6" />
+          </div>
+          {badge && <Badge variant="secondary" className="bg-primary/10 text-primary border-0">{badge}</Badge>}
+        </div>
+        <CardTitle className="text-xl mb-2">{title}</CardTitle>
+        <CardDescription className="text-base leading-relaxed">{description}</CardDescription>
+      </CardHeader>
+    </Card>
+  </motion.div>
+)
+
+const BentoGrid = () => {
+  return (
+    <section id="features" className="py-24 bg-secondary/5">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6">Built to Defend Your Margins</h2>
+          <p className="text-lg text-muted-foreground">Every feature is engineered to convert refunds into revenue and protect your bottom line.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(250px,auto)]">
+          {/* Large Card */}
+          <div className="md:col-span-2">
+            <FeatureCard 
+              icon={BarChart3}
+              title="Returnless Insights"
+              description="Identify high-risk SKUs and automate returnless refunds. Our AI analyzes shipping costs vs. inventory value to make the most profitable decision instantly."
+              badge="Save 18% Margin"
+              delay={0}
+            />
+          </div>
+          
+          {/* Small Cards */}
+          <FeatureCard 
+            icon={RefreshCw}
+            title="Exchange Autopilot"
+            description="Convert refunds into exchanges with instant credit incentives and one-click swaps."
+            delay={0.1}
+          />
+          
+          <FeatureCard 
+            icon={Truck}
+            title="Eco-Routing"
+            description="Automatically route donations to local centers to reduce carbon footprint and shipping fees."
+            delay={0.2}
+          />
+
+          <div className="md:col-span-2">
+             <FeatureCard 
+              icon={ShieldCheck}
+              title="VIP Resolution Hub"
+              description="Prioritize your best customers. High-LTV shoppers get white-glove treatment and instant resolutions, reducing churn risk by 47%."
+              badge="Churn Protection"
+              delay={0.3}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const MetricsSection = () => {
+  return (
+    <section className="py-20 border-y border-border/50 bg-background relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.03]" />
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-border/50">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="p-4"
+          >
+            <div className="text-5xl md:text-6xl font-heading font-extrabold text-foreground mb-2">23%</div>
+            <p className="text-muted-foreground font-medium uppercase tracking-wide text-sm">Average Return Reduction</p>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="p-4"
+          >
+            <div className="text-5xl md:text-6xl font-heading font-extrabold text-foreground mb-2">$48k</div>
+            <p className="text-muted-foreground font-medium uppercase tracking-wide text-sm">Monthly Revenue Protected</p>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="p-4"
+          >
+            <div className="text-5xl md:text-6xl font-heading font-extrabold text-foreground mb-2">72h</div>
+            <p className="text-muted-foreground font-medium uppercase tracking-wide text-sm">Time to Live Insights</p>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const PricingCard = ({ title, price, description, features, highlighted, cta }: any) => (
+  <Card className={`relative flex flex-col h-full ${highlighted ? 'border-primary shadow-2xl shadow-primary/10 scale-105 z-10 bg-card' : 'border-border/50 bg-card/50'}`}>
+    {highlighted && (
+      <div className="absolute -top-4 left-0 right-0 mx-auto w-fit rounded-full bg-gradient-to-r from-primary to-accent px-4 py-1 text-xs font-bold text-white shadow-lg uppercase tracking-wider">
+        Most Popular
+      </div>
+    )}
+    <CardHeader>
+      <CardTitle className="text-2xl">{title}</CardTitle>
+      <div className="mt-4 flex items-baseline gap-1">
+        <span className="text-4xl font-extrabold tracking-tight">${price}</span>
+        <span className="text-muted-foreground font-medium">/mo</span>
+      </div>
+      <CardDescription className="mt-2">{description}</CardDescription>
+    </CardHeader>
+    <CardContent className="flex-1">
+      <ul className="space-y-4 text-sm">
+        {features.map((feature: string) => (
+          <li key={feature} className="flex items-center gap-3">
+            <CheckCircle2 className={`h-5 w-5 shrink-0 ${highlighted ? 'text-primary' : 'text-muted-foreground'}`} />
+            <span className="text-foreground/80">{feature}</span>
+          </li>
+        ))}
+      </ul>
+    </CardContent>
+    <div className="p-6 pt-0">
+      <Button 
+        className="w-full" 
+        variant={highlighted ? "default" : "outline"} 
+        size="lg"
+        onClick={() => window.location.href = `https://app.returnshield.app/register?plan=${title.toLowerCase()}`}
+      >
+        {cta}
+      </Button>
+    </div>
+  </Card>
+)
+
+const PricingSection = () => {
+  const plans = [
+    {
+      title: "Launch",
+      price: "29",
+      description: "Essential analytics for emerging brands.",
+      features: [
+        "Daily return summary",
+        "30-day trend analytics",
+        "Basic email notifications",
+        "Standard support",
+        "Up to 500 returns/mo"
+      ],
+      cta: "Get Started"
+    },
+    {
+      title: "Scale",
+      price: "99",
+      description: "Automation for growing teams.",
+      features: [
+        "Everything in Launch",
+        "AI Exchange Coach™",
+        "VIP Resolution Hub",
+        "Slack alerts",
+        "Unlimited automated rules",
+        "Priority support"
+      ],
+      highlighted: true,
+      cta: "Start Free Trial"
+    },
+    {
+      title: "Elite",
+      price: "249",
+      description: "Enterprise-grade control & insights.",
+      features: [
+        "Everything in Scale",
+        "Dedicated Success Manager",
+        "Custom Integrations",
+        "Predictive Forecasting",
+        "Custom API Rate Limits",
+        "24/7 Phone Support"
+      ],
+      cta: "Contact Sales"
+    }
+  ]
+
+  return (
+    <section id="pricing" className="py-24">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6">Simple, Transparent Pricing</h2>
+          <p className="text-lg text-muted-foreground">No hidden fees. Cancel anytime. ReturnShield pays for itself in your first month.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {plans.map((plan, idx) => (
+            <motion.div
+              key={plan.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              className="h-full"
+            >
+              <PricingCard {...plan} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const Footer = () => {
+  return (
+    <footer className="bg-card border-t border-border py-12">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 font-heading font-bold text-xl">
+              <ShieldCheck className="h-6 w-6 text-primary" />
+              ReturnShield
+            </div>
+            <p className="text-muted-foreground text-sm">
+              The revenue defense platform for modern commerce.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-4">Platform</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="#" className="hover:text-primary">Features</a></li>
+              <li><a href="#" className="hover:text-primary">Integrations</a></li>
+              <li><a href="#" className="hover:text-primary">Pricing</a></li>
+              <li><a href="#" className="hover:text-primary">Changelog</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4">Company</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="#" className="hover:text-primary">About</a></li>
+              <li><a href="#" className="hover:text-primary">Blog</a></li>
+              <li><a href="#" className="hover:text-primary">Careers</a></li>
+              <li><a href="mailto:hello@returnshield.app" className="hover:text-primary">Contact</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4">Legal</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="/privacy" className="hover:text-primary">Privacy Policy</a></li>
+              <li><a href="/terms" className="hover:text-primary">Terms of Service</a></li>
+              <li><a href="/dmarc" className="hover:text-primary">DMARC Policy</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+          <p>© 2026 ReturnShield Inc. All rights reserved.</p>
+          <div className="flex gap-6">
+            {/* Social icons could go here */}
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
 }
 
 function App() {
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground selection:bg-primary/20">
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <span>ReturnShield</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-            <a href="#features" className="transition-colors hover:text-foreground">Features</a>
-            <a href="#pricing" className="transition-colors hover:text-foreground">Pricing</a>
-            <a href="#testimonials" className="transition-colors hover:text-foreground">Customers</a>
-          </nav>
-          <div className="flex items-center gap-4">
-            <a href="https://app.returnshield.app/login" className="text-sm font-medium text-muted-foreground hover:text-foreground hidden sm:block">Log in</a>
-            <Button onClick={() => window.location.href = 'https://app.returnshield.app/register'}>
-              Start Free Trial
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main>
-        {/* Hero Section */}
-        <section className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-32 lg:pt-40 lg:pb-40">
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background opacity-40"></div>
-          <div className="container px-4 text-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mx-auto max-w-3xl space-y-6"
-            >
-              <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                New: AI-Powered Exchange Coach
-              </Badge>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                Turn Returns into <span className="text-primary block sm:inline">Revenue</span>
-              </h1>
-              <p className="mx-auto max-w-[700px] text-lg text-muted-foreground md:text-xl">
-                Stop losing margin on refunds. ReturnShield automates exchanges, protects VIP customers, and recovers revenue with intelligent return routing.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <Button size="lg" className="h-12 px-8 text-base" onClick={() => window.location.href = 'https://app.returnshield.app/register'}>
-                  Start Preventing Returns <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button size="lg" variant="outline" className="h-12 px-8 text-base">
-                  View Live Demo
-                </Button>
-              </div>
-              <div className="pt-8 text-sm text-muted-foreground">
-                <p>Trusted by 500+ Shopify Brands</p>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Stats Grid */}
-        <section className="border-y border-border/50 bg-secondary/20 py-12">
-          <div className="container px-4">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <div className="text-center">
-                <h3 className="text-4xl font-bold text-foreground">23%</h3>
-                <p className="text-sm font-medium text-muted-foreground mt-1">Average Return Reduction</p>
-              </div>
-              <div className="text-center border-x-0 sm:border-x border-border/50">
-                <h3 className="text-4xl font-bold text-foreground">$48k</h3>
-                <p className="text-sm font-medium text-muted-foreground mt-1">Monthly Revenue Protected</p>
-              </div>
-              <div className="text-center">
-                <h3 className="text-4xl font-bold text-foreground">72h</h3>
-                <p className="text-sm font-medium text-muted-foreground mt-1">Time to Live Insights</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Bento Grid */}
-        <section id="features" className="py-24">
-          <div className="container px-4">
-            <div className="mb-16 text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Platform Features</h2>
-              <p className="mt-4 text-muted-foreground text-lg">Everything you need to master your post-purchase experience.</p>
-            </div>
-            
-            <motion.div 
-              variants={container}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-            >
-              <motion.div variants={item} className="lg:col-span-2">
-                <Card className="h-full bg-gradient-to-br from-card to-card/50 border-border/50">
-                  <CardHeader>
-                    <div className="mb-2 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                      <BarChart3 className="w-6 h-6" />
-                    </div>
-                    <CardTitle>Returnless Insights</CardTitle>
-                    <CardDescription className="text-base">
-                      Identify high-risk SKUs and automate returnless refunds to save on shipping and processing costs.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="rounded-lg bg-background/50 border border-border p-4">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-medium">Margin Saved</span>
-                        <Badge variant="default" className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20">+18%</Badge>
-                      </div>
-                      <div className="h-24 w-full bg-secondary/50 rounded animate-pulse"></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={item}>
-                <Card className="h-full border-border/50">
-                  <CardHeader>
-                    <div className="mb-2 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
-                      <Zap className="w-6 h-6" />
-                    </div>
-                    <CardTitle>Exchange Autopilot</CardTitle>
-                    <CardDescription>
-                      Convert refunds into exchanges automatically with instant credit incentives.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Instant credit issuance</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> One-click exchanges</li>
-                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Inventory syncing</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={item}>
-                <Card className="h-full border-border/50">
-                  <CardHeader>
-                    <div className="mb-2 w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500">
-                      <Globe className="w-6 h-6" />
-                    </div>
-                    <CardTitle>Eco-Friendly Routing</CardTitle>
-                    <CardDescription>
-                      Calculate carbon impact and route donations to local centers.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={item} className="lg:col-span-2">
-                <Card className="h-full border-border/50">
-                  <CardHeader>
-                    <div className="mb-2 w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
-                      <LayoutDashboard className="w-6 h-6" />
-                    </div>
-                    <CardTitle>VIP Resolution Hub</CardTitle>
-                    <CardDescription>
-                      Prioritize your best customers with dedicated queues and white-glove handling rules.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex gap-4 overflow-x-auto pb-2">
-                      <Badge variant="outline" className="whitespace-nowrap">LTV {'>'} $500</Badge>
-                      <Badge variant="outline" className="whitespace-nowrap">Repeat Customer</Badge>
-                      <Badge variant="outline" className="whitespace-nowrap">No Previous Returns</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Pricing */}
-        <section id="pricing" className="py-24 bg-secondary/10">
-          <div className="container px-4">
-            <div className="mb-16 text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Simple, Transparent Pricing</h2>
-              <p className="mt-4 text-muted-foreground text-lg">Choose the plan that fits your volume.</p>
-            </div>
-
-            <div className="grid gap-8 md:grid-cols-3">
-              {/* Launch Plan */}
-              <Card className="relative border-border/50">
-                <CardHeader>
-                  <CardTitle>Launch</CardTitle>
-                  <div className="mt-4 flex items-baseline text-5xl font-extrabold tracking-tight">
-                    $29
-                    <span className="ml-1 text-xl font-medium text-muted-foreground">/mo</span>
-                  </div>
-                  <CardDescription>For emerging brands.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 text-sm">
-                    {['Daily return summary', '30-day trend analytics', 'Email notifications'].map((feature) => (
-                      <li key={feature} className="flex items-center text-muted-foreground">
-                        <CheckCircle2 className="mr-2 h-4 w-4 text-primary" /> {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className="mt-8 w-full" variant="outline" onClick={() => window.location.href = 'https://app.returnshield.app/register?plan=launch'}>
-                    Get Started
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Scale Plan */}
-              <Card className="relative border-primary shadow-lg scale-105 z-10 bg-card">
-                <div className="absolute -top-4 left-0 right-0 mx-auto w-fit rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
-                  Most Popular
-                </div>
-                <CardHeader>
-                  <CardTitle>Scale</CardTitle>
-                  <div className="mt-4 flex items-baseline text-5xl font-extrabold tracking-tight">
-                    $99
-                    <span className="ml-1 text-xl font-medium text-muted-foreground">/mo</span>
-                  </div>
-                  <CardDescription>For growing teams.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 text-sm">
-                    {['Everything in Launch', 'AI Exchange Coach', 'VIP Resolution Hub', 'Slack alerts'].map((feature) => (
-                      <li key={feature} className="flex items-center text-foreground font-medium">
-                        <CheckCircle2 className="mr-2 h-4 w-4 text-primary" /> {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className="mt-8 w-full" onClick={() => window.location.href = 'https://app.returnshield.app/register?plan=scale'}>
-                    Start Free Trial
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Elite Plan */}
-              <Card className="relative border-border/50">
-                <CardHeader>
-                  <CardTitle>Elite</CardTitle>
-                  <div className="mt-4 flex items-baseline text-5xl font-extrabold tracking-tight">
-                    $249
-                    <span className="ml-1 text-xl font-medium text-muted-foreground">/mo</span>
-                  </div>
-                  <CardDescription>For high volume.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 text-sm">
-                    {['Everything in Scale', 'Dedicated Strategist', 'Custom Integrations', 'Priority Support'].map((feature) => (
-                      <li key={feature} className="flex items-center text-muted-foreground">
-                        <CheckCircle2 className="mr-2 h-4 w-4 text-primary" /> {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className="mt-8 w-full" variant="outline" onClick={() => window.location.href = 'https://app.returnshield.app/register?plan=elite'}>
-                    Contact Sales
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border/40 bg-background py-12">
-        <div className="container px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-2 font-bold text-lg">
-              <ShieldCheck className="h-5 w-5 text-muted-foreground" />
-              <span className="text-muted-foreground">ReturnShield</span>
-            </div>
-            <div className="flex gap-6 text-sm text-muted-foreground">
-              <a href="/privacy" className="hover:text-foreground">Privacy</a>
-              <a href="/terms" className="hover:text-foreground">Terms</a>
-              <a href="/dmarc" className="hover:text-foreground">DMARC</a>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              © 2026 ReturnShield Inc.
-            </div>
-          </div>
-        </div>
-      </footer>
+    <div className="min-h-screen bg-background font-sans text-foreground selection:bg-primary/30 selection:text-primary-foreground">
+      <Navbar />
+      <Hero />
+      <MetricsSection />
+      <BentoGrid />
+      <PricingSection />
+      <Footer />
     </div>
   )
 }
