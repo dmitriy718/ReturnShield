@@ -16,7 +16,7 @@ class Order(models.Model):
     platform = models.CharField(max_length=32, choices=PLATFORM_CHOICES)
 
     # Order details
-    customer_email = models.EmailField()
+    customer_email = models.EmailField(db_index=True)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=3, default='USD')
 
@@ -90,6 +90,7 @@ class ReturnRequest(models.Model):
         indexes = [
             models.Index(fields=['user', 'status']),
             models.Index(fields=['created_at']),
+            models.Index(fields=['status', 'created_at']),
         ]
 
     def __str__(self):

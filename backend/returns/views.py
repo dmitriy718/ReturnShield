@@ -1,5 +1,7 @@
 import logging
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -41,6 +43,7 @@ class ExchangeAutomationView(APIView):
 class ReturnlessInsightsView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @method_decorator(cache_page(60 * 15))
     def get(self, request, *args, **kwargs):
         insights = build_returnless_insights()
         capture_event(
@@ -57,6 +60,7 @@ class ReturnlessInsightsView(APIView):
 class ExchangeCoachView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @method_decorator(cache_page(60 * 15))
     def get(self, request, *args, **kwargs):
         payload = build_exchange_coach_actions()
         capture_event(
@@ -70,6 +74,7 @@ class ExchangeCoachView(APIView):
 class VIPResolutionView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @method_decorator(cache_page(60 * 15))
     def get(self, request, *args, **kwargs):
         queue = build_vip_resolution_queue()
         capture_event(

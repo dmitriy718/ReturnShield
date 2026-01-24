@@ -80,6 +80,14 @@ if not DEBUG:
         print("WARNING: STRIPE_SECRET_KEY is missing in production!")
     if not SENDGRID_API_KEY:
         print("WARNING: SENDGRID_API_KEY is missing in production!")
+    
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # EasyPost Configuration
 EASYPOST_API_KEY = os.getenv("EASYPOST_API_KEY", "")
