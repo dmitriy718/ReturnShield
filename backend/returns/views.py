@@ -119,9 +119,10 @@ class ShopperOrderLookupView(APIView):
             
             matched_order = None
             for order in orders:
-                shipping_zip = order.shipping_address.get('zip', '')
-                # Simple loose match
-                if str(zip_code).strip() in str(shipping_zip):
+                shipping_zip = str(order.shipping_address.get('zip', '')).strip()
+                input_zip = str(zip_code).strip()
+                # Strict match for security
+                if input_zip == shipping_zip:
                     matched_order = order
                     break
             
