@@ -62,7 +62,6 @@ class ReturnRequest(models.Model):
     # Sync details
     shopify_refund_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
     refund_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    refund_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     restock = models.BooleanField(default=False)
 
     # Gift Returns

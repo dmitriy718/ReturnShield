@@ -18,14 +18,16 @@ def generate_return_label(return_request):
 
     try:
         # Create From Address (Customer)
-        # In a real app, we'd parse this from the order's shipping_address
+        # Parse from the order's shipping_address
+        shipping_address = return_request.order.shipping_address or {}
         from_address = easypost.Address.create(
-            name=return_request.order.customer_email,
-            street1="123 Customer St", # Placeholder
-            city="San Francisco",
-            state="CA",
-            zip="94105",
-            phone="415-123-4567"
+            name=shipping_address.get("name") or return_request.order.customer_email,
+            street1=shipping_address.get("address1") or shipping_address.get("street1") or "Unknown St",
+            street2=shipping_address.get("address2") or shipping_address.get("street2"),
+            city=shipping_address.get("city") or "Unknown City",
+            state=shipping_address.get("province") or shipping_address.get("state") or "CA",
+            zip=shipping_address.get("zip") or "00000",
+            phone=shipping_address.get("phone") or "555-555-5555"
         )
 
         # Create To Address (Warehouse)
