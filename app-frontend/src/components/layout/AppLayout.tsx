@@ -1,116 +1,83 @@
-import { useState } from 'react'
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../providers/AuthProvider'
-import './AppLayout.css'
-
-const navigation = [
-  { to: '/', label: 'Overview', exact: true },
-  { to: '/automation', label: 'Exchange Automation' },
-  { to: '/billing', label: 'Billing' },
-  { to: '/integrations/health', label: 'Integrations' },
-]
+import { Outlet, Link, useLocation } from "react-router-dom"
+import { LayoutDashboard, Settings, CreditCard, LogOut, ShieldCheck, Activity, Plug } from "lucide-react"
+import { useAuth } from "../../providers/AuthProvider"
+import { Button } from "../ui/button"
+import { Separator } from "../ui/separator"
 
 export function AppLayout() {
-  const { user, logout, completeWalkthrough } = useAuth()
+  const { logout, user } = useAuth()
   const location = useLocation()
-  const navigate = useNavigate()
-  const [resettingTour, setResettingTour] = useState(false)
 
-  const canResetTour = Boolean(user?.has_completed_walkthrough)
-
-  const handleResetTour = async () => {
-    if (resettingTour) {
-      return
-    }
-    try {
-      setResettingTour(true)
-      await completeWalkthrough(false)
-      if (location.pathname !== '/') {
-        navigate('/')
-      }
-    } catch (error) {
-      console.error('Failed to reset guided tour', error)
-    } finally {
-      setResettingTour(false)
-    }
-  }
+  const navItems = [
+    { href: "/", label: "Overview", icon: LayoutDashboard },
+    { href: "/automation", label: "Automation", icon: Activity },
+    { href: "/integrations/health", label: "Integrations", icon: Plug },
+    { href: "/billing", label: "Billing", icon: CreditCard },
+  ]
 
   return (
-    <div className="app-shell">
-      <aside className="app-sidebar">
-        <div className="sidebar-header">
-          <span className="sidebar-brand">ReturnShield</span>
-          <p className="sidebar-tagline">Keep returns profitable.</p>
+    <div className="flex min-h-screen bg-background text-foreground font-sans">
+      {/* Sidebar */}
+      <aside className="hidden w-64 flex-col border-r border-border bg-card/50 md:flex">
+        <div className="flex h-16 items-center px-6 border-b border-border/50">
+          <Link to="/" className="flex items-center gap-2 font-bold text-lg">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <span>ReturnShield</span>
+          </Link>
         </div>
-        <nav>
-          <ul>
-            {navigation.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  end={item.exact}
-                  className={({ isActive }) => (isActive ? 'active-nav-link' : undefined)}
+        <div className="flex-1 overflow-y-auto py-6 px-4">
+          <nav className="flex flex-col gap-1">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              const isActive = location.pathname === item.href
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  }`}
                 >
+                  <Icon className="h-4 w-4" />
                   {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <div className="sidebar-footer">
-          <button type="button" onClick={logout} className="logout-button">
-            Log out
-          </button>
+                </Link>
+              )
+            })}
+          </nav>
         </div>
-      </aside>
-      <div className="app-content">
-        <header className="app-header">
-          <div>
-            <h1>
-              {location.pathname === '/'
-                ? 'Insights Overview'
-                : navigation.find((item) => item.to === location.pathname)?.label ?? 'Dashboard'}
-            </h1>
-            <p className="app-subheading">
-              Stay on top of margins, exchanges, and VIP engagements in a single workspace.
-            </p>
-          </div>
-        <div className="app-header-actions">
-          <div className="app-user">
-            <span className="avatar">{getInitials(user?.company_name || user?.username || 'RS')}</span>
-            <div>
-              <p className="user-name">{user?.company_name || 'ReturnShield operator'}</p>
-              <p className="user-email">{user?.email}</p>
+        <div className="p-4 border-t border-border/50">
+          <div className="flex items-center gap-3 px-2 mb-4">
+            <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">
+              {user?.company_name?.[0] || "U"}
+            </div>
+            <div className="flex flex-col overflow-hidden">
+              <span className="truncate text-sm font-medium">{user?.company_name || "Company"}</span>
+              <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
             </div>
           </div>
-          {canResetTour ? (
-            <button
-              type="button"
-              className="tour-reset-button"
-              onClick={handleResetTour}
-              disabled={resettingTour}
-            >
-              {resettingTour ? 'Resetting tour...' : 'Replay guided tour'}
-            </button>
-          ) : null}
+          <Button variant="outline" className="w-full justify-start gap-2" onClick={logout}>
+            <LogOut className="h-4 w-4" />
+            Log out
+          </Button>
         </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <header className="flex h-16 items-center border-b border-border/50 bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
+          <Link to="/" className="flex items-center gap-2 font-bold">
+            <ShieldCheck className="h-6 w-6 text-primary" />
+            <span>ReturnShield</span>
+          </Link>
         </header>
-        <main>
+        <main className="flex-1 overflow-y-auto p-6 md:p-8">
           <Outlet />
         </main>
       </div>
     </div>
   )
 }
-
-function getInitials(source: string) {
-  const parts = source.split(' ').filter(Boolean)
-  if (parts.length === 0) {
-    return 'RS'
-  }
-  if (parts.length === 1) {
-    return parts[0].slice(0, 2).toUpperCase()
-  }
-  return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-}
-

@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, ArrowRight, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GlassCard } from '../components/ui/GlassCard';
-import { NeonButton } from '../components/ui/NeonButton';
+import { motion } from 'framer-motion';
+import { ArrowRight, Package, Search } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Label } from '../components/ui/label';
 import { lookupOrder } from '../services/api';
 
 export default function FindOrder() {
@@ -15,7 +17,7 @@ export default function FindOrder() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleLookup = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError(null);
@@ -24,105 +26,105 @@ export default function FindOrder() {
             const order = await lookupOrder(orderNumber, email, zipCode, isGift);
             navigate('/select-items', { state: { order, isGift } });
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to find order');
+            setError(err instanceof Error ? err.message : 'Order not found');
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="w-full max-w-md">
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-8"
-                >
-                    <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 mb-2">
-                        ReturnShield
-                    </h1>
-                    <p className="text-white/60">Enter your details to find your order</p>
-                </motion.div>
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-md space-y-8"
+            >
+                <div className="text-center space-y-2">
+                    <div className="mx-auto w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                        <Package className="w-6 h-6" />
+                    </div>
+                    <h1 className="text-3xl font-bold tracking-tight">Returns & Exchanges</h1>
+                    <p className="text-muted-foreground">Enter your order details to get started.</p>
+                </div>
 
-                <GlassCard>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex items-center gap-2 text-red-200 text-sm"
-                            >
-                                <AlertCircle className="w-4 h-4 shrink-0" />
-                                {error}
-                            </motion.div>
-                        )}
-
-                        <div className="space-y-2">
-                            <label htmlFor="order" className="text-sm font-medium text-white/80 ml-1">
-                                Order Number
-                            </label>
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                                <input
-                                    id="order"
-                                    type="text"
-                                    value={orderNumber}
-                                    onChange={(e) => setOrderNumber(e.target.value)}
-                                    placeholder="#1001"
-                                    className="input-field pl-10"
-                                    required
-                                />
+                <Card className="border-border/50 shadow-lg">
+                    <CardHeader>
+                        <CardTitle>Find your order</CardTitle>
+                        <CardDescription>
+                            We'll need your order number and email to look up your purchase.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleLookup} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="orderNumber">Order Number</Label>
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        id="orderNumber"
+                                        placeholder="#1001"
+                                        className="pl-9"
+                                        value={orderNumber}
+                                        onChange={(e) => setOrderNumber(e.target.value)}
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="flex items-center justify-end">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setIsGift(!isGift);
-                                    setError(null);
-                                }}
-                                className="text-sm text-primary hover:text-primary/80 transition-colors"
-                            >
-                                {isGift ? 'I have the email address' : 'Start a Gift Return?'}
-                            </button>
-                        </div>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="email">{isGift ? 'Zip Code' : 'Email Address'}</Label>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setIsGift(!isGift);
+                                            setEmail('');
+                                            setZipCode('');
+                                        }}
+                                        className="text-xs text-primary hover:underline"
+                                    >
+                                        {isGift ? 'I have an email' : 'Received as a gift?'}
+                                    </button>
+                                </div>
+                                {isGift ? (
+                                    <Input
+                                        id="zipCode"
+                                        placeholder="90210"
+                                        value={zipCode}
+                                        onChange={(e) => setZipCode(e.target.value)}
+                                        required
+                                    />
+                                ) : (
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="you@example.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                )}
+                            </div>
 
-                        <div className="space-y-2">
-                            <label htmlFor="email_or_zip" className="text-sm font-medium text-white/80 ml-1">
-                                {isGift ? 'Shipping Zip Code' : 'Email Address'}
-                            </label>
-                            <input
-                                id="email_or_zip"
-                                type={isGift ? "text" : "email"}
-                                value={isGift ? zipCode : email}
-                                onChange={(e) => isGift ? setZipCode(e.target.value) : setEmail(e.target.value)}
-                                placeholder={isGift ? "90210" : "hello@example.com"}
-                                className="input-field"
-                                required
-                            />
-                        </div>
+                            {error && (
+                                <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+                                    {error}
+                                </div>
+                            )}
 
-                        <NeonButton
-                            type="submit"
-                            className="w-full"
-                            isLoading={isLoading}
-                        >
-                            Find Order <ArrowRight className="w-4 h-4" />
-                        </NeonButton>
-                    </form>
-                </GlassCard>
+                            <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? 'Searching...' : 'Find Order'}
+                                {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
 
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-center text-white/30 text-sm mt-8"
-                >
-                    Powered by ReturnShield AI
-                </motion.p>
-            </div>
+                <p className="text-center text-sm text-muted-foreground">
+                    Having trouble? <a href="#" className="underline hover:text-primary">Contact support</a>
+                </p>
+            </motion.div>
         </div>
     );
 }

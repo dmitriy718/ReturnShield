@@ -1,84 +1,82 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../providers/AuthProvider'
-import './AuthPages.css'
-
-type LocationState = {
-  from?: Location
-}
+import { useState } from "react"
+import { useAuth } from "../providers/AuthProvider"
+import { Button } from "../components/ui/button"
+import { Input } from "../components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../components/ui/card"
+import { Label } from "../components/ui/label"
+import { ShieldCheck } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export function LoginPage() {
   const { login } = useAuth()
-  const location = useLocation()
-  const state = location.state as LocationState | undefined
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault()
-    setSubmitting(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
     setError(null)
     try {
-      await login({ username: email.trim(), password })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to sign in. Please try again.')
+      await login({ username: email, password })
+    } catch (err: any) {
+      setError(err.message || "Failed to login")
     } finally {
-      setSubmitting(false)
+      setLoading(false)
     }
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-panel">
-        <div className="auth-header">
-          <span className="auth-badge">ReturnShield</span>
-          <h1>Sign in to your dashboard</h1>
-          <p>Exchange-first analytics, automated playbooks, and VIP insights—all in one place.</p>
-          {state?.from && (
-            <p className="auth-note">Please sign in to continue to {state.from.pathname.replace('/', '') || 'dashboard'}.</p>
-          )}
-        </div>
-
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label>
-            <span>Email</span>
-            <input
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@brand.com"
-            />
-          </label>
-          <label>
-            <span>Password</span>
-            <input
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="••••••••"
-            />
-          </label>
-
-          {error && <p className="auth-error">{error}</p>}
-
-          <button type="submit" className="auth-submit" disabled={submitting}>
-            {submitting ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
-
-        <p className="auth-footer">
-          New to ReturnShield? <Link to="/register">Create an account</Link>
-        </p>
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md border-border/50 bg-card/50 backdrop-blur">
+        <CardHeader className="space-y-1 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+          <CardDescription>Sign in to your ReturnShield dashboard</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <div className="text-sm text-destructive">{error}</div>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="justify-center">
+          <p className="text-sm text-muted-foreground">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-primary hover:underline">
+              Start Free Trial
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
-

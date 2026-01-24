@@ -1,0 +1,686 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "ReturnShield home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "ReturnShield shield" [ref=e6]
+        - generic [ref=e7]: ReturnShieldTurn Your Returns Into Relationships
+      - button "Open navigation menu"
+      - navigation [ref=e8]:
+        - button "Features" [ref=e9] [cursor=pointer]
+        - button "Impact" [ref=e10] [cursor=pointer]
+        - button "AI Coach" [ref=e11] [cursor=pointer]
+        - button "VIP Hub" [ref=e12] [cursor=pointer]
+        - button "Exchange Autopilot" [ref=e13] [cursor=pointer]
+        - button "Integrations" [ref=e14] [cursor=pointer]
+        - button "Pricing" [ref=e15] [cursor=pointer]
+        - button "Customer Wins" [ref=e16] [cursor=pointer]
+        - button "FAQ" [ref=e17] [cursor=pointer]
+        - generic [ref=e18]:
+          - link "Log in" [ref=e19] [cursor=pointer]:
+            - /url: https://app.returnshield.app/login?utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=nav_mobile_login
+          - link "Start Preventing Returns" [ref=e20] [cursor=pointer]:
+            - /url: https://app.returnshield.app/register?utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=nav_mobile_primary_cta
+      - generic [ref=e21]:
+        - link "Log in" [ref=e22] [cursor=pointer]:
+          - /url: https://app.returnshield.app/login?utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=nav_desktop_login
+        - link "Start Preventing Returns" [ref=e23] [cursor=pointer]:
+          - /url: https://app.returnshield.app/register?utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=nav_desktop_primary_cta
+    - main [ref=e24]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - img [ref=e29]
+            - text: Stop losing money on returns
+          - heading "Return insights that actually make sense." [level=1] [ref=e32]:
+            - text: Return insights that
+            - text: actually make sense.
+          - paragraph [ref=e33]: ReturnShield turns messy return data into revenue-saving actions. Detect operational leaks, automate smarter policies, and prove the ROI of every fulfillment decision.
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - text: Revenue protected (90 days)
+            - strong [ref=e36]: $11,609
+          - generic [ref=e37]:
+            - text: Landfill diverted
+            - strong [ref=e38]: 592 lbs
+          - generic [ref=e39]:
+            - text: CX hours returned
+            - strong [ref=e40]: 12.8 hrs
+        - generic [ref=e41]:
+          - link "Start Preventing Returns" [ref=e42] [cursor=pointer]:
+            - /url: https://app.returnshield.app/register?utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=hero_primary_cta
+            - text: Start Preventing Returns
+            - img [ref=e43]
+          - link "See the Why Behind Returns" [ref=e45] [cursor=pointer]:
+            - /url: "#features"
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - strong [ref=e48]:
+              - img [ref=e49]
+              - text: Built for Shopify brands
+            - paragraph [ref=e52]: Connect, sync, and act in under 72 hours.
+          - generic [ref=e53]:
+            - strong [ref=e54]:
+              - img [ref=e55]
+              - text: Convert returns, not customers
+            - paragraph [ref=e58]: Exchange-first automation keeps loyal buyers.
+      - region "Performance metrics" [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e61]: 23%
+          - generic [ref=e62]: Return rate reduction
+          - paragraph [ref=e63]: Average drop within 60 days of activation.
+        - generic [ref=e64]:
+          - generic [ref=e65]: $48K
+          - generic [ref=e66]: Monthly revenue protected
+          - paragraph [ref=e67]: Median revenue brands keep every month with ReturnShield.
+        - generic [ref=e68]:
+          - generic [ref=e69]: 72 hrs
+          - generic [ref=e70]: Time to live insights
+          - paragraph [ref=e71]: From install to actionable SKU-level recommendations.
+      - region "ReturnShield ROI forecaster" [ref=e72]:
+        - generic [ref=e73]:
+          - heading "Forecast your ReturnShield revenue impact" [level=2] [ref=e74]
+          - paragraph [ref=e75]: Adjust the levers below to see how exchange-first automation prevents refunds and keeps more revenue in play. We model against live operator benchmarks from the ReturnShield beta cohort.
+        - generic [ref=e76]:
+          - form "ROI assumptions" [ref=e77]:
+            - group "Industry presets" [ref=e78]:
+              - button "DTC Apparel Higher return rates driven by fit feedback." [ref=e79] [cursor=pointer]:
+                - generic [ref=e80]: DTC Apparel
+                - generic [ref=e81]: Higher return rates driven by fit feedback.
+              - button "Beauty & Wellness Subscription refills focused on loyalty retention." [ref=e82] [cursor=pointer]:
+                - generic [ref=e83]: Beauty & Wellness
+                - generic [ref=e84]: Subscription refills focused on loyalty retention.
+              - button "Home Goods Bulkier SKUs with costly reverse logistics." [ref=e85] [cursor=pointer]:
+                - generic [ref=e86]: Home Goods
+                - generic [ref=e87]: Bulkier SKUs with costly reverse logistics.
+            - generic [ref=e88]:
+              - generic [ref=e89]: Monthly orders
+              - spinbutton "Monthly orders" [ref=e90]: "350"
+            - generic [ref=e91]:
+              - generic [ref=e92]: Average order value
+              - generic [ref=e93]:
+                - generic [ref=e94]: $
+                - spinbutton "Average order value $" [ref=e95]: "92"
+            - generic [ref=e96]:
+              - generic [ref=e97]: Current return rate
+              - generic [ref=e98]: 17%
+              - slider "Current return rate 17%" [ref=e99]: "0.17"
+            - paragraph [ref=e100]: "Benchmarks: 23% average return-rate reduction, 42% of refunded orders converted to exchanges when ReturnShield playbooks are live."
+          - generic "Projected ROI outcomes" [ref=e101]:
+            - article [ref=e102]:
+              - generic [ref=e103]: Monthly gross sales
+              - strong [ref=e104]: $32,200
+            - article [ref=e105]:
+              - generic [ref=e106]: Current monthly refund leakage
+              - strong [ref=e107]: $5,474
+            - article [ref=e108]:
+              - generic [ref=e109]: Refunds prevented
+              - strong [ref=e110]: $1,259
+            - article [ref=e111]:
+              - generic [ref=e112]: Exchange-driven revenue retained
+              - strong [ref=e113]: $2,299
+            - article [ref=e114]:
+              - generic [ref=e115]: Projected return rate after 60 days
+              - strong [ref=e116]: 13.1%
+            - article [ref=e117]:
+              - generic [ref=e118]: Monthly revenue protected
+              - strong [ref=e119]: $3,558
+              - generic [ref=e120]: 35.6× subscription ROI
+      - generic [ref=e121]:
+        - generic [ref=e122]:
+          - generic [ref=e123]: Sustainability impact
+          - heading "Returnless refunds that protect margins and the planet." [level=2] [ref=e124]
+          - paragraph [ref=e125]: ReturnShield pinpoints low-value items where reverse logistics erodes margin. Keep-it refunds, donation routing, and automated storytelling prevented 592 lbs of landfill waste and saved $53,520 in annualized margin with just 3 SKUs in the pilot set.
+        - generic [ref=e126]:
+          - article [ref=e127]:
+            - generic [ref=e128]: $53,520
+            - generic [ref=e129]: Annualized margin recovered
+            - paragraph [ref=e130]: Projected savings from automated returnless authorizations.
+          - article [ref=e131]:
+            - generic [ref=e132]: 0.28 t CO₂e
+            - generic [ref=e133]: Carbon emissions prevented
+            - paragraph [ref=e134]: Equivalent to avoiding ~316 last-mile deliveries.
+          - article [ref=e135]:
+            - generic [ref=e136]: 592 lbs
+            - generic [ref=e137]: Landfill diverted
+            - paragraph [ref=e138]: Kept out of landfill through donations and keep-it policies.
+          - article [ref=e139]:
+            - generic [ref=e140]: 5.6 hrs
+            - generic [ref=e141]: Team hours returned
+            - paragraph [ref=e142]: Saved per month by skipping inspections and repacking.
+        - generic [ref=e143]:
+          - article [ref=e144]:
+            - heading "Scaled apparel brand cut refunds by 26% in 60 days." [level=3] [ref=e145]
+            - paragraph [ref=e146]: AI Exchange Coach automated exchange-first flows across four high-risk SKUs.
+            - link "See apparel playbook" [ref=e147] [cursor=pointer]:
+              - /url: /exchange-automation
+          - article [ref=e148]:
+            - heading "Subscription beauty merchant recovered $94K in Q2." [level=3] [ref=e149]
+            - paragraph [ref=e150]: VIP Resolution Hub prioritized top 5% customers and automated keep-it credits.
+            - link "Book a concierge review" [ref=e151] [cursor=pointer]:
+              - /url: https://app.returnshield.app/register?plan=scale&utm_source=success_story_scale
+          - article [ref=e152]:
+            - heading "Lifestyle retailer diverted 18K lbs from landfill." [level=3] [ref=e153]
+            - paragraph [ref=e154]: Returnless Impact Lab benchmarks guided donation + returnless decisions.
+            - link "Explore sustainability impact" [ref=e155] [cursor=pointer]:
+              - /url: "#impact"
+        - complementary [ref=e156]:
+          - heading "Playbook moves live this week" [level=3] [ref=e157]
+          - list [ref=e158]:
+            - listitem [ref=e159]: Keep-it refund for sub-$15 cost of goods when reverse logistics > 65% of margin.
+            - listitem [ref=e160]: Tag donation-ready SKUs in Shopify metafields and sync nightly with fulfillment center.
+            - listitem [ref=e161]: Trigger SendGrid sustainability story 48h after refund to reinforce loyalty.
+            - listitem [ref=e162]: "Track impact dashboards weekly: landfill diverted, CO₂e prevented, margin recaptured."
+      - generic [ref=e163]:
+        - generic [ref=e164]:
+          - heading "AI Exchange Coach™" [level=2] [ref=e165]
+          - paragraph [ref=e166]: Automate the next best exchange-saving move. $4,460 in margin is protected while the Coach unlocks $3,869.60in monthly uplift.
+        - generic [ref=e167]:
+          - generic [ref=e168]:
+            - text: Period
+            - strong [ref=e169]: last 30 days
+          - generic [ref=e170]:
+            - text: Actions live
+            - strong [ref=e171]: "4"
+          - generic [ref=e172]:
+            - text: Projected uplift
+            - strong [ref=e173]: $3,869.60
+        - generic [ref=e174]:
+          - article [ref=e175]:
+            - generic [ref=e176]:
+              - text: PORTFOLIO
+              - heading "Activate keep-it credits for low-margin SKUs" [level=3] [ref=e177]
+            - paragraph [ref=e178]: Returnless automation prevents unnecessary shipping and accelerates repeat orders.
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - text: 30-day returns
+                - strong [ref=e181]: "236"
+              - generic [ref=e182]:
+                - text: Margin at risk
+                - strong [ref=e183]: $4,460
+              - generic [ref=e184]:
+                - text: Exchange uplift
+                - strong [ref=e185]: $2,174.80
+            - list [ref=e186]:
+              - listitem [ref=e187]: Enable keep-it mode when reverse logistics cost is >65% of unit margin.
+              - listitem [ref=e188]: Auto-enroll shoppers receiving keep-it credit into the loyalty win-back flow.
+              - listitem [ref=e189]: Highlight sustainability impact in the follow-up email to reinforce loyalty.
+          - article [ref=e190]:
+            - generic [ref=e191]:
+              - text: RS-221
+              - heading "Convert Everyday Bamboo Tee refunds into bonus exchanges" [level=3] [ref=e192]
+            - paragraph [ref=e193]: Fit feedback · relaxed cut
+            - generic [ref=e194]:
+              - generic [ref=e195]:
+                - text: 30-day returns
+                - strong [ref=e196]: "136"
+              - generic [ref=e197]:
+                - text: Margin at risk
+                - strong [ref=e198]: $2,280
+              - generic [ref=e199]:
+                - text: Exchange uplift
+                - strong [ref=e200]: $866.40
+            - list [ref=e201]:
+              - listitem [ref=e202]: Swap refund CTA with exchange-first modal offering 12% bonus credit.
+              - listitem [ref=e203]: Pre-build Shopify exchange templates for the top three replacement SKUs.
+              - listitem [ref=e204]: Trigger PostHog alert if refund intent stays above 15% after 7 days.
+          - article [ref=e205]:
+            - generic [ref=e206]:
+              - text: RS-014
+              - heading "Convert Luxe Knit Throw refunds into bonus exchanges" [level=3] [ref=e207]
+            - paragraph [ref=e208]: Texture / feel not as expected
+            - generic [ref=e209]:
+              - generic [ref=e210]:
+                - text: 30-day returns
+                - strong [ref=e211]: "42"
+              - generic [ref=e212]:
+                - text: Margin at risk
+                - strong [ref=e213]: $1,240
+              - generic [ref=e214]:
+                - text: Exchange uplift
+                - strong [ref=e215]: $471.20
+            - list [ref=e216]:
+              - listitem [ref=e217]: Swap refund CTA with exchange-first modal offering 12% bonus credit.
+              - listitem [ref=e218]: Pre-build Shopify exchange templates for the top three replacement SKUs.
+              - listitem [ref=e219]: Trigger PostHog alert if refund intent stays above 15% after 7 days.
+          - article [ref=e220]:
+            - generic [ref=e221]:
+              - text: RS-091
+              - heading "Convert Ceramic Mood Candle refunds into bonus exchanges" [level=3] [ref=e222]
+            - paragraph [ref=e223]: Minor packaging blemish
+            - generic [ref=e224]:
+              - generic [ref=e225]:
+                - text: 30-day returns
+                - strong [ref=e226]: "58"
+              - generic [ref=e227]:
+                - text: Margin at risk
+                - strong [ref=e228]: $940
+              - generic [ref=e229]:
+                - text: Exchange uplift
+                - strong [ref=e230]: $357.20
+            - list [ref=e231]:
+              - listitem [ref=e232]: Swap refund CTA with exchange-first modal offering 12% bonus credit.
+              - listitem [ref=e233]: Pre-build Shopify exchange templates for the top three replacement SKUs.
+              - listitem [ref=e234]: Trigger PostHog alert if refund intent stays above 15% after 7 days.
+      - generic [ref=e235]:
+        - generic [ref=e236]:
+          - heading "VIP Resolution Hub" [level=2] [ref=e237]
+          - paragraph [ref=e238]: Resolve loyalty-rich tickets first, blend returnless refunds with concierge touches, and defend $903.15 in repeat revenue this quarter.
+        - generic [ref=e239]:
+          - generic [ref=e240]:
+            - text: Open VIP tickets
+            - strong [ref=e241]: "3"
+          - generic [ref=e242]:
+            - text: Avg. hours open
+            - strong [ref=e243]: 3.8 hrs
+          - generic [ref=e244]:
+            - text: Ops hours returned
+            - strong [ref=e245]: 7.2 hrs
+        - generic [ref=e246]:
+          - article [ref=e247]:
+            - generic [ref=e248]:
+              - heading "Leah Ortega" [level=3] [ref=e249]
+              - text: Platinum
+            - generic [ref=e250]:
+              - generic [ref=e251]:
+                - term [ref=e252]: Ticket ID
+                - definition [ref=e253]: VIP-RS-1420
+              - generic [ref=e254]:
+                - term [ref=e255]: Order value
+                - definition [ref=e256]: $60
+              - generic [ref=e257]:
+                - term [ref=e258]: LTV
+                - definition [ref=e259]: $3,917
+              - generic [ref=e260]:
+                - term [ref=e261]: Churn risk
+                - definition [ref=e262]: 8.0%
+              - generic [ref=e263]:
+                - term [ref=e264]: Hours open
+                - definition [ref=e265]: 2.5 hrs
+            - paragraph [ref=e266]: Texture / feel not as expected
+            - paragraph [ref=e267]: Concierge exchange with complimentary shipping upgrade
+          - article [ref=e268]:
+            - generic [ref=e269]:
+              - heading "Marcus Lin" [level=3] [ref=e270]
+              - text: Gold
+            - generic [ref=e271]:
+              - generic [ref=e272]:
+                - term [ref=e273]: Ticket ID
+                - definition [ref=e274]: VIP-RS-1421
+              - generic [ref=e275]:
+                - term [ref=e276]: Order value
+                - definition [ref=e277]: $42
+              - generic [ref=e278]:
+                - term [ref=e279]: LTV
+                - definition [ref=e280]: $6,408
+              - generic [ref=e281]:
+                - term [ref=e282]: Churn risk
+                - definition [ref=e283]: 47.7%
+              - generic [ref=e284]:
+                - term [ref=e285]: Hours open
+                - definition [ref=e286]: 3.8 hrs
+            - paragraph [ref=e287]: Fit feedback · relaxed cut
+            - paragraph [ref=e288]: Concierge exchange with complimentary shipping upgrade
+          - article [ref=e289]:
+            - generic [ref=e290]:
+              - heading "Kaya Gomez" [level=3] [ref=e291]
+              - text: Gold
+            - generic [ref=e292]:
+              - generic [ref=e293]:
+                - term [ref=e294]: Ticket ID
+                - definition [ref=e295]: VIP-RS-1422
+              - generic [ref=e296]:
+                - term [ref=e297]: Order value
+                - definition [ref=e298]: $33
+              - generic [ref=e299]:
+                - term [ref=e300]: LTV
+                - definition [ref=e301]: $2,866
+              - generic [ref=e302]:
+                - term [ref=e303]: Churn risk
+                - definition [ref=e304]: 17.0%
+              - generic [ref=e305]:
+                - term [ref=e306]: Hours open
+                - definition [ref=e307]: 5.1 hrs
+            - paragraph [ref=e308]: Minor packaging blemish
+            - paragraph [ref=e309]: Instant keep-it refund with sustainability reinforcement
+      - generic [ref=e310]:
+        - generic [ref=e311]:
+          - heading "Returnless refund intelligence, pre-modeled." [level=2] [ref=e312]
+          - paragraph [ref=e313]: We stack-rank every SKU by margin risk, sustainability upside, and customer delight. Returnless automation frees 5.6 hours of CX time per month while keep-it credits average $20.83 per approval.
+        - generic [ref=e314]:
+          - article [ref=e315]:
+            - generic [ref=e316]:
+              - text: RS-014
+              - heading "Luxe Knit Throw" [level=3] [ref=e317]
+              - paragraph [ref=e318]: Texture / feel not as expected
+            - generic [ref=e319]:
+              - generic [ref=e320]:
+                - text: 30-day returns
+                - strong [ref=e321]: "42"
+              - generic [ref=e322]:
+                - text: Avg. COGS
+                - strong [ref=e323]: $18.50
+              - generic [ref=e324]:
+                - text: Margin recaptured
+                - strong [ref=e325]: $1,240
+              - generic [ref=e326]:
+                - text: Carbon prevented
+                - strong [ref=e327]: 85 kg
+              - generic [ref=e328]:
+                - text: Landfill diverted
+                - strong [ref=e329]: 180 lbs
+              - generic [ref=e330]:
+                - text: Ops minutes saved
+                - strong [ref=e331]: 96 min
+            - list [ref=e332]:
+              - listitem [ref=e333]: Auto-approve returnless refund with 12% exchange credit coupon.
+              - listitem [ref=e334]: Tag SKU for donation pickup with GiveBack Box.
+          - article [ref=e335]:
+            - generic [ref=e336]:
+              - text: RS-221
+              - heading "Everyday Bamboo Tee" [level=3] [ref=e337]
+              - paragraph [ref=e338]: Fit feedback · relaxed cut
+            - generic [ref=e339]:
+              - generic [ref=e340]:
+                - text: 30-day returns
+                - strong [ref=e341]: "136"
+              - generic [ref=e342]:
+                - text: Avg. COGS
+                - strong [ref=e343]: $9.25
+              - generic [ref=e344]:
+                - text: Margin recaptured
+                - strong [ref=e345]: $2,280
+              - generic [ref=e346]:
+                - text: Carbon prevented
+                - strong [ref=e347]: 132 kg
+              - generic [ref=e348]:
+                - text: Landfill diverted
+                - strong [ref=e349]: 264 lbs
+              - generic [ref=e350]:
+                - text: Ops minutes saved
+                - strong [ref=e351]: 168 min
+            - list [ref=e352]:
+              - listitem [ref=e353]: Serve AI sizing quiz before checkout for repeat buyers.
+              - listitem [ref=e354]: Offer returnless refund with keep-it note referencing sustainability pledge.
+          - article [ref=e355]:
+            - generic [ref=e356]:
+              - text: RS-091
+              - heading "Ceramic Mood Candle" [level=3] [ref=e357]
+              - paragraph [ref=e358]: Minor packaging blemish
+            - generic [ref=e359]:
+              - generic [ref=e360]:
+                - text: 30-day returns
+                - strong [ref=e361]: "58"
+              - generic [ref=e362]:
+                - text: Avg. COGS
+                - strong [ref=e363]: $7.40
+              - generic [ref=e364]:
+                - text: Margin recaptured
+                - strong [ref=e365]: $940
+              - generic [ref=e366]:
+                - text: Carbon prevented
+                - strong [ref=e367]: 64 kg
+              - generic [ref=e368]:
+                - text: Landfill diverted
+                - strong [ref=e369]: 148 lbs
+              - generic [ref=e370]:
+                - text: Ops minutes saved
+                - strong [ref=e371]: 72 min
+            - list [ref=e372]:
+              - listitem [ref=e373]: Bundle blemished units for outlet flash sale.
+              - listitem [ref=e374]: Message VIP segment with 2-for-1 rescue offer.
+      - region "Unlock your ReturnShield effect" [ref=e375]:
+        - generic [ref=e376]:
+          - heading "Unlock Your ReturnShield Effect" [level=2] [ref=e377]
+          - paragraph [ref=e378]: Stop treating returns as a cost center. Surface the why behind returns, deploy exchange-first playbooks, and defend contribution margin on autopilot.
+        - generic [ref=e379]:
+          - link "Unlock Your ReturnShield Effect" [ref=e380] [cursor=pointer]:
+            - /url: https://app.returnshield.app/register?utm_source=cta_banner_primary
+          - link "Convert Returns to Exchanges" [ref=e381] [cursor=pointer]:
+            - /url: /exchange-automation
+      - generic [ref=e382]:
+        - heading "Ready to defend your contribution margin?" [level=2] [ref=e383]
+        - paragraph [ref=e384]: Start a live walkthrough and activate exchange-first automations within 72 hours.
+        - link "Schedule concierge onboarding" [ref=e385] [cursor=pointer]:
+          - /url: https://app.returnshield.app/register?concierge=1&utm_source=conversion_concierge
+      - generic [ref=e386]:
+        - heading "Already a customer?" [level=2] [ref=e387]
+        - paragraph [ref=e388]: Visit the ReturnShield operator console to monitor exchange wins and VIP queue updates.
+        - link "Go to operator console" [ref=e389] [cursor=pointer]:
+          - /url: https://app.returnshield.app?utm_source=conversion_operator_console
+      - generic [ref=e390]:
+        - generic [ref=e391]:
+          - generic [ref=e392]: Exchange Autopilot
+          - heading "Automate the swap before a refund can settle." [level=2] [ref=e393]
+          - paragraph [ref=e394]: Redirect refund intent into curated exchanges, bonus credits, and concierge outreach. Exchange Autopilot plugs into your existing helpdesk and 3PL in under a day.
+        - generic [ref=e395]:
+          - article [ref=e396]:
+            - heading "Intercept refund intent" [level=3] [ref=e397]
+            - paragraph [ref=e398]: Dynamic CTAs and AI sizing recommendations guide shoppers to the right replacement instantly.
+          - article [ref=e399]:
+            - heading "Automate fulfillment & comms" [level=3] [ref=e400]
+            - paragraph [ref=e401]: Trigger Shopify swaps, notify your 3PL, and send branded updates without touching a ticket.
+          - article [ref=e402]:
+            - heading "Measure ROI in real time" [level=3] [ref=e403]
+            - paragraph [ref=e404]: Dashboards track exchange adoption, saved margin, and loyalty gains automatically.
+        - generic [ref=e405]:
+          - link "Explore Exchange Autopilot" [ref=e406] [cursor=pointer]:
+            - /url: /exchange-automation
+          - link "Launch in my store" [ref=e407] [cursor=pointer]:
+            - /url: https://app.returnshield.app/register?plan=scale&utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=autopilot_launch_scale
+      - generic [ref=e408]:
+        - generic [ref=e409]:
+          - generic [ref=e410]: Connect your stack
+          - heading "Integrations purpose-built for return-heavy brands." [level=2] [ref=e411]
+          - paragraph [ref=e412]: ReturnShield meets you where your orders already live. Activate connectors, sync historical returns, and keep policies aligned across channels.
+        - generic [ref=e413]:
+          - article [ref=e414]:
+            - generic [ref=e415]:
+              - text: Available now
+              - heading "Shopify" [level=3] [ref=e416]
+            - paragraph [ref=e417]: Native app install with Shopify OAuth, nightly order sync, and instant policy automation.
+            - link "Install Shopify connector" [ref=e418] [cursor=pointer]:
+              - /url: https://app.returnshield.app/register?platform=shopify&utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=integration_shopify
+          - article [ref=e419]:
+            - generic [ref=e420]:
+              - text: Beta access
+              - heading "BigCommerce" [level=3] [ref=e421]
+            - paragraph [ref=e422]: Returns webhook automation, order ingestion, and VIP queue tagging for pilot merchants.
+            - link "Join BigCommerce beta" [ref=e423] [cursor=pointer]:
+              - /url: https://app.returnshield.app/register?platform=bigcommerce&utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=integration_bigcommerce
+          - article [ref=e424]:
+            - generic [ref=e425]:
+              - text: Pilot waitlist
+              - heading "WooCommerce" [level=3] [ref=e426]
+            - paragraph [ref=e427]: Secure REST API integration with scheduled syncs and bespoke messaging playbooks for Woo retailers.
+            - link "Request WooCommerce pilot" [ref=e428] [cursor=pointer]:
+              - /url: https://app.returnshield.app/register?platform=woocommerce&utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=integration_woocommerce
+      - generic [ref=e429]:
+        - generic [ref=e430]:
+          - heading "Keep revenue, not returns." [level=2] [ref=e431]
+          - paragraph [ref=e432]: Every module is engineered to defend your contribution margin. We benchmark against a $100/month ROI mandate on every release.
+        - generic [ref=e433]:
+          - article [ref=e434]:
+            - heading "SKU return heatmaps" [level=3] [ref=e435]
+            - paragraph [ref=e436]: Pinpoint high-risk products, spot sizing issues, and trigger proactive interventions before refunds stack up.
+          - article [ref=e437]:
+            - heading "Smart policy automation" [level=3] [ref=e438]
+            - paragraph [ref=e439]: Auto-adjust policies by customer lifetime value, return reason, or shipping costs to protect your margins.
+          - article [ref=e440]:
+            - heading "Cohort-grade reporting" [level=3] [ref=e441]
+            - paragraph [ref=e442]: Understand which customer segments send the most returns and redirect them toward exchanges or store credit.
+          - article [ref=e443]:
+            - heading "AI-written response templates" [level=3] [ref=e444]
+            - paragraph [ref=e445]: Send empathetic, on-brand replies that deflect refunds and protect loyalty—ready in seconds, not hours.
+      - generic [ref=e446]:
+        - generic [ref=e447]:
+          - heading "Onboarding takes less than a coffee break." [level=2] [ref=e448]
+          - paragraph [ref=e449]: We obsess over velocity because your cash flow depends on it. Connect ReturnShield, let the sync run, and watch insights surface immediately.
+        - list [ref=e450]:
+          - listitem [ref=e451]:
+            - generic [ref=e452]: "01"
+            - generic [ref=e453]:
+              - heading "Connect" [level=3] [ref=e454]
+              - paragraph [ref=e455]: Securely authenticate your Shopify storefront using the ReturnShield partner app and pull 12 months of order history.
+          - listitem [ref=e456]:
+            - generic [ref=e457]: "02"
+            - generic [ref=e458]:
+              - heading "Sync" [level=3] [ref=e459]
+              - paragraph [ref=e460]: Stripe activates billing, ReturnShield ingests return events, and our AI tags every claim with actionable insights.
+          - listitem [ref=e461]:
+            - generic [ref=e462]: "03"
+            - generic [ref=e463]:
+              - heading "See insights" [level=3] [ref=e464]
+              - paragraph [ref=e465]: Your dashboard lights up with prioritized savings opportunities, policy recommendations, and automation playbooks.
+      - generic [ref=e466]:
+        - generic [ref=e467]:
+          - heading "Predict return risk before it hits your inbox." [level=2] [ref=e468]
+          - paragraph [ref=e469]: The dashboard triages refunds by financial impact, customer lifetime value, and operational root cause. One glance and you know exactly where to intervene.
+          - list [ref=e470]:
+            - listitem [ref=e471]: Exchange nudges outperform refund requests by 2.4×.
+            - listitem [ref=e472]: Bulk actions to update policies directly from insights.
+            - listitem [ref=e473]: Export investor-ready reports that prove contribution gains.
+          - link "Convert Returns to Exchanges" [ref=e474] [cursor=pointer]:
+            - /url: /exchange-automation
+        - generic [ref=e476]:
+          - generic [ref=e477]:
+            - generic [ref=e478]: Live Insight
+            - text: SKU RS-104 is driving 17% of losses
+          - generic [ref=e479]:
+            - generic [ref=e480]:
+              - paragraph [ref=e481]: 53 return claims
+              - paragraph [ref=e482]: $12,480 at risk · 61% size-related
+            - button "Unlock Your ReturnShield Effect" [ref=e483] [cursor=pointer]
+          - generic [ref=e484]:
+            - paragraph [ref=e485]: "Suggested actions:"
+            - list [ref=e486]:
+              - listitem [ref=e487]: Trigger size guide email pre-delivery.
+              - listitem [ref=e488]: Offer instant exchanges for VIP customers.
+              - listitem [ref=e489]: "Flag manufacturing batch #784 for QA review."
+      - generic [ref=e490]:
+        - generic [ref=e491]:
+          - heading "Pricing engineered to pay for itself." [level=2] [ref=e492]
+          - paragraph [ref=e493]: Every plan includes actionable insights, premium support, and the promise that ReturnShield protects more revenue than it costs.
+        - generic [ref=e494]:
+          - article [ref=e495]:
+            - generic [ref=e496]:
+              - text: Launch
+              - generic [ref=e497]: $29/month
+              - paragraph [ref=e498]: Built for brands testing product-market fit.
+            - list [ref=e499]:
+              - listitem [ref=e500]:
+                - img [ref=e501]
+                - text: Daily return summary email
+              - listitem [ref=e503]:
+                - img [ref=e504]
+                - text: 30-day trends by SKU + channel
+              - listitem [ref=e506]:
+                - img [ref=e507]
+                - text: Policy tweak library & playbooks
+              - listitem [ref=e509]:
+                - img [ref=e510]
+                - text: Email support within 24 hours
+            - button "Start with Launch" [ref=e512] [cursor=pointer]
+          - article [ref=e513]:
+            - generic [ref=e514]:
+              - text: Scale
+              - generic [ref=e515]: $69/month
+              - paragraph [ref=e516]: Designed for teams scaling fulfillment operations.
+            - list [ref=e517]:
+              - listitem [ref=e518]:
+                - img [ref=e519]
+                - text: Everything in Launch
+              - listitem [ref=e521]:
+                - img [ref=e522]
+                - text: AI-generated return responses
+              - listitem [ref=e524]:
+                - img [ref=e525]
+                - text: Customer cohort segmentation
+              - listitem [ref=e527]:
+                - img [ref=e528]
+                - text: Slack alerts for anomalies
+              - listitem [ref=e530]:
+                - img [ref=e531]
+                - text: Unlimited team seats
+            - button "Scale smarter" [ref=e533] [cursor=pointer]
+          - article [ref=e534]:
+            - generic [ref=e535]:
+              - text: Elite
+              - generic [ref=e536]: $100/month
+              - paragraph [ref=e537]: For operators who demand bulletproof margins.
+            - list [ref=e538]:
+              - listitem [ref=e539]:
+                - img [ref=e540]
+                - text: Everything in Scale
+              - listitem [ref=e542]:
+                - img [ref=e543]
+                - text: Predictive loss forecasting
+              - listitem [ref=e545]:
+                - img [ref=e546]
+                - text: Priority onboarding concierge
+              - listitem [ref=e548]:
+                - img [ref=e549]
+                - text: Quarterly strategy workshops
+              - listitem [ref=e551]:
+                - img [ref=e552]
+                - text: 24/7 priority response SLA
+            - button "Book enterprise review" [ref=e554] [cursor=pointer]
+        - link "Turn Returns into Relationships" [ref=e556] [cursor=pointer]:
+          - /url: https://app.returnshield.app/register?utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=pricing_secondary_cta
+      - generic [ref=e557]:
+        - blockquote [ref=e558]:
+          - paragraph [ref=e559]: “We recaptured $62K in refund risk the first month. The dashboard surfaced one mislabeled SKU that explained 41% of our returns.”
+          - generic [ref=e560]: Riya Patel · COO, Oak & Ember Apparel
+        - generic [ref=e561]:
+          - heading "Your next refund could be revenue." [level=3] [ref=e562]
+          - paragraph [ref=e563]: Ship ReturnShield today and be the success story we feature next week.
+          - link "Schedule 15-minute walkthrough" [ref=e564] [cursor=pointer]:
+            - /url: https://app.returnshield.app/register?utm_source=returnshield.app&utm_medium=website&utm_campaign=primary&utm_content=testimonial_walkthrough
+      - generic [ref=e565]:
+        - heading "Questions investors and operators ask us." [level=2] [ref=e566]
+        - generic [ref=e567]:
+          - article [ref=e568]:
+            - heading "How fast do we see ROI?" [level=3] [ref=e569]
+            - paragraph [ref=e570]: Most brands recoup their monthly subscription with the first operational fix we surface—typically inside week one.
+          - article [ref=e571]:
+            - heading "Do you replace our existing return portal?" [level=3] [ref=e572]
+            - paragraph [ref=e573]: No. ReturnShield analyzes your existing workflows, adds intelligence, and automates smart policy adjustments on top.
+          - article [ref=e574]:
+            - heading "Will this work beyond Shopify?" [level=3] [ref=e575]
+            - paragraph [ref=e576]: Shopify is live today. WooCommerce, Amazon, and custom cart integrations are lined up for Stage 3—let us know your timeline.
+          - article [ref=e577]:
+            - heading "Can our CX team actually use this?" [level=3] [ref=e578]
+            - paragraph [ref=e579]: Yes. The dashboard is built for non-technical operators with guided recommendations and a human support team on standby.
+    - contentinfo [ref=e580]:
+      - link "ReturnShield home" [ref=e582] [cursor=pointer]:
+        - /url: /
+        - img "ReturnShield shield" [ref=e583]
+        - generic [ref=e584]: ReturnShieldTurn Your Returns Into Relationships
+      - generic [ref=e585]:
+        - link "hello@returnshield.app" [ref=e586] [cursor=pointer]:
+          - /url: mailto:hello@returnshield.app
+        - link "Privacy Policy" [ref=e587] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms of Service" [ref=e588] [cursor=pointer]:
+          - /url: /terms
+        - link "DMARC Policy" [ref=e589] [cursor=pointer]:
+          - /url: /dmarc
+  - generic [ref=e590]:
+    - generic:
+      - img
+    - iframe [ref=e591]:
+      - button "Open Beacon popover" [ref=f1e5] [cursor=pointer]:
+        - generic:
+          - img
+        - generic:
+          - img
+        - generic:
+          - img
+        - generic:
+          - img
+        - generic [ref=f1e6]: What's New?
+        - img "Message avatar"
+```

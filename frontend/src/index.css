@@ -4,93 +4,49 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  line-height: 1.6;
-  font-weight: 400;
-
-  /* Color Palette - Premium Dark Mode */
-  --color-bg-main: #020617;
-  /* Slate 950 */
-  --color-bg-card: #0f172a;
-  /* Slate 900 */
-  --color-bg-card-hover: #1e293b;
-  /* Slate 800 */
-
-  --color-text-primary: #f8fafc;
-  /* Slate 50 */
-  --color-text-secondary: #94a3b8;
-  /* Slate 400 */
-  --color-text-muted: #64748b;
-  /* Slate 500 */
-
-  --color-accent: #3b82f6;
-  /* Blue 500 */
-  --color-accent-glow: rgba(59, 130, 246, 0.5);
-  --color-accent-light: #60a5fa;
-  /* Blue 400 */
-
-  --color-success: #10b981;
-  /* Emerald 500 */
-  --color-warning: #f59e0b;
-  /* Amber 500 */
-  --color-error: #ef4444;
-  /* Red 500 */
-
-  /* Glassmorphism */
-  --glass-bg: rgba(15, 23, 42, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
-  --backdrop-blur: 12px;
-
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 24px;
-  --radius-full: 9999px;
-
-  --container-width: 1280px;
-  --header-height: 80px;
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+ 
+    --radius: 0.5rem;
+  }
 }
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background-color: var(--color-bg-main);
-  color: var(--color-text-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Outfit', system-ui, sans-serif;
-  color: var(--color-text-primary);
-  line-height: 1.1;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
-
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
 }
