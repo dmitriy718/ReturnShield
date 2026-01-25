@@ -85,6 +85,7 @@ export function HelpWidget() {
               </Link>
             </div>
           </motion.div>
+        </>
         )}
       </AnimatePresence>
 
