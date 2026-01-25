@@ -15,6 +15,9 @@ import { LoadingScreen } from './components/ui/LoadingScreen'
 import { FeatureFlagProvider } from './providers/FeatureFlagProvider'
 
 import { SetupPage } from './pages/SetupPage'
+import { PolicyGeneratorPage } from './pages/PolicyGeneratorPage'
+import { BlocklistPage } from './pages/BlocklistPage'
+import { ActivityLogPage } from './pages/ActivityLogPage'
 
 function ProtectedRoute() {
   const { token, loading } = useAuth()
@@ -63,6 +66,9 @@ function App() {
             <Route index element={<DashboardPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/automation" element={<AutomationPage />} />
+            <Route path="/policy" element={<PolicyGeneratorPage />} />
+            <Route path="/blocklist" element={<BlocklistPage />} />
+            <Route path="/activity" element={<ActivityLogPage />} />
             <Route path="/billing" element={<BillingPage />} />
             <Route path="/billing/success" element={<CheckoutSuccessPage />} />
             <Route path="/integrations/health" element={<IntegrationsHealthPage />} />

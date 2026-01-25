@@ -12,6 +12,9 @@ export function AppLayout() {
     { href: "/", label: "Overview", icon: LayoutDashboard },
     { href: "/automation", label: "Automation", icon: Activity },
     { href: "/integrations/health", label: "Integrations", icon: Plug },
+    { href: "/policy", label: "Policy Generator", icon: ShieldCheck },
+    { href: "/blocklist", label: "Blocklist", icon: LogOut }, // Reusing LogOut icon temporarily or pick better
+    { href: "/activity", label: "Activity Log", icon: Activity },
     { href: "/billing", label: "Billing", icon: CreditCard },
   ]
 
