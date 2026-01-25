@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HelpCircle, X, Book, Sparkles, MessageSquare } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -6,16 +6,35 @@ import { Link } from 'react-router-dom'
 export function HelpWidget() {
   const [isOpen, setIsOpen] = useState(false)
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false)
+    }
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [])
+
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-4 w-72 bg-card border border-border shadow-2xl rounded-2xl overflow-hidden"
-          >
+          <>
+            {/* Transparent Overlay to capture clicks outside */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-transparent cursor-default"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="relative mb-4 w-72 bg-card border border-border shadow-2xl rounded-2xl overflow-hidden"
+            >
             <div className="bg-primary px-4 py-3 flex items-center justify-between">
               <span className="font-bold text-primary-foreground">Help & Updates</span>
               <button onClick={() => setIsOpen(false)} className="text-primary-foreground/80 hover:text-white">
