@@ -32,5 +32,6 @@ urlpatterns = [
     path('api/platforms/status/', PlatformStatusView.as_view(), name='platform-status'),
     path('api/integrations/health/', IntegrationsHealthView.as_view(), name='integrations-health'),
     path('api/feature-flags/', FeatureFlagsView.as_view(), name='feature-flags'),
+    path('api/core/', include('core.settings_api.urls')),
     path('health/', HealthCheckView.as_view(), name='health-check'),
 ]
