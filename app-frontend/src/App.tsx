@@ -14,6 +14,8 @@ import { AppLayout } from './components/layout/AppLayout'
 import { LoadingScreen } from './components/ui/LoadingScreen'
 import { FeatureFlagProvider } from './providers/FeatureFlagProvider'
 
+import { SetupPage } from './pages/SetupPage'
+
 function ProtectedRoute() {
   const { token, loading } = useAuth()
   const location = useLocation()
@@ -56,6 +58,7 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/setup" element={<SetupPage />} />
           <Route element={<AppLayout />}>
             <Route index element={<DashboardPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />

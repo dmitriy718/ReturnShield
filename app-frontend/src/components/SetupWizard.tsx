@@ -1,174 +1,218 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import type { ReactNode } from 'react';
-import { useAuth } from '../providers/AuthProvider';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { OnboardingStage, User } from '../types';
-import './SetupWizard.css';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, ChevronRight, Store, Globe, ArrowRight, Loader2 } from 'lucide-react';
+import { useAuth } from '../providers/AuthProvider';
+import { GlassCard } from './ui/GlassCard';
+import { apiFetch } from '../services/api';
 
-interface WizardStep {
-  key: OnboardingStage;
-  title: string;
-  description: string;
-  component: ReactNode;
-  ctaLabel?: string;
-  helper?: string;
-  isCompletable?: (user: User | null) => boolean; // Function to check if the step can be marked as complete
-}
+type Step = 'welcome' | 'platform' | 'connect' | 'sync' | 'complete';
 
-export const SetupWizard: React.FC = () => {
-  const navigate = useNavigate();
-  const { user, updateOnboarding, refreshUser, completeWalkthrough } = useAuth();
-  const isAuthenticated = !!user;
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [processing, setProcessing] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
+export function SetupWizard() {
+    const { user, refreshUser, updateOnboarding } = useAuth();
+    const navigate = useNavigate();
+    const [step, setStep] = useState<Step>('welcome');
+    const [platform, setPlatform] = useState<string>('shopify');
+    const [domain, setDomain] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false);
 
-  const wizardSteps: WizardStep[] = useMemo(() => [
-    {
-      key: 'connect',
-      title: 'Connect Your Shopify Store',
-      description: 'To get started, connect your Shopify store to ReturnShield. This will allow us to start analyzing your returns data.',
-      component: (
-        <div className="wizard-step-content">
-          <p>Click the button below to go to the Shopify App Store and install the ReturnShield app. You will be redirected back here after the installation is complete.</p>
-          <button className="wizard-button primary" onClick={() => window.open('https://apps.shopify.com/returnshield', '_blank')}>
-            Connect Shopify Store
-          </button>
-          <p className="wizard-note">Note: You may need to log in to your Shopify account.</p>
-        </div>
-      ),
-      ctaLabel: 'I have connected my store',
-      isCompletable: (user) => user?.has_shopify_store ?? false,
-    },
-    {
-      key: 'sync',
-      title: 'Sync Your Return Data',
-      description: 'We are now syncing your historical return data. This process may take a few minutes depending on the size of your store.',
-      component: (
-        <div className="wizard-step-content">
-          <p>This initial sync is crucial for providing you with accurate insights and recommendations.</p>
-          <div className="sync-progress">
-            <div className={`sync-progress-bar ${isSyncing ? 'animating' : ''}`}></div>
-            <span>{isSyncing ? 'Syncing...' : 'Sync complete!'}</span>
-          </div>
-        </div>
-      ),
-      ctaLabel: 'Go to Dashboard',
-    },
-    {
-      key: 'insights',
-      title: 'Explore Your Insights',
-      description: 'Your dashboard is now populated with initial insights based on your historical data. Take a moment to explore.',
-      component: (
-        <div className="wizard-step-content">
-          <p>Here are a few things to check out:</p>
-          <ul>
-            <li><strong>ROI Snapshot:</strong> See your potential margin recovery.</li>
-            <li><strong>Returnless Intelligence:</strong> Identify high-risk products.</li>
-            <li><strong>AI Exchange Coach:</strong> Get recommendations for converting refunds into exchanges.</li>
-          </ul>
-        </div>
-      ),
-      ctaLabel: 'Continue',
-    },
-    {
-      key: 'complete',
-      title: 'Onboarding Complete!',
-      description: 'Congratulations! You have successfully set up ReturnShield.',
-      component: (
-        <div className="wizard-step-content">
-          <p>You can now start using ReturnShield to manage and optimize your returns process. If you have any questions, please don't hesitate to contact our support team.</p>
-          <button className="wizard-button" onClick={() => navigate('/dashboard')}>
-            Go to My Dashboard
-          </button>
-        </div>
-      ),
-      ctaLabel: 'Finish',
-    },
-  ], [isSyncing, navigate]);
+    const handleConnect = async () => {
+        setIsLoading(true);
+        try {
+            // In a real OAuth flow, we'd redirect here. 
+            // For this wizard, we'll update the user profile with the store domain.
+            await apiFetch('/accounts/store/', {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    store_platform: platform,
+                    store_domain: domain
+                })
+            });
+            await updateOnboarding('sync');
+            setStep('sync');
+            // Simulate sync delay
+            setTimeout(async () => {
+                await updateOnboarding('insights');
+                setStep('complete');
+            }, 3000);
+        } catch (error) {
+            console.error("Failed to connect store", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-  const currentStep = wizardSteps[currentStepIndex];
-
-  const shouldShowWizard = useMemo(() => {
-    if (!isAuthenticated || !user) return false;
-    return !user.has_completed_walkthrough;
-  }, [isAuthenticated, user]);
-
-  useEffect(() => {
-    if (user && shouldShowWizard) {
-      const stageIndex = wizardSteps.findIndex(step => step.key === user.onboarding_stage);
-      if (stageIndex !== -1 && stageIndex !== currentStepIndex) {
-        setCurrentStepIndex(stageIndex);
-      }
-    }
-  }, [user, shouldShowWizard, wizardSteps, currentStepIndex]);
-
-  useEffect(() => {
-    if (currentStep.key === 'sync' && shouldShowWizard) {
-      setIsSyncing(true);
-      const timer = setTimeout(() => {
-        setIsSyncing(false);
-      }, 5000); // Simulate a 5 second sync
-      return () => clearTimeout(timer);
-    }
-  }, [currentStep, shouldShowWizard]);
-
-  const handleAdvance = useCallback(async () => {
-    if (processing) return;
-    setProcessing(true);
-
-    try {
-      const isStepCompletable = currentStep.isCompletable ? currentStep.isCompletable(user) : true;
-      if (!isStepCompletable) {
-        alert("Please complete the current step's action before proceeding.");
-        setProcessing(false);
-        return;
-      }
-
-      const nextStepIndex = currentStepIndex + 1;
-      if (nextStepIndex < wizardSteps.length) {
-        const nextStageKey = wizardSteps[nextStepIndex].key;
-        await updateOnboarding(nextStageKey);
-        await refreshUser();
-        setCurrentStepIndex(nextStepIndex);
-      } else {
-        await completeWalkthrough(true);
+    const handleComplete = async () => {
         await updateOnboarding('complete');
         await refreshUser();
-      }
-    } catch (error) {
-      console.error('Failed to advance wizard:', error);
-    } finally {
-      setProcessing(false);
-    }
-  }, [currentStepIndex, wizardSteps, updateOnboarding, refreshUser, completeWalkthrough, processing, currentStep, user]);
+        navigate('/');
+    };
 
-  if (!shouldShowWizard || !currentStep) {
-    return null;
-  }
+    return (
+        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+            <GlassCard className="w-full max-w-2xl p-0 overflow-hidden min-h-[500px] flex flex-col">
+                <div className="p-8 flex-1 flex flex-col">
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-2">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step === 'welcome' ? 'bg-primary text-primary-foreground' : 'bg-green-500 text-white'}`}>
+                                {step === 'welcome' ? '1' : <Check size={16} />}
+                            </div>
+                            <div className={`h-1 w-12 rounded-full ${step === 'welcome' ? 'bg-muted' : 'bg-green-500'}`} />
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step === 'platform' || step === 'connect' ? 'bg-primary text-primary-foreground' : (step === 'sync' || step === 'complete' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground')}`}>
+                                {(step === 'sync' || step === 'complete') ? <Check size={16} /> : '2'}
+                            </div>
+                            <div className={`h-1 w-12 rounded-full ${['sync', 'complete'].includes(step) ? 'bg-green-500' : 'bg-muted'}`} />
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step === 'complete' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}>
+                                {step === 'complete' ? <Check size={16} /> : '3'}
+                            </div>
+                        </div>
+                        <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
+                            Setup Wizard
+                        </div>
+                    </div>
 
-  const progress = ((currentStepIndex + 1) / wizardSteps.length) * 100;
+                    <AnimatePresence mode="wait">
+                        {step === 'welcome' && (
+                            <motion.div
+                                key="welcome"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="flex-1 flex flex-col justify-center"
+                            >
+                                <h1 className="text-3xl font-bold mb-4">Welcome to ReturnShield!</h1>
+                                <p className="text-muted-foreground text-lg mb-8">
+                                    Let's get your store connected so we can start protecting your revenue.
+                                    We'll sync your orders and set up your first return rule.
+                                </p>
+                                <button 
+                                    onClick={() => setStep('platform')}
+                                    className="self-start flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium text-lg"
+                                >
+                                    Get Started <ArrowRight size={20} />
+                                </button>
+                            </motion.div>
+                        )}
 
-  return (
-    <div className="setup-wizard-overlay" role="dialog" aria-modal="true">
-      <div className="setup-wizard-card">
-        <header>
-          <div className="wizard-progress">
-            <div className="wizard-progress-bar" style={{ width: `${progress}%` }} />
-          </div>
-        </header>
-        <div className="wizard-body">
-          <h2>{currentStep.title}</h2>
-          <p>{currentStep.description}</p>
-          {currentStep.component}
-          {currentStep.helper && <p className="wizard-helper">{currentStep.helper}</p>}
+                        {step === 'platform' && (
+                            <motion.div
+                                key="platform"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="flex-1 flex flex-col"
+                            >
+                                <h2 className="text-2xl font-bold mb-6">Select your platform</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                                    {['shopify', 'bigcommerce', 'woocommerce'].map((p) => (
+                                        <button
+                                            key={p}
+                                            onClick={() => setPlatform(p)}
+                                            className={`p-6 rounded-xl border-2 text-left transition-all ${platform === p ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border hover:border-primary/50'}`}
+                                        >
+                                            <Store className={`w-8 h-8 mb-4 ${platform === p ? 'text-primary' : 'text-muted-foreground'}`} />
+                                            <div className="font-bold capitalize">{p}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex justify-end mt-auto">
+                                    <button 
+                                        onClick={() => setStep('connect')}
+                                        className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium"
+                                    >
+                                        Next Step <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 'connect' && (
+                            <motion.div
+                                key="connect"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="flex-1 flex flex-col"
+                            >
+                                <h2 className="text-2xl font-bold mb-2">Connect {platform}</h2>
+                                <p className="text-muted-foreground mb-8">Enter your store URL to initiate the connection.</p>
+                                
+                                <div className="max-w-md space-y-4 mb-8">
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Store Domain</label>
+                                        <div className="relative">
+                                            <Globe className="absolute left-3 top-3 text-muted-foreground" size={20} />
+                                            <input 
+                                                type="text" 
+                                                className="w-full pl-10 p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary/50 outline-none"
+                                                placeholder={platform === 'shopify' ? 'your-store.myshopify.com' : 'https://yourstore.com'}
+                                                value={domain}
+                                                onChange={(e) => setDomain(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-between mt-auto">
+                                    <button 
+                                        onClick={() => setStep('platform')}
+                                        className="text-muted-foreground hover:text-foreground font-medium"
+                                    >
+                                        Back
+                                    </button>
+                                    <button 
+                                        onClick={handleConnect}
+                                        disabled={!domain || isLoading}
+                                        className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50"
+                                    >
+                                        {isLoading ? <Loader2 className="animate-spin" /> : 'Connect Store'}
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 'sync' && (
+                            <motion.div
+                                key="sync"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="flex-1 flex flex-col items-center justify-center text-center"
+                            >
+                                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                                    <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                                </div>
+                                <h2 className="text-2xl font-bold mb-2">Syncing your orders...</h2>
+                                <p className="text-muted-foreground max-w-md">
+                                    We're importing your order history to build your analytics dashboard. This usually takes less than a minute.
+                                </p>
+                            </motion.div>
+                        )}
+
+                        {step === 'complete' && (
+                            <motion.div
+                                key="complete"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="flex-1 flex flex-col items-center justify-center text-center"
+                            >
+                                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mb-6">
+                                    <Check className="w-10 h-10 text-green-600" />
+                                </div>
+                                <h2 className="text-2xl font-bold mb-2">You're all set!</h2>
+                                <p className="text-muted-foreground max-w-md mb-8">
+                                    Your store is connected and ReturnShield is active. Let's take you to your dashboard.
+                                </p>
+                                <button 
+                                    onClick={handleComplete}
+                                    className="flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium text-lg shadow-lg shadow-primary/25"
+                                >
+                                    Go to Dashboard <ArrowRight size={20} />
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </GlassCard>
         </div>
-        <footer>
-          <button type="button" className="wizard-button primary" onClick={handleAdvance} disabled={processing}>
-            {processing ? 'Processing…' : currentStep.ctaLabel ?? 'Next'}
-          </button>
-        </footer>
-      </div>
-    </div>
-  );
-};
+    );
+}
