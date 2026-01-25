@@ -13,6 +13,8 @@ import ContactPage from './pages/Contact.tsx'
 import CareersPage from './pages/Careers.tsx'
 import BlogPage from './pages/Blog.tsx'
 import BlogPostPage from './pages/BlogPost.tsx'
+import HelpCenterPage from './pages/HelpCenter.tsx'
+import HelpDocPage from './pages/HelpDoc.tsx'
 import NotFoundPage from './pages/NotFound.tsx'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
@@ -49,6 +51,8 @@ export function RoutedApp() {
       <Route path="/careers" element={<CareersPage />} />
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/blog/:slug" element={<BlogPostPage />} />
+      <Route path="/help" element={<HelpCenterPage />} />
+      <Route path="/help/:slug" element={<HelpDocPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
