@@ -1,45 +1,59 @@
-import { Link } from 'react-router-dom'
-import logoMark from '../assets/logo-mark.svg'
+import { ShieldCheck } from 'lucide-react'
 
-export function Footer() {
-    const handleFooterLink = (event: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-        // Note: Original code called setNavOpen(false) here.
-        // Assuming navigation closes menu or menu covers footer, so this might be redundant
-        // if Header manages its own state.
-        if (window.location.pathname === path) {
-            event.preventDefault()
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-    }
+export const Footer = () => {
+  return (
+    <footer className="bg-card border-t border-border py-12 md:py-16">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="space-y-4">
+            <a href="/" className="flex items-center gap-2 font-heading font-bold text-xl text-foreground">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              ReturnShield
+            </a>
+            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
+              The revenue defense platform for modern commerce. Turn returns into your biggest growth lever.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-4 text-foreground">Platform</h4>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li><a href="/#features" className="hover:text-primary transition-colors">Features</a></li>
+              <li><a href="/#pricing" className="hover:text-primary transition-colors">Pricing</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Integrations</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Changelog</a></li>
+            </ul>
+          </div>
 
-    return (
-        <footer className="footer">
-            <div>
-                <Link
-                    to="/"
-                    className="brand"
-                    aria-label="ReturnShield home"
-                    onClick={(event) => handleFooterLink(event, '/')}
-                >
-                    <img src={logoMark} alt="ReturnShield shield" className="brand-icon" />
-                    <div className="brand-text">
-                        <span className="brand-title">ReturnShield</span>
-                        <span className="brand-tagline">Turn Your Returns Into Relationships</span>
-                    </div>
-                </Link>
-            </div>
-            <div className="footer-links">
-                <a href="mailto:hello@returnshield.app">hello@returnshield.app</a>
-                <Link to="/privacy" onClick={(event) => handleFooterLink(event, '/privacy')}>
-                    Privacy Policy
-                </Link>
-                <Link to="/terms" onClick={(event) => handleFooterLink(event, '/terms')}>
-                    Terms of Service
-                </Link>
-                <Link to="/dmarc" onClick={(event) => handleFooterLink(event, '/dmarc')}>
-                    DMARC Policy
-                </Link>
-            </div>
-        </footer>
-    )
+          <div>
+            <h4 className="font-bold mb-4 text-foreground">Company</h4>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li><a href="#" className="hover:text-primary transition-colors">About</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Careers</a></li>
+              <li><a href="mailto:hello@returnshield.app" className="hover:text-primary transition-colors">Contact</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4 text-foreground">Legal</h4>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li><a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" className="hover:text-primary transition-colors">Terms of Service</a></li>
+              <li><a href="/dmarc" className="hover:text-primary transition-colors">DMARC Policy</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+          <p>© 2026 ReturnShield Inc. All rights reserved.</p>
+          <div className="flex gap-6">
+            {/* Social icons would go here */}
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
 }
