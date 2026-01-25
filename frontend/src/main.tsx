@@ -7,8 +7,13 @@ import App from './App.tsx'
 import ExchangeAutopilotPage from './pages/ExchangeAutopilot.tsx'
 import PrivacyPolicyPage from './pages/PrivacyPolicy.tsx'
 import TermsOfServicePage from './pages/TermsOfService.tsx'
-import NotFoundPage from './pages/NotFound.tsx'
 import DMARCPolicyPage from './pages/DMARCPolicy.tsx'
+import AboutPage from './pages/About.tsx'
+import ContactPage from './pages/Contact.tsx'
+import CareersPage from './pages/Careers.tsx'
+import BlogPage from './pages/Blog.tsx'
+import BlogPostPage from './pages/BlogPost.tsx'
+import NotFoundPage from './pages/NotFound.tsx'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://analytics.returnshield.app'
@@ -39,6 +44,11 @@ export function RoutedApp() {
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
       <Route path="/dmarc" element={<DMARCPolicyPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/careers" element={<CareersPage />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/blog/:slug" element={<BlogPostPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )

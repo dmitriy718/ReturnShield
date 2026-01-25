@@ -66,7 +66,7 @@ const Hero = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
           >
-            <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-xl shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 border-0" onClick={() => window.location.href = 'https://app.returnshield.app/register'}>
+            <Button size="lg" className="h-14 px-8 text-lg text-blue-50 hover:text-white rounded-full shadow-xl shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 border-0" onClick={() => window.location.href = 'https://app.returnshield.app/register'}>
               Start Preventing Returns <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full bg-background/50 backdrop-blur border-border hover:bg-background/80 hover:border-primary/50 transition-colors">
@@ -242,7 +242,7 @@ const PricingCard = ({ title, price, description, features, highlighted, cta }: 
     </CardContent>
     <div className="p-6 pt-0">
       <Button 
-        className={`w-full h-12 text-base ${highlighted ? 'shadow-lg shadow-primary/20' : ''}`} 
+        className={`w-full h-12 text-base ${highlighted ? 'text-white shadow-lg shadow-primary/20 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-300' : ''}`} 
         variant={highlighted ? "default" : "outline"} 
         size="lg"
         onClick={() => window.location.href = `https://app.returnshield.app/register?plan=${title.toLowerCase()}`}

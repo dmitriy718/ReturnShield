@@ -25,14 +25,14 @@ export const Navbar = () => {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          <a href="/#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Features</a>
-          <a href="/#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">How it Works</a>
-          <a href="/#pricing" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Pricing</a>
+          <a href="/#features" className="text-sm font-medium text-muted-foreground hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)] transition-all duration-300">Features</a>
+          <a href="/#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)] transition-all duration-300">How it Works</a>
+          <a href="/#pricing" className="text-sm font-medium text-muted-foreground hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)] transition-all duration-300">Pricing</a>
         </div>
 
         <div className="hidden md:flex items-center gap-4">
           <a href="https://app.returnshield.app/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Log in</a>
-          <Button onClick={() => window.location.href = 'https://app.returnshield.app/register'} className="shadow-lg shadow-primary/20">
+          <Button onClick={() => window.location.href = 'https://app.returnshield.app/register'} className="text-white shadow-lg shadow-primary/20 hover:shadow-primary/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-300">
             Start Free Trial
           </Button>
         </div>
