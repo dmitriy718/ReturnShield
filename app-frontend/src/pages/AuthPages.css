@@ -77,13 +77,15 @@
 .auth-radio {
   display: flex;
   gap: 0.65rem;
-  align-items: flex-start;
+  align-items: center;
   font-weight: 500;
   color: rgba(15, 23, 42, 0.85);
+  cursor: pointer;
 }
 
 .auth-radio input {
-  margin-top: 0.15rem;
+  margin: 0;
+  cursor: pointer;
 }
 
 .auth-form label {

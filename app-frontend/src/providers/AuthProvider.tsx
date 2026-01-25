@@ -134,7 +134,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await loadUser(payload.token)
       } catch (error) {
         if (error instanceof ApiError && error.detail) {
-          throw new Error(error.detail)
+          try {
+            const detailObj = JSON.parse(error.detail)
+            const firstError = Object.values(detailObj)[0]
+            if (Array.isArray(firstError)) {
+              throw new Error(firstError[0])
+            }
+            if (typeof firstError === 'string') {
+              throw new Error(firstError)
+            }
+          } catch {
+            throw new Error(error.detail)
+          }
         }
         throw new Error('Unable to complete registration. Please try again.')
       }
