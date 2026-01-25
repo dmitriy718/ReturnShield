@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, CreditCard, LogOut, ShieldCheck, Activity, Plug } from "lucide-react"
+import { LayoutDashboard, CreditCard, LogOut, ShieldCheck, Activity, Plug, Settings } from "lucide-react"
 import { useAuth } from "../../providers/AuthProvider"
 import { Button } from "../ui/button"
 import { Separator } from "../ui/separator"
@@ -15,6 +15,7 @@ export function AppLayout() {
     { href: "/policy", label: "Policy Generator", icon: ShieldCheck },
     { href: "/blocklist", label: "Blocklist", icon: LogOut }, // Reusing LogOut icon temporarily or pick better
     { href: "/activity", label: "Activity Log", icon: Activity },
+    { href: "/settings", label: "Settings", icon: Settings },
     { href: "/billing", label: "Billing", icon: CreditCard },
   ]
 

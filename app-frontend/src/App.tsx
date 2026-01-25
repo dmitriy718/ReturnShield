@@ -18,6 +18,7 @@ import { SetupPage } from './pages/SetupPage'
 import { PolicyGeneratorPage } from './pages/PolicyGeneratorPage'
 import { BlocklistPage } from './pages/BlocklistPage'
 import { ActivityLogPage } from './pages/ActivityLogPage'
+import { SettingsPage } from './pages/SettingsPage'
 
 function ProtectedRoute() {
   const { token, loading } = useAuth()
@@ -69,6 +70,7 @@ function App() {
             <Route path="/policy" element={<PolicyGeneratorPage />} />
             <Route path="/blocklist" element={<BlocklistPage />} />
             <Route path="/activity" element={<ActivityLogPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/billing" element={<BillingPage />} />
             <Route path="/billing/success" element={<CheckoutSuccessPage />} />
             <Route path="/integrations/health" element={<IntegrationsHealthPage />} />
