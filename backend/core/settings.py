@@ -140,6 +140,7 @@ INSTALLED_APPS = [
     'woocommerce_integration',
     'returns',
     'automation',
+    'core.settings_api',
 ]
 
 MIDDLEWARE = [
