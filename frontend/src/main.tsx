@@ -16,6 +16,7 @@ import BlogPostPage from './pages/BlogPost.tsx'
 import HelpCenterPage from './pages/HelpCenter.tsx'
 import HelpDocPage from './pages/HelpDoc.tsx'
 import NotFoundPage from './pages/NotFound.tsx'
+import { HelpWidget } from './components/HelpWidget.tsx'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://analytics.returnshield.app'
@@ -40,21 +41,24 @@ export function RoutedApp() {
   }, [location])
 
   return (
-    <Routes>
-      <Route path="/" element={<App />} />
-      <Route path="/exchange-automation" element={<ExchangeAutopilotPage />} />
-      <Route path="/privacy" element={<PrivacyPolicyPage />} />
-      <Route path="/terms" element={<TermsOfServicePage />} />
-      <Route path="/dmarc" element={<DMARCPolicyPage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/careers" element={<CareersPage />} />
-      <Route path="/blog" element={<BlogPage />} />
-      <Route path="/blog/:slug" element={<BlogPostPage />} />
-      <Route path="/help" element={<HelpCenterPage />} />
-      <Route path="/help/:slug" element={<HelpDocPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/exchange-automation" element={<ExchangeAutopilotPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsOfServicePage />} />
+        <Route path="/dmarc" element={<DMARCPolicyPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/help" element={<HelpCenterPage />} />
+        <Route path="/help/:slug" element={<HelpDocPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+      <HelpWidget />
+    </>
   )
 }
 
