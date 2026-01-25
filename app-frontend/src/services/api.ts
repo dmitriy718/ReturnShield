@@ -157,8 +157,19 @@ export interface FraudSettings {
   high_value_threshold: number;
 }
 
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 export async function getAutomationRules(token: string) {
-  return apiFetch<AutomationRule[]>('/automation/rules/', { token });
+  const response = await apiFetch<PaginatedResponse<AutomationRule> | AutomationRule[]>('/automation/rules/', { token });
+  if ('results' in response && Array.isArray(response.results)) {
+    return response.results;
+  }
+  return response as AutomationRule[];
 }
 
 export async function createAutomationRule(token: string, rule: Omit<AutomationRule, 'id'>) {

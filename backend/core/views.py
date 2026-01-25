@@ -185,7 +185,7 @@ class FeatureFlagsView(APIView):
             from waffle.models import Flag
             active_flags = Flag.objects.filter(users=user, everyone=False).values_list("name", flat=True)
             flags.extend(active_flags)
-        except ImportError:
+        except Exception:
             pass  # django-waffle not installed or not configured
 
         return Response(flags, status=200)
