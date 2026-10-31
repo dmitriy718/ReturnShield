@@ -24,3 +24,18 @@ build/
 
 # Secrets
 vpspass.txt
+
+# Secret & local state hygiene
+.env.local
+.env.production
+.dev.vars
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+.claude/
+.local/
+*.save
+*.bak
+temp_pass.txt
